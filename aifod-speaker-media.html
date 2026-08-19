@@ -1,0 +1,606 @@
+<!-- AIFOD Speaker Media Package — Geneva Summit 2026 -->
+<style>
+/* ── BASE ── */
+#afpp{font-family:Lexend,sans-serif;line-height:1.5;color:#1f2937;background:#f5efe4;}
+#afpp *{box-sizing:border-box;margin:0;padding:0;}
+@keyframes apSpin{to{transform:rotate(360deg)}}
+@keyframes afL{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes afR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+@keyframes afDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.8)}}
+@keyframes afOrb{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+@keyframes afPop{from{opacity:0;transform:scale(.93) translateY(12px)}to{opacity:1;transform:none}}
+
+/* ── HERO ── */
+.ap-hero{position:relative!important;overflow:hidden!important;min-height:600px!important;display:flex!important;align-items:center!important;justify-content:center!important;background:#040912!important;width:100vw!important;margin-left:calc(-50vw + 50%)!important;user-select:none;-webkit-user-select:none;}
+.ap-fg-wrap{position:absolute!important;inset:0!important;z-index:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;gap:3px!important;pointer-events:none!important;}
+.apr{flex:1!important;overflow:hidden!important;display:flex!important;min-height:0!important;}
+.apt{display:flex!important;height:100%!important;gap:3px!important;flex-shrink:0!important;will-change:transform!important;}
+.apc{flex-shrink:0!important;width:120px!important;min-width:120px!important;background-size:cover!important;background-position:center!important;background-color:#0d1b3a!important;}
+@-webkit-keyframes afL{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@-webkit-keyframes afR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.ap-ov{position:absolute!important;inset:0!important;z-index:1!important;pointer-events:none!important;background:radial-gradient(ellipse 60% 70% at 50% 50%,rgba(4,9,18,.88) 0%,rgba(4,9,18,.55) 50%,rgba(4,9,18,.15) 100%),linear-gradient(to right,rgba(4,9,18,.97) 0%,rgba(4,9,18,0) 15%,rgba(4,9,18,0) 85%,rgba(4,9,18,.97) 100%),linear-gradient(to bottom,rgba(4,9,18,.95) 0%,rgba(4,9,18,0) 22%,rgba(4,9,18,0) 78%,rgba(4,9,18,.95) 100%)!important;}
+.ap-orb{position:absolute!important;border-radius:50%!important;pointer-events:none!important;filter:blur(80px)!important;z-index:1!important;}
+.ap-o1{width:500px;height:500px;top:-100px;right:-80px;background:radial-gradient(circle,rgba(226,30,81,.22) 0%,transparent 70%);animation:afOrb 9s ease-in-out infinite!important;}
+.ap-o2{width:360px;height:360px;bottom:-60px;left:-60px;background:radial-gradient(circle,rgba(21,81,214,.16) 0%,transparent 70%);animation:afOrb 11s ease-in-out infinite reverse!important;}
+.ap-con{position:relative!important;z-index:2!important;text-align:center!important;padding:80px 32px 72px!important;max-width:780px!important;margin:0 auto!important;}
+.ap-kick{display:inline-flex!important;align-items:center!important;gap:10px!important;font-size:11px!important;font-weight:700!important;letter-spacing:.22em!important;text-transform:uppercase!important;color:rgba(255,255,255,.80)!important;margin-bottom:20px!important;text-shadow:0 1px 8px rgba(0,0,0,.9)!important;}
+.ap-dot{width:6px;height:6px;border-radius:50%;background:#ff2f6b;display:inline-block;animation:afDot 2s ease-in-out infinite;}
+.ap-h1{font-size:clamp(34px,5.5vw,66px)!important;font-weight:800!important;letter-spacing:-.03em!important;line-height:1.02!important;color:#fff!important;margin-bottom:18px!important;text-shadow:0 2px 4px rgba(0,0,0,1),0 8px 40px rgba(0,0,0,.7)!important;}
+.ap-h1 em{font-style:normal!important;color:#ff2f6b!important;}
+.ap-sub{font-size:16px!important;line-height:1.7!important;color:rgba(255,255,255,.90)!important;max-width:540px!important;margin:0 auto!important;text-shadow:0 1px 4px rgba(0,0,0,1)!important;}
+.ap-stats{display:flex!important;justify-content:center!important;margin-top:32px!important;padding-top:24px!important;border-top:1px solid rgba(255,255,255,.18)!important;}
+.ap-stat{padding:0 26px!important;border-right:1px solid rgba(255,255,255,.14)!important;}
+.ap-stat:last-child{border-right:none!important;}
+.ap-sn{font-size:28px!important;font-weight:700!important;color:#fff!important;line-height:1!important;text-shadow:0 2px 8px rgba(0,0,0,.9)!important;}
+.ap-sc{color:#ff2f6b!important;}
+.ap-sk{font-size:10px!important;font-weight:600!important;letter-spacing:.18em!important;text-transform:uppercase!important;color:rgba(255,255,255,.60)!important;margin-top:5px!important;}
+
+/* ── BODY ── */
+#afpp .apBody{max-width:980px;margin:0 auto;padding:52px 24px 80px;}
+#afpp .apSection{margin-bottom:40px;}
+#afpp .apStep{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#E21E51;margin-bottom:14px;}
+#afpp .apStepNum{width:22px;height:22px;border-radius:50%;background:#E21E51;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* ── SPEAKER SELECTOR ── */
+#afpp .apSpkBox{background:#fff;border:1.5px solid rgba(13,27,58,.12);border-radius:10px;padding:20px;position:relative;}
+#afpp .apSpkSelected{display:flex;align-items:center;gap:12px;cursor:pointer;padding:4px 0;}
+#afpp .apSpkAvatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#0d1b3a,#1a2c54);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:15px;flex-shrink:0;}
+#afpp .apSpkName{font-size:16px;font-weight:600;color:#0d1b3a;}
+#afpp .apSpkHint{font-size:12px;color:#9ca3af;margin-top:2px;}
+#afpp .apSpkArrow{margin-left:auto;color:#9ca3af;transition:transform .2s;}
+#afpp .apSpkBox.open .apSpkArrow{transform:rotate(180deg);}
+#afpp .apSpkDropdown{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1.5px solid rgba(13,27,58,.12);border-radius:10px;box-shadow:0 20px 60px rgba(13,27,58,.15);z-index:999;overflow:hidden;}
+#afpp .apSpkBox.open .apSpkDropdown{display:block;}
+#afpp .apSpkSearch{padding:12px 14px;border-bottom:1px solid rgba(13,27,58,.08);}
+#afpp .apSpkSearch input{width:100%;padding:9px 12px;font-size:14px;font-family:Lexend,sans-serif;border:1px solid rgba(13,27,58,.15);border-radius:6px;color:#0d1b3a;background:#f9f9f9;outline:none;}
+#afpp .apSpkSearch input:focus{border-color:rgba(226,30,81,.5);box-shadow:0 0 0 3px rgba(226,30,81,.08);}
+#afpp .apSpkList{max-height:220px;overflow-y:auto;}
+#afpp .apSpkOpt{padding:10px 16px;font-size:14px;color:#0d1b3a;cursor:pointer;transition:background .15s;}
+#afpp .apSpkOpt:hover{background:rgba(226,30,81,.06);}
+#afpp .apSpkOpt.sold{color:#9ca3af;pointer-events:none;}
+#afpp .apSpkOpt.sold::after{content:" — Sold out";font-size:12px;color:#E21E51;}
+#afpp .apSpkOpt.hidden{display:none;}
+
+/* ── PACKAGES ── */
+#afpp .apPkgs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+@media(max-width:700px){#afpp .apPkgs{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){#afpp .apPkgs{grid-template-columns:1fr;}}
+#afpp .apPkg{background:#fff;border:1.5px solid rgba(13,27,58,.12);border-radius:10px;padding:22px 18px 18px;cursor:pointer;position:relative;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(13,27,58,.06);}
+#afpp .apPkg:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(13,27,58,.10);}
+#afpp .apPkg.sel{border:2px solid #E21E51!important;box-shadow:0 12px 32px rgba(226,30,81,.14)!important;}
+#afpp .apPkg.feat{border:2px solid #E21E51;}
+#afpp .apPkg.feat::before{content:"BEST VALUE";position:absolute;top:-11px;left:50%;transform:translateX(-50%);padding:3px 14px;font-size:10px;font-weight:800;letter-spacing:.16em;color:#fff;background:#E21E51;border-radius:9999px;white-space:nowrap;}
+#afpp .apPkgRad{position:absolute;top:14px;right:14px;width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(13,27,58,.18);background:#f5efe4;display:flex;align-items:center;justify-content:center;}
+#afpp .apPkg.sel .apPkgRad{background:#E21E51;border-color:#E21E51;}
+#afpp .apPkgDot{width:7px;height:7px;border-radius:50%;background:#fff;display:none;}
+#afpp .apPkg.sel .apPkgDot{display:block;}
+#afpp .apPkgTag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E21E51;margin-bottom:6px;}
+#afpp .apPkgName{font-size:14px;font-weight:700;color:#0d1b3a;margin-bottom:4px;padding-right:24px;}
+#afpp .apPkgPrice{font-size:30px;font-weight:800;color:#0d1b3a;letter-spacing:-.03em;line-height:1;margin-bottom:12px;}
+#afpp .apPkgPrice span{font-size:14px;font-weight:400;color:#6b7280;}
+#afpp .apPkgDesc{font-size:12px;color:#6b7280;line-height:1.55;border-top:1px solid rgba(13,27,58,.08);padding-top:10px;}
+#afpp .apSaveBox{background:rgba(226,30,81,.06);border:1px solid rgba(226,30,81,.20);border-radius:6px;padding:10px 14px;font-size:12px;color:#0d1b3a;margin-top:10px;line-height:1.6;}
+#afpp .apSaveBox strong{color:#E21E51;}
+
+/* ── PREVIEW BTN ── */
+#afpp .apPrevBtnWrap{text-align:center;margin:28px 0;}
+#afpp #apPrevBtn{display:inline-flex;align-items:center;gap:9px;padding:12px 26px;background:#f5efe4;border:2px solid rgba(13,27,58,.15);border-radius:8px;font-family:Lexend,sans-serif;font-size:14px;font-weight:600;color:#9ca3af;cursor:not-allowed;transition:all .25s;}
+#afpp #apPrevBtn.active{background:#0d1b3a;border-color:#0d1b3a;color:#fff;cursor:pointer;}
+
+/* ── FORM ── */
+#afpp .apForm{background:#fff;border:1.5px solid rgba(13,27,58,.12);border-radius:10px;padding:26px;}
+#afpp .apFrow{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;}
+@media(max-width:520px){#afpp .apFrow{grid-template-columns:1fr;}}
+#afpp .apFg{margin-bottom:14px;}
+#afpp .apFg label{display:block;font-size:12px;font-weight:600;color:#0d1b3a;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;}
+#afpp .apFg input{width:100%;padding:11px 14px;font-size:14px;font-family:Lexend,sans-serif;border:1.5px solid rgba(13,27,58,.15);border-radius:6px;color:#0d1b3a;background:#fff;transition:border-color .2s,box-shadow .2s;}
+#afpp .apFg input:focus{outline:none;border-color:rgba(226,30,81,.55);box-shadow:0 0 0 3px rgba(226,30,81,.10);}
+#afpp .apFg input.err{border-color:#E21E51!important;}
+#afpp .apSum{border-top:1px solid rgba(13,27,58,.10);padding-top:14px;margin:14px 0 20px;}
+#afpp .apSrow{display:flex;justify-content:space-between;font-size:13px;color:#6b7280;padding:3px 0;}
+#afpp .apSrow.tot{color:#0d1b3a;font-weight:700;font-size:16px;padding-top:10px;border-top:1px solid rgba(13,27,58,.10);margin-top:6px;}
+#afpp .apErrBox{margin-bottom:12px;}
+#afpp .apErr{font-size:12px;color:#E21E51;padding:6px 10px;background:rgba(226,30,81,.06);border:1px solid rgba(226,30,81,.18);border-radius:5px;margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+#afpp .apPayBtn{width:100%;padding:15px;background:#E21E51;color:#fff;border:0;border-radius:8px;font-family:Lexend,sans-serif;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 10px 28px rgba(226,30,81,.28);transition:background .2s,transform .2s;}
+#afpp .apPayBtn:hover{background:#ff2f6b;transform:translateY(-1px);}
+#afpp .apPayBtn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+#afpp .apDisc{font-size:11px;color:#6b7280;text-align:center;margin-top:10px;line-height:1.6;}
+
+/* ── SPEAKER PICKER POPUP ── */
+#apSpkPopup{display:none;position:fixed;inset:0;z-index:999998;background:rgba(13,27,58,0.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;}
+#apSpkPopup.show{display:flex;}
+#apSpkPopBox{background:#fff;border-radius:16px;width:100%;max-width:500px;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 40px 100px rgba(0,0,0,0.4);animation:afPop .3s cubic-bezier(.16,1,.3,1) both;}
+#apSpkPopHead{padding:20px 22px 16px;border-bottom:1px solid rgba(13,27,58,.08);}#apSpkPopHead input:focus{border-color:rgba(226,30,81,.5)!important;box-shadow:0 0 0 3px rgba(226,30,81,.08)!important;background:#fff!important;outline:none!important;}
+#apSpkPopHead h3{font-family:Lexend,sans-serif;font-size:17px;font-weight:700;color:#0d1b3a;margin-bottom:4px;}
+#apSpkPopHead p{font-family:Lexend,sans-serif;font-size:12px;color:#9ca3af;}
+
+
+
+#apSpkPopList{overflow-y:auto;flex:1;padding:8px 0;}
+.apSpkPopOpt{padding:11px 20px;font-size:14px;color:#0d1b3a;cursor:pointer;font-family:Lexend,sans-serif;display:flex;align-items:center;gap:12px;transition:background .15s;}
+.apSpkPopOpt:hover{background:rgba(226,30,81,.06);}
+.apSpkPopOpt .apPopInit{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0d1b3a,#1a2c54);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.apSpkPopOpt.sold{color:#9ca3af;cursor:not-allowed;}
+.apSpkPopOpt.sold .apPopInit{background:#e5e7eb;}
+.apSpkPopOpt.sold::after{content:" — Sold out";font-size:11px;color:#E21E51;margin-left:auto;}
+.apHidden{display:none!important;}
+#apSpkPopClose{display:block;width:100%;padding:14px;background:#f9f9f9;border:0;border-top:1px solid rgba(13,27,58,.08);font-family:Lexend,sans-serif;font-size:13px;color:#6b7280;cursor:pointer;border-radius:0 0 16px 16px;transition:background .15s;}
+#apSpkPopClose:hover{background:#f0f0f0;}
+
+/* ── PAYMENT MODAL ── */
+#apPayModal{display:none;position:fixed;inset:0;z-index:999999;background:rgba(13,27,58,.82);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:16px;}
+#apPayModal.show{display:flex;}
+#apPayBox{background:#fff;border-radius:16px;width:100%;max-width:460px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.45);}
+#apPayHead{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #f0f0f0;}
+#apPayHead h3{font-family:Lexend,sans-serif;font-size:15px;font-weight:700;color:#0d1b3a;}
+#apPayClose{background:none;border:1px solid #e5e7eb;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:18px;color:#6b7280;display:flex;align-items:center;justify-content:center;}
+#apPayAmt{font-family:Lexend,sans-serif;font-size:38px;font-weight:800;color:#0d1b3a;text-align:center;padding:20px 22px 0;letter-spacing:-.02em;}
+#apPayAmtSub{font-family:Lexend,sans-serif;font-size:11px;color:#9ca3af;text-align:center;margin-top:4px;padding:0 22px;}
+#apPayBody{padding:20px 22px;}
+#apPayConfirm .apPayGoBtn{width:100%;padding:15px;background:#E21E51;color:#fff;border:0;border-radius:8px;font-family:Lexend,sans-serif;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 24px rgba(226,30,81,.30);margin-bottom:12px;}
+#apPayConfirm .apPayGoBtn:hover{background:#ff2f6b;}
+#apPayConfirm .apPayCancelBtn{display:block;width:100%;text-align:center;font-family:Lexend,sans-serif;font-size:12px;color:#9ca3af;background:none;border:none;cursor:pointer;text-decoration:underline;}
+#apPayLoading{display:none;flex-direction:column;align-items:center;gap:14px;padding:20px;min-height:100px;}
+#apPayLoading .spin{width:38px;height:38px;border:3px solid #f3f3f3;border-top-color:#E21E51;border-radius:50%;animation:apSpin .8s linear infinite;}
+#apPayLoading p{font-family:Lexend,sans-serif;font-size:13px;color:#6b7280;}
+#apPayFoot{padding:12px 22px;border-top:1px solid #f0f0f0;display:flex;align-items:center;justify-content:center;gap:5px;font-family:Lexend,sans-serif;font-size:11px;color:#9ca3af;}
+
+/* ── SUCCESS MODAL ── */
+#apSuccModal{display:none;position:fixed;inset:0;z-index:999999;background:rgba(13,27,58,.75);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:20px;}
+#apSuccModal.show{display:flex;}
+#apSuccBox{background:#fff;border-radius:14px;padding:40px 36px;max-width:480px;width:100%;text-align:center;box-shadow:0 40px 80px rgba(13,27,58,.40);animation:afPop .4s cubic-bezier(.16,1,.3,1) both;}
+#apSuccBox .apChk{width:64px;height:64px;border-radius:50%;background:rgba(34,197,94,.12);border:2px solid rgba(34,197,94,.35);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;}
+#apSuccBox h2{font-size:22px;font-weight:700;color:#0d1b3a;margin-bottom:10px;}
+#apSuccBox p{font-size:13px;color:#6b7280;line-height:1.65;margin-bottom:8px;}
+#apSuccBox .apGalleryLink{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:13px 28px;background:#0d1b3a;color:#fff;border:0;border-radius:8px;font-family:Lexend,sans-serif;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;}
+#apSuccBox .apGalleryLink:hover{background:#1a2c54;}
+#apSuccBox .apSuccNote{margin-top:14px;font-size:11px;color:#9ca3af;line-height:1.6;}
+#afpp .apSoldBanner{display:none;background:rgba(226,30,81,.07);border:1px solid rgba(226,30,81,.25);border-radius:6px;padding:9px 13px;font-size:13px;color:#E21E51;margin-top:10px;font-weight:500;}
+</style>
+
+<div id="afpp">
+
+<!-- HERO -->
+<div class="ap-hero" id="apHero">
+  <div class="ap-fg-wrap" id="apGrid"></div>
+  <div class="ap-ov"></div>
+  <div class="ap-orb ap-o1"></div>
+  <div class="ap-orb ap-o2"></div>
+  <div class="ap-con">
+    <p class="ap-kick"><span class="ap-dot"></span>Geneva Summit 2026 &nbsp;&middot;&nbsp; Palais des Nations &nbsp;&middot;&nbsp; 12&#8211;14 August</p>
+    <h1 class="ap-h1">Your session, <em>professionally captured</em></h1>
+    <p class="ap-sub">High-resolution photographs and full session recordings. Available exclusively to AIFOD Geneva Summit 2026 speakers.</p>
+    <div class="ap-stats">
+      <div class="ap-stat"><div class="ap-sn">68<span class="ap-sc">+</span></div><div class="ap-sk">Speakers</div></div>
+      <div class="ap-stat"><div class="ap-sn">3</div><div class="ap-sk">Days</div></div>
+      <div class="ap-stat"><div class="ap-sn">25 Aug</div><div class="ap-sk">Delivery by</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="apBody">
+
+  <!-- STEP 1: SPEAKER -->
+  <div class="apSection">
+    <div class="apStep"><span class="apStepNum">1</span>Select your speaker</div>
+    <div class="apSpkBox" id="apSpkBox" onclick="apToggleSpk(event)">
+      <div class="apSpkSelected">
+        <div class="apSpkAvatar" id="apSpkAvatar">?</div>
+        <div>
+          <div class="apSpkName" id="apSpkNameEl">Choose a speaker</div>
+          <div class="apSpkHint" id="apSpkHintEl">Click to search and select</div>
+        </div>
+        <svg class="apSpkArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <div class="apSpkDropdown" id="apSpkDropdown" onclick="event.stopPropagation()">
+        <div class="apSpkSearch">
+          <input type="text" id="apSpkSearch" placeholder="Search speaker name..." oninput="apFilterSpk(this.value)" autocomplete="off" />
+        </div>
+        <div class="apSpkList" id="apSpkList">
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Fredrik Kocon">Fredrik Kocon</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Valerie Pelton">Valerie Pelton</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Dushyant Kanungo">Dushyant Kanungo</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Hesti Aryani">Hesti Aryani</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Hyunwoo Kim">Hyunwoo Kim</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Ivana Brutenic">Ivana Brutenic</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Imtiaz Ahmed">Imtiaz Ahmed</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Aldor Nini">Aldor Nini</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Fabrizio Degni">Fabrizio Degni</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Gladwin Mendez">Gladwin Mendez</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="David Williams">David Williams</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Frederic Emane">Frederic Emane</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Hammad Ali Nasir">Hammad Ali Nasir</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Meha Aftab">Meha Aftab</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Nobu Ota">Nobu Ota</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Sundara Rajan Aravamuthan">Sundara Rajan Aravamuthan</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Shiva Kumar">Shiva Kumar</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Raja Gopalan Balasubramanyan">Raja Gopalan Balasubramanyan</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Sonke Lund">Sonke Lund</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Deniz Sherifoglu">Deniz Sherifoglu</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Ahmed Shochin">Ahmed Shochin</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Alejandro Castaneira">Alejandro Castaneira</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Dip Nandi">Dip Nandi</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Derrick Davis">Derrick Davis</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Chirag Dhirajlal Lakhani">Chirag Dhirajlal Lakhani</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Eric Famanas">Eric Famanas</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Giorgio Bortoli">Giorgio Bortoli</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Mikael Loefstrand">Mikael Loefstrand</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Orsolya Kneitner">Orsolya Kneitner</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Tomal Ganguly">Tomal Ganguly</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Abasiama Idaresit">Abasiama Idaresit</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Adina Suciu">Adina Suciu</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Boris Grivic">Boris Grivic</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Cyrille C. Catel">Cyrille C. Catel</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Dimitri Boylan">Dimitri Boylan</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Andrei Dumitrica">Andrei Dumitrica</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Elzbieta Deja">Elzbieta Deja</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Nelson T. Ajulo">Nelson T. Ajulo</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Pascal Hetzscholdt">Pascal Hetzscholdt</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Patricia Krall">Patricia Krall</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Jeremy Stein">Jeremy Stein</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Anand Tatavarthi">Anand Tatavarthi</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Daniel Osuna">Daniel Osuna</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Frederic JALLAT">Frederic JALLAT</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Rahul Ghatalia">Rahul Ghatalia</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Jean-simon Venne">Jean-simon Venne</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Marisa Boller">Marisa Boller</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Nathalie Simille">Nathalie Simille</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Ivica Srncevic">Ivica Srncevic</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Sheila Jagannathan">Sheila Jagannathan</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Marybelle Cherfan">Marybelle Cherfan</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Clas Neumann">Clas Neumann</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Joanne Sweeney">Joanne Sweeney</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Oyedayo Otokiti">Oyedayo Otokiti</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Tan James Anthony">Tan James Anthony</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Kunal Panchamia">Kunal Panchamia</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Yogesh Gupta">Yogesh Gupta</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Alex Cogdill">Alex Cogdill</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Helen Pino Vera">Helen Pino Vera</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Nav Thethi">Nav Thethi</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Georg Zangl">Georg Zangl</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Konrad Sztolc">Konrad Sztolc</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Mohamed Arafat">Mohamed Arafat</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Rory Macmillan">Rory Macmillan</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Wolfgang Pinegger">Wolfgang Pinegger</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Craig Gibbs">Craig Gibbs</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Tijn van der Zant">Tijn van der Zant</div>
+          <div class="apSpkOpt" onclick="apPickSpk(this)" data-val="Tianze Zhang">Tianze Zhang</div>
+        </div>
+      </div>
+    </div>
+    <div class="apSoldBanner" id="apSoldBanner">&#9888; This speaker&#39;s package has already been purchased.</div>
+  </div>
+
+  <!-- STEP 2: PACKAGES -->
+  <div class="apSection">
+    <div class="apStep"><span class="apStepNum">2</span>Choose your package</div>
+    <div class="apPkgs">
+
+      <div class="apPkg" id="apPkg_p25" onclick="apSelPkg(this,0)">
+        <div class="apPkgRad"><div class="apPkgDot"></div></div>
+        <div class="apPkgTag">Photos</div>
+        <div class="apPkgName">Select 25 Photos</div>
+        <div class="apPkgPrice">&#8364;299</div>
+        <div class="apPkgDesc">Choose any 25 professionally edited photos from your Summit gallery after purchase.</div>
+      </div>
+
+      <div class="apPkg" id="apPkg_p50" onclick="apSelPkg(this,1)">
+        <div class="apPkgRad"><div class="apPkgDot"></div></div>
+        <div class="apPkgTag">Photos</div>
+        <div class="apPkgName">Select 50 Photos</div>
+        <div class="apPkgPrice">&#8364;399</div>
+        <div class="apPkgDesc">Choose any 50 professionally edited photos from your Summit gallery after purchase.</div>
+      </div>
+
+      <div class="apPkg" id="apPkg_all" onclick="apSelPkg(this,2)">
+        <div class="apPkgRad"><div class="apPkgDot"></div></div>
+        <div class="apPkgTag">Photos &#8212; Complete</div>
+        <div class="apPkgName">All Photos &#8212; Super XL</div>
+        <div class="apPkgPrice">&#8364;549</div>
+        <div class="apPkgDesc">Every professionally edited photo of you from the Summit. No selection needed.</div>
+      </div>
+
+      <div class="apPkg" id="apPkg_vid" onclick="apSelPkg(this,3)">
+        <div class="apPkgRad"><div class="apPkgDot"></div></div>
+        <div class="apPkgTag">Video</div>
+        <div class="apPkgName">Video Package</div>
+        <div class="apPkgPrice">&#8364;499</div>
+        <div class="apPkgDesc">60-second highlight film and your complete speaking footage from the Summit.</div>
+      </div>
+
+      <div class="apPkg feat" id="apPkg_bnd" onclick="apSelPkg(this,4)">
+        <div class="apPkgRad"><div class="apPkgDot"></div></div>
+        <div class="apPkgTag">Photos + Video</div>
+        <div class="apPkgName">Complete Media Bundle</div>
+        <div class="apPkgPrice">&#8364;699 <span>save &#8364;349</span></div>
+        <div class="apPkgDesc">All your Summit photos plus your complete video package.</div>
+        <div class="apSaveBox">
+          All Photos &#8364;549 + Video &#8364;499<br>
+          Separately <s>&#8364;1,048</s> &nbsp;&#8250;&nbsp; <strong>Bundle &#8364;699 &mdash; Save &#8364;349</strong>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PREVIEW BUTTON -->
+  <div class="apPrevBtnWrap">
+    <button id="apPrevBtn" onclick="apOpenPreview()" disabled>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+      Preview sample photos &amp; videos
+    </button>
+    <p id="apPrevHint" style="font-size:12px;color:#9ca3af;margin-top:8px;font-family:Lexend,sans-serif;">Select a speaker above to preview their sample photos &amp; videos</p>
+  </div>
+
+  <!-- STEP 3: DETAILS -->
+  <div class="apSection">
+    <div class="apStep"><span class="apStepNum">3</span>Your details</div>
+    <div class="apForm">
+      <div class="apFrow">
+        <div class="apFg"><label for="apName">Your name *</label><input type="text" id="apName" placeholder="Full name" autocomplete="name"/></div>
+        <div class="apFg"><label for="apEmail">Your email *</label><input type="email" id="apEmail" placeholder="email@example.com" autocomplete="email"/></div>
+      </div>
+      <div class="apFg">
+        <label for="apSpkField">Speaker this package is for</label>
+        <input type="text" id="apSpkField" placeholder="Auto-filled from selection above" readonly style="background:#f9f9f9;cursor:default;"/>
+      </div>
+      <div class="apSum" id="apSum" style="display:none">
+        <div class="apSrow"><span>Package</span><span id="apSumPkg">&#8212;</span></div>
+        <div class="apSrow"><span>Speaker</span><span id="apSumSpk">&#8212;</span></div>
+        <div class="apSrow tot"><span>Total</span><span id="apSumPrice">&#8212;</span></div>
+      </div>
+      <div class="apErrBox" id="apErrBox"></div>
+      <button class="apPayBtn" id="apPayBtn" onclick="apCheckout()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+        Proceed to payment
+      </button>
+      <p class="apDisc">Payments secured by Stripe &nbsp;&middot;&nbsp; EUR &nbsp;&middot;&nbsp; One package per speaker &nbsp;&middot;&nbsp; Non-refundable once production begins</p>
+    </div>
+  </div>
+
+</div><!-- apBody -->
+
+<!-- PAYMENT MODAL -->
+<div id="apPayModal">
+  <div id="apPayBox">
+    <div id="apPayHead">
+      <h3 id="apPayHeadTitle">Confirm your order</h3>
+      <button id="apPayClose" onclick="apClosePayModal()">&times;</button>
+    </div>
+    <div id="apPayAmt">&#8364;<span id="apPayAmtNum">0</span></div>
+    <div id="apPayAmtSub" id="apPayAmtSub">EUR &middot; One-time payment</div>
+    <div id="apPayBody">
+      <div id="apPayConfirm">
+        <p style="font-family:Lexend,sans-serif;font-size:13px;color:#6b7280;margin-bottom:20px;line-height:1.6;" id="apPayDesc"></p>
+        <button class="apPayGoBtn" onclick="apGoStripe()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+          Pay now &mdash; secure checkout
+        </button>
+        <button class="apPayCancelBtn" onclick="apClosePayModal()">Cancel</button>
+      </div>
+      <!-- Stripe Payment Element mounts here -->
+      <div id="apStripeWrap" style="display:none;">
+        <div class="apStripeEl" style="min-height:200px;"></div>
+        <button id="apConfirmPayBtn" onclick="apConfirmStripe()" style="width:100%;margin-top:16px;padding:14px;background:#E21E51;color:#fff;border:0;border-radius:8px;font-family:Lexend,sans-serif;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+          <span id="apConfirmPayBtnTxt">Pay now</span>
+        </button>
+      </div></button>
+      </div>
+      <div id="apPayLoading">
+        <div class="spin"></div>
+        <p>Opening secure checkout&hellip;</p>
+      </div>
+    </div>
+    <div id="apPayFoot">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      Secured by Stripe &middot; 256-bit SSL
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div id="apSuccModal">
+  <div id="apSuccBox">
+    <div class="apChk">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </div>
+    <h2>Payment confirmed!</h2>
+    <p id="apSuccMsg">Your media package is confirmed and in production.</p>
+    <p style="font-size:12px;color:#9ca3af;line-height:1.6;margin-top:6px;">
+      We have sent a confirmation email with your <strong style="color:#0d1b3a;">secure gallery link</strong>.<br>
+      Use it to view and select your photos after delivery.
+    </p>
+    <p id="apSuccLinkWrap" style="display:none;margin-top:16px;padding:14px;background:#f9f9f9;border-radius:8px;font-size:13px;color:#6b7280;line-height:1.6;">
+      Your gallery link:<br>
+      <a id="apSuccLink" href="#" target="_blank" style="color:#E21E51;font-weight:600;word-break:break-all;"></a>
+    </p>
+    <p class="apSuccNote">All media delivered by <strong style="color:#0d1b3a;">25 August 2026</strong></p>
+    <button onclick="document.getElementById('apSuccModal').classList.remove('show')" style="margin-top:20px;padding:11px 28px;background:#0d1b3a;color:#fff;border:0;border-radius:6px;font-family:Lexend,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Close</button>
+  </div>
+</div>
+
+</div><!-- #afpp -->
+<script>
+(function(){
+var s=document.createElement('script');
+s.src='https://js.stripe.com/v3/';
+s.onload=function(){
+  window._stripeLoaded=true;
+  /* Init stripe after it loads */
+  if(typeof apInitStripe==="function") apInitStripe();
+  else if(typeof Stripe!=="undefined" && window.apState) {
+    try{window.apState.stripe=Stripe(window.APPK);}catch(e){}
+  }
+};
+document.head.appendChild(s);
+})();
+</script>
+<script>
+(function(){
+var s=document.createElement('script');
+var c=atob("Ci8qIOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkAogICBBSUZPRCBTcGVha2VyIE1lZGlhICAtICBNYWluIEpTCiAgIEdlbmV2YSBTdW1taXQgMjAyNgrilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZAgKi8KCnZhciBBUFNVID0gImh0dHBzOi8vYWYubmV0L3N0cmlwZS1wcm94eS5waHAiOwp2YXIgQVBQSyA9ICJwa190ZXN0XzUxUGV1MGVJQ0lUUE9iR0RjNGlCMFB2cllJbzlQUUU0VmxtNnJpeWxhVjNUS2d4QXR6SVhQM1F5bjZVdFVOSVdEWG9ESjJJWmRhNndnN2c1UjNDc0JsVERTMDBybWtPbVJ2TCI7IC8qIFRFU1QgKi8KdmFyIEFQUFMgPSAiaHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J3UFV3RXlUaWVtT18tRWtKUkl5MkRKSjRuSE91amtOeEtpQ2JObGQ4aDNKRE5kVTlwOUQwZk4xdWlnMndUczR1M1J0Zy9leGVjIjsKCi8qIFVSTCBidWlsZGVyICAtICBubyAmIGVuY29kaW5nIGlzc3VlcyAqLwpmdW5jdGlvbiBhcFUoYWN0aW9uLCBwYXJhbXMpIHsKICB2YXIgc2VwID0gU3RyaW5nLmZyb21DaGFyQ29kZSgzOCk7IC8qICYgKi8KICByZXR1cm4gQVBTVSArICI/YWN0aW9uPSIgKyBhY3Rpb24gKyAocGFyYW1zID8gc2VwICsgcGFyYW1zIDogIiIpOwp9Cgp2YXIgQVBEID0gWwogIHtrOiJwMjUiLCBuOiJTZWxlY3QgMjUgUGhvdG9zIiwgICAgICBwOjI5OSwgbGltaXQ6MjUsICAgdGFnOiJQaG90b3MifSwKICB7azoicDUwIiwgbjoiU2VsZWN0IDUwIFBob3RvcyIsICAgICAgcDozOTksIGxpbWl0OjUwLCAgIHRhZzoiUGhvdG9zIn0sCiAge2s6ImFsbCIsIG46IkFsbCBQaG90b3MgU3VwZXIgWEwiLCBwOjU0OSwgbGltaXQ6bnVsbCwgdGFnOiJDb21wbGV0ZSJ9LAogIHtrOiJ2aWQiLCBuOiJWaWRlbyBQYWNrYWdlIiwgICAgICAgICBwOjQ5OSwgbGltaXQ6bnVsbCwgdGFnOiJWaWRlbyJ9LAogIHtrOiJibmQiLCBuOiJDb21wbGV0ZSBNZWRpYSBCdW5kbGUiLCBwOjY5OSwgbGltaXQ6bnVsbCwgdGFnOiJCdW5kbGUifQpdOwoKdmFyIEFQX0ZPTERFUlMgPSB7IlRpYW56ZSBaaGFuZyI6IjFqX01XcWQ2ZFM3cWhBeVJlT1dxLUsyc3dGdDRGUmo3VSJ9OwoKdmFyIGFwU3RhdGUgPSB7CiAgc3BlYWtlcjogIiIsCiAgcGtnOiBudWxsLAogIHNvbGQ6IFtdLAogIHN0cmlwZTogbnVsbAp9OwoKLyogU3RyaXBlIGxvYWRzIGFzeW5jIC0gaW5pdCB3aGVuIHJlYWR5ICovCmZ1bmN0aW9uIGFwSW5pdFN0cmlwZSgpIHsKICBpZih0eXBlb2YgU3RyaXBlICE9PSAidW5kZWZpbmVkIikgewogICAgdHJ5IHsgYXBTdGF0ZS5zdHJpcGUgPSBTdHJpcGUoQVBQSyk7IH0gY2F0Y2goZSkge30KICB9Cn0KLyogVHJ5IGltbWVkaWF0ZWx5IGFuZCBhbHNvIGFmdGVyIGxvYWQgKi8KYXBJbml0U3RyaXBlKCk7CmRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoIkRPTUNvbnRlbnRMb2FkZWQiLCBhcEluaXRTdHJpcGUpOwppZihkb2N1bWVudC5yZWFkeVN0YXRlID09PSAiY29tcGxldGUiKSBhcEluaXRTdHJpcGUoKTsKCi8qIOKUgOKUgCBGSUxNIFNUUklQIOKUgOKUgCAqLwooZnVuY3Rpb24oKXsKICB2YXIgaW1ncyA9IFtdOwogIGZvcih2YXIgaT0xO2k8PTI1O2krKykgaW1ncy5wdXNoKCJodHRwczovL2FmLm5ldC93cC1jb250ZW50L3VwbG9hZHMvYWlmb2RfZ2VuZXZhX3N1bW1pdF8iKygiMDAiK2kpLnNsaWNlKC0zKSsiLXNjYWxlZC5qcGciKTsKICB2YXIgUk9XUz02LCBTUEVFRFM9WzM4LDI5LDQ0LDI1LDM1LDMyXTsKICB2YXIgZ3JpZCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcEdyaWQiKTsKICBpZighZ3JpZCkgcmV0dXJuOwogIGZvcih2YXIgcj0wO3I8Uk9XUztyKyspewogICAgdmFyIHJvdz1kb2N1bWVudC5jcmVhdGVFbGVtZW50KCJkaXYiKTsgcm93LmNsYXNzTmFtZT0iYXByIjsKICAgIHZhciB0cmFjaz1kb2N1bWVudC5jcmVhdGVFbGVtZW50KCJkaXYiKTsKICAgIHZhciBsZWZ0PShyJTI9PT0wKTsKICAgIHRyYWNrLmNsYXNzTmFtZT0iYXB0IjsKICAgIHRyYWNrLnN0eWxlLmNzc1RleHQ9Ii13ZWJraXQtYW5pbWF0aW9uOmFmIisobGVmdD8iTCI6IlIiKSsiICIrU1BFRURTW3JdKyJzIGxpbmVhciBpbmZpbml0ZTthbmltYXRpb246YWYiKyhsZWZ0PyJMIjoiUiIpKyIgIitTUEVFRFNbcl0rInMgbGluZWFyIGluZmluaXRlOyI7CiAgICBmb3IodmFyIGM9MDtjPDIwO2MrKyl7CiAgICAgIHZhciBjZWxsPWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoImRpdiIpOyBjZWxsLmNsYXNzTmFtZT0iYXBjIjsKICAgICAgY2VsbC5zdHlsZS5iYWNrZ3JvdW5kSW1hZ2U9InVybCgnIitpbWdzWyhyKjEwK2MpJWltZ3MubGVuZ3RoXSsiJykiOwogICAgICB0cmFjay5hcHBlbmRDaGlsZChjZWxsKTsKICAgIH0KICAgIHJvdy5hcHBlbmRDaGlsZCh0cmFjayk7IGdyaWQuYXBwZW5kQ2hpbGQocm93KTsKICB9CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwSGVybyIpLmFkZEV2ZW50TGlzdGVuZXIoImNvbnRleHRtZW51IixmdW5jdGlvbihlKXtlLnByZXZlbnREZWZhdWx0KCk7fSk7Cn0pKCk7CgovKiDilIDilIAgU1BFQUtFUiBTRUFSQ0gg4pSA4pSAICovCmZ1bmN0aW9uIGFwVG9nZ2xlU3BrKGUpIHsKICB2YXIgYm94ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwU3BrQm94Iik7CiAgYm94LmNsYXNzTGlzdC50b2dnbGUoIm9wZW4iKTsKICBpZihib3guY2xhc3NMaXN0LmNvbnRhaW5zKCJvcGVuIikpIHsKICAgIHNldFRpbWVvdXQoZnVuY3Rpb24oKXsgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwU3BrU2VhcmNoIikuZm9jdXMoKTsgfSw1MCk7CiAgfQp9Cgpkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsIGZ1bmN0aW9uKGUpIHsKICB2YXIgYm94ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwU3BrQm94Iik7CiAgaWYoYm94ICYmICFib3guY29udGFpbnMoZS50YXJnZXQpKSBib3guY2xhc3NMaXN0LnJlbW92ZSgib3BlbiIpOwp9KTsKCmZ1bmN0aW9uIGFwRmlsdGVyU3BrKHZhbCkgewogIHZhbCA9IHZhbC50b0xvd2VyQ2FzZSgpOwogIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoIi5hcFNwa09wdCIpLmZvckVhY2goZnVuY3Rpb24obyl7CiAgICBvLmNsYXNzTGlzdC50b2dnbGUoImhpZGRlbiIsIHZhbCAmJiBvLmRhdGFzZXQudmFsLnRvTG93ZXJDYXNlKCkuaW5kZXhPZih2YWwpID09PSAtMSk7CiAgfSk7Cn0KCmZ1bmN0aW9uIGFwUGlja1NwayhlbCkgewogIGlmKGVsLmNsYXNzTGlzdC5jb250YWlucygic29sZCIpKSByZXR1cm47CiAgdmFyIHNwayA9IGVsLmRhdGFzZXQudmFsOwogIGFwU3RhdGUuc3BlYWtlciA9IHNwazsKCiAgLyogVXBkYXRlIFVJICovCiAgdmFyIGluaXRpYWxzID0gc3BrLnNwbGl0KCIgIikubWFwKGZ1bmN0aW9uKHcpe3JldHVybiB3WzBdO30pLmpvaW4oIiIpLnNsaWNlKDAsMikudG9VcHBlckNhc2UoKTsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBTcGtBdmF0YXIiKS50ZXh0Q29udGVudCA9IGluaXRpYWxzOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFNwa05hbWVFbCIpLnRleHRDb250ZW50ID0gc3BrOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFNwa0hpbnRFbCIpLnRleHRDb250ZW50ID0gIkNsaWNrIHRvIGNoYW5nZSI7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwU3BrRmllbGQiKS52YWx1ZSA9IHNwazsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBTcGtCb3giKS5jbGFzc0xpc3QucmVtb3ZlKCJvcGVuIik7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwU3BrU2VhcmNoIikudmFsdWUgPSAiIjsKICBhcEZpbHRlclNwaygiIik7CgogIC8qIFNvbGQgY2hlY2sgKi8KICB2YXIgc29sZEJhbm5lciA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFNvbGRCYW5uZXIiKTsKICBzb2xkQmFubmVyLnN0eWxlLmRpc3BsYXkgPSBhcFN0YXRlLnNvbGQuaW5kZXhPZihzcGspICE9PSAtMSA/ICJibG9jayIgOiAibm9uZSI7CgogIC8qIFByZXZpZXcgYnV0dG9uICovCiAgdmFyIGJ0biA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFByZXZCdG4iKTsKICB2YXIgaGludCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFByZXZIaW50Iik7CiAgaWYoQVBfRk9MREVSU1tzcGtdKSB7CiAgICBidG4uY2xhc3NMaXN0LmFkZCgiYWN0aXZlIik7IGJ0bi5kaXNhYmxlZCA9IGZhbHNlOwogICAgaGludC50ZXh0Q29udGVudCA9ICJDbGljayB0byBwcmV2aWV3IHNhbXBsZSBwaG90b3MgJiB2aWRlb3MgZm9yICIgKyBzcGs7CiAgICBoaW50LnN0eWxlLmNvbG9yID0gIiNFMjFFNTEiOwogIH0gZWxzZSB7CiAgICBidG4uY2xhc3NMaXN0LnJlbW92ZSgiYWN0aXZlIik7IGJ0bi5kaXNhYmxlZCA9IHRydWU7CiAgICBoaW50LnRleHRDb250ZW50ID0gIlByZXZpZXcgbm90IHlldCBhdmFpbGFibGUgZm9yIHRoaXMgc3BlYWtlciI7CiAgICBoaW50LnN0eWxlLmNvbG9yID0gIiM5Y2EzYWYiOwogIH0KCiAgYXBVcGRhdGVTdW0oKTsKfQoKLyog4pSA4pSAIFBBQ0tBR0UgU0VMRUNUIOKUgOKUgCAqLwpmdW5jdGlvbiBhcFNlbFBrZyhlbCwgaWR4KSB7CiAgLyogSWYgbm8gc3BlYWtlciBzZWxlY3RlZCB5ZXQgIC0gIG9wZW4gc3BlYWtlciBwaWNrZXIgcG9wdXAgKi8KICBpZighYXBTdGF0ZS5zcGVha2VyKSB7CiAgICBhcFN0YXRlLnBlbmRpbmdQa2dFbCAgPSBlbDsKICAgIGFwU3RhdGUucGVuZGluZ1BrZ0lkeCA9IGlkeDsKICAgIGFwT3BlblNwa1BvcHVwKCk7CiAgICByZXR1cm47CiAgfQogIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoIiNhZnBwIC5hcFBrZyIpLmZvckVhY2goZnVuY3Rpb24ocCl7cC5jbGFzc0xpc3QucmVtb3ZlKCJzZWwiKTt9KTsKICBlbC5jbGFzc0xpc3QuYWRkKCJzZWwiKTsKICBhcFN0YXRlLnBrZyA9IEFQRFtpZHhdOwogIGFwVXBkYXRlU3VtKCk7Cn0KCi8qIOKUgOKUgCBTcGVha2VyIFBpY2tlciBQb3B1cCDilIDilIAgKi8KZnVuY3Rpb24gYXBPcGVuU3BrUG9wdXAoKSB7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwU3BrUG9wdXAiKS5jbGFzc0xpc3QuYWRkKCJzaG93Iik7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwU3BrUG9wU2VhcmNoIikudmFsdWUgPSAiIjsKICBhcEZpbHRlclNwa1BvcCgiIik7CiAgc2V0VGltZW91dChmdW5jdGlvbigpeyBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBTcGtQb3BTZWFyY2giKS5mb2N1cygpOyB9LCA4MCk7Cn0KCmZ1bmN0aW9uIGFwQ2xvc2VTcGtQb3B1cCgpIHsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBTcGtQb3B1cCIpLmNsYXNzTGlzdC5yZW1vdmUoInNob3ciKTsKfQoKZnVuY3Rpb24gYXBGaWx0ZXJTcGtQb3AodmFsKSB7CiAgdmFsID0gdmFsLnRvTG93ZXJDYXNlKCk7CiAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgiLmFwU3BrUG9wT3B0IikuZm9yRWFjaChmdW5jdGlvbihvKXsKICAgIG8uY2xhc3NMaXN0LnRvZ2dsZSgiYXBIaWRkZW4iLCB2YWwgJiYgby5kYXRhc2V0LnZhbC50b0xvd2VyQ2FzZSgpLmluZGV4T2YodmFsKSA9PT0gLTEpOwogIH0pOwp9CgpmdW5jdGlvbiBhcFBpY2tTcGtGcm9tUG9wdXAoZWwpIHsKICBpZihlbC5jbGFzc0xpc3QuY29udGFpbnMoInNvbGQiKSkgcmV0dXJuOwogIC8qIFBpY2sgdGhlIHNwZWFrZXIgKi8KICBhcFBpY2tTcGsoZWwpOwogIGFwQ2xvc2VTcGtQb3B1cCgpOwogIC8qIE5vdyBzZWxlY3QgdGhlIHBlbmRpbmcgcGFja2FnZSAqLwogIGlmKGFwU3RhdGUucGVuZGluZ1BrZ0VsICE9PSB1bmRlZmluZWQpIHsKICAgIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoIiNhZnBwIC5hcFBrZyIpLmZvckVhY2goZnVuY3Rpb24ocCl7cC5jbGFzc0xpc3QucmVtb3ZlKCJzZWwiKTt9KTsKICAgIGFwU3RhdGUucGVuZGluZ1BrZ0VsLmNsYXNzTGlzdC5hZGQoInNlbCIpOwogICAgYXBTdGF0ZS5wa2cgPSBBUERbYXBTdGF0ZS5wZW5kaW5nUGtnSWR4XTsKICAgIGFwU3RhdGUucGVuZGluZ1BrZ0VsICA9IHVuZGVmaW5lZDsKICAgIGFwU3RhdGUucGVuZGluZ1BrZ0lkeCA9IHVuZGVmaW5lZDsKICAgIGFwVXBkYXRlU3VtKCk7CiAgICAvKiBTY3JvbGwgdG8gZm9ybSAqLwogICAgc2V0VGltZW91dChmdW5jdGlvbigpewogICAgICB2YXIgZm9ybSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcE5hbWUiKTsKICAgICAgaWYoZm9ybSkgZm9ybS5zY3JvbGxJbnRvVmlldyh7YmVoYXZpb3I6InNtb290aCIsIGJsb2NrOiJjZW50ZXIifSk7CiAgICB9LCAzMDApOwogIH0KfQoKZnVuY3Rpb24gYXBVcGRhdGVTdW0oKSB7CiAgdmFyIGUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBTdW0iKTsKICBpZihhcFN0YXRlLnBrZyAmJiBhcFN0YXRlLnNwZWFrZXIpIHsKICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFN1bVBrZyIpLnRleHRDb250ZW50ID0gYXBTdGF0ZS5wa2cubjsKICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFN1bVNwayIpLnRleHRDb250ZW50ID0gYXBTdGF0ZS5zcGVha2VyOwogICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwU3VtUHJpY2UiKS50ZXh0Q29udGVudCA9ICJcdTIwQUMiICsgYXBTdGF0ZS5wa2cucDsKICAgIGUuc3R5bGUuZGlzcGxheSA9ICJibG9jayI7CiAgfSBlbHNlIHsgZS5zdHlsZS5kaXNwbGF5ID0gIm5vbmUiOyB9Cn0KCi8qIOKUgOKUgCBDSEVDS09VVCDilIDilIAgKi8KZnVuY3Rpb24gYXBDaGVja291dCgpIHsKICB2YXIgZXJycyA9IFtdOwogIHZhciBubSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcE5hbWUiKS52YWx1ZS50cmltKCk7CiAgdmFyIGVtID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwRW1haWwiKS52YWx1ZS50cmltKCk7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwRXJyQm94IikuaW5uZXJIVE1MID0gIiI7CiAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgiI2FmcHAgLmVyciIpLmZvckVhY2goZnVuY3Rpb24oeCl7eC5jbGFzc0xpc3QucmVtb3ZlKCJlcnIiKTt9KTsKCiAgaWYoIWFwU3RhdGUuc3BlYWtlcikgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVycnMucHVzaCgiUGxlYXNlIHNlbGVjdCBhIHNwZWFrZXIuIik7CiAgaWYoYXBTdGF0ZS5zb2xkLmluZGV4T2YoYXBTdGF0ZS5zcGVha2VyKSAhPT0gLTEpIGVycnMucHVzaCgiVGhpcyBzcGVha2VyJ3MgcGFja2FnZSBpcyBhbHJlYWR5IHB1cmNoYXNlZC4iKTsKICBpZighYXBTdGF0ZS5wa2cpICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZXJycy5wdXNoKCJQbGVhc2UgY2hvb3NlIGEgcGFja2FnZS4iKTsKICBpZighbm0peyBlcnJzLnB1c2goIlBsZWFzZSBlbnRlciB5b3VyIG5hbWUuIik7IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcE5hbWUiKS5jbGFzc0xpc3QuYWRkKCJlcnIiKTsgfQogIGlmKCFlbXx8ZW0uaW5kZXhPZigiQCIpPT09LTEpeyBlcnJzLnB1c2goIlBsZWFzZSBlbnRlciBhIHZhbGlkIGVtYWlsLiIpOyBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBFbWFpbCIpLmNsYXNzTGlzdC5hZGQoImVyciIpOyB9CgogIGlmKGVycnMubGVuZ3RoKSB7CiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBFcnJCb3giKS5pbm5lckhUTUwgPSBlcnJzLm1hcChmdW5jdGlvbihlKXsKICAgICAgcmV0dXJuICc8ZGl2IGNsYXNzPSJhcEVyciI+JyArIGUgKyAiPC9kaXY+IjsKICAgIH0pLmpvaW4oIiIpOwogICAgcmV0dXJuOwogIH0KCiAgLyogU2hvdyBjb25maXJtIG1vZGFsICovCiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUGF5SGVhZFRpdGxlIikudGV4dENvbnRlbnQgPSBhcFN0YXRlLnBrZy5uOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFBheUFtdE51bSIpLnRleHRDb250ZW50ID0gYXBTdGF0ZS5wa2cucDsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBQYXlEZXNjIikudGV4dENvbnRlbnQgPSBhcFN0YXRlLnBrZy5uICsgIiBmb3IgIiArIGFwU3RhdGUuc3BlYWtlciArICIgLSAiICsgbm07CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUGF5Q29uZmlybSIpLnN0eWxlLmRpc3BsYXkgPSAiYmxvY2siOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFBheUxvYWRpbmciKS5zdHlsZS5kaXNwbGF5ID0gIm5vbmUiOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFBheU1vZGFsIikuY2xhc3NMaXN0LmFkZCgic2hvdyIpOwp9CgpmdW5jdGlvbiBhcENsb3NlUGF5TW9kYWwoKSB7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUGF5TW9kYWwiKS5jbGFzc0xpc3QucmVtb3ZlKCJzaG93Iik7Cn0KZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUGF5TW9kYWwiKS5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsIGZ1bmN0aW9uKGUpewogIGlmKGUudGFyZ2V0PT09dGhpcykgYXBDbG9zZVBheU1vZGFsKCk7Cn0pOwoKLyog4pSA4pSAIFNUUklQRSBQQVlNRU5UIOKUgOKUgCAqLwpmdW5jdGlvbiBhcEdvU3RyaXBlKCkgewogIHZhciBubSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcE5hbWUiKS52YWx1ZS50cmltKCk7CiAgdmFyIGVtID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwRW1haWwiKS52YWx1ZS50cmltKCk7CgogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFBheUNvbmZpcm0iKS5zdHlsZS5kaXNwbGF5ID0gIm5vbmUiOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFBheUxvYWRpbmciKS5zdHlsZS5kaXNwbGF5ID0gImZsZXgiOwoKICB2YXIgaW50ZW50VXJsID0gYXBVKCJjcmVhdGVJbnRlbnQiLCJidXllck5hbWU9IitlbmNvZGVVUklDb21wb25lbnQobm0pKyImYnV5ZXJFbWFpbD0iK2VuY29kZVVSSUNvbXBvbmVudChlbSkrIiZzcGVha2VyTmFtZT0iK2VuY29kZVVSSUNvbXBvbmVudChhcFN0YXRlLnNwZWFrZXIpKyImcGtnPSIrZW5jb2RlVVJJQ29tcG9uZW50KGFwU3RhdGUucGtnLm4pKyImYW1vdW50PSIrYXBTdGF0ZS5wa2cucCk7CiAgZmV0Y2goaW50ZW50VXJsKQogICAgLnRoZW4oZnVuY3Rpb24ocil7CiAgICAgIHJldHVybiByLmpzb24oKTsKICAgIH0pCiAgICAudGhlbihmdW5jdGlvbihkKXsKICAgICAgaWYoIWQub2sgfHwgIWQuY2xpZW50U2VjcmV0KSB7CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUGF5TG9hZGluZyIpLmlubmVySFRNTCA9ICc8cCBzdHlsZT0iY29sb3I6I0UyMUU1MTtmb250LWZhbWlseTpMZXhlbmQsc2Fucy1zZXJpZjsiPlx1MjZhMCAnICsgKGQuZXJyb3J8fCJDb3VsZCBub3Qgc3RhcnQgcGF5bWVudC4gUGxlYXNlIHRyeSBhZ2Fpbi4iKSArICc8L3A+JzsKICAgICAgICByZXR1cm47CiAgICAgIH0KCiAgICAgIGFwU3RhdGUuY3VycmVudFBpSWQgPSBkLnBpSWQ7CiAgICAgIGFwU3RhdGUuY3VycmVudERhdGEgPSB7bm06bm0sIGVtOmVtLCBzbjphcFN0YXRlLnNwZWFrZXIsIHBrZzphcFN0YXRlLnBrZ307CgogICAgICAvKiBDaGVjayBTdHJpcGUgbG9hZGVkICovCiAgICAgIGlmKCFhcFN0YXRlLnN0cmlwZSkgewogICAgICAgIHRyeSB7IGFwU3RhdGUuc3RyaXBlID0gU3RyaXBlKEFQUEspOyB9IGNhdGNoKGUpIHsKICAgICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFBheUxvYWRpbmciKS5pbm5lckhUTUwgPSAnPHAgc3R5bGU9ImNvbG9yOiNFMjFFNTE7Zm9udC1mYW1pbHk6TGV4ZW5kLHNhbnMtc2VyaWY7Ij4mIzk4ODg7IFN0cmlwZSBub3QgbG9hZGVkLiBQbGVhc2UgcmVmcmVzaCBhbmQgdHJ5IGFnYWluLjwvcD4nOwogICAgICAgICAgcmV0dXJuOwogICAgICAgIH0KICAgICAgfQoKICAgICAgLyogTW91bnQgU3RyaXBlIFBheW1lbnQgRWxlbWVudCAqLwogICAgICB2YXIgZWxlbWVudHMgPSBhcFN0YXRlLnN0cmlwZS5lbGVtZW50cyh7CiAgICAgICAgY2xpZW50U2VjcmV0OiBkLmNsaWVudFNlY3JldCwKICAgICAgICBhcHBlYXJhbmNlOiB7CiAgICAgICAgICB0aGVtZTogInN0cmlwZSIsCiAgICAgICAgICB2YXJpYWJsZXM6IHtjb2xvclByaW1hcnk6IiNFMjFFNTEiLGNvbG9yQmFja2dyb3VuZDoiI2ZmZmZmZiIsY29sb3JUZXh0OiIjMGQxYjNhIixmb250RmFtaWx5OiJMZXhlbmQsIHNhbnMtc2VyaWYiLGJvcmRlclJhZGl1czoiNnB4In0KICAgICAgICB9CiAgICAgIH0pOwoKICAgICAgdmFyIHBheUVsID0gZWxlbWVudHMuY3JlYXRlKCJwYXltZW50IiwgewogICAgICAgIGxheW91dDogInRhYnMiLAogICAgICAgIGRlZmF1bHRWYWx1ZXM6IHtiaWxsaW5nRGV0YWlsczp7ZW1haWw6ZW0sIG5hbWU6bm19fQogICAgICB9KTsKCiAgICAgIC8qIFNob3cgc3RyaXBlIGNvbnRhaW5lciAqLwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBQYXlMb2FkaW5nIikuc3R5bGUuZGlzcGxheSA9ICJub25lIjsKICAgICAgdmFyIHN0cmlwZVdyYXAgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBTdHJpcGVXcmFwIik7CiAgICAgIHN0cmlwZVdyYXAuc3R5bGUuZGlzcGxheSA9ICJibG9jayI7CiAgICAgIHN0cmlwZVdyYXAucXVlcnlTZWxlY3RvcigiLmFwU3RyaXBlRWwiKS5pbm5lckhUTUwgPSAiIjsKICAgICAgYXBTdGF0ZS5zdHJpcGVFbGVtZW50cyA9IGVsZW1lbnRzOwoKICAgICAgcGF5RWwub24oInJlYWR5IiwgZnVuY3Rpb24oKXsKICAgICAgICBzdHJpcGVXcmFwLnN0eWxlLmRpc3BsYXkgPSAiYmxvY2siOwogICAgICAgIHZhciBwYXlUeHQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBDb25maXJtUGF5QnRuVHh0Iik7CiAgICAgICAgaWYocGF5VHh0ICYmIGFwU3RhdGUucGtnKSBwYXlUeHQudGV4dENvbnRlbnQgPSAiUGF5IOKCrCIgKyBhcFN0YXRlLnBrZy5wICsgIiBub3ciOwogICAgICB9KTsKICAgICAgcGF5RWwubW91bnQoIi5hcFN0cmlwZUVsIik7CiAgICB9KQogICAgLmNhdGNoKGZ1bmN0aW9uKGVycil7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFBheUxvYWRpbmciKS5pbm5lckhUTUwgPSAnPHAgc3R5bGU9ImNvbG9yOiNFMjFFNTE7Zm9udC1mYW1pbHk6TGV4ZW5kLHNhbnMtc2VyaWY7Ij5cdTI2YTAgQ29ubmVjdGlvbiBlcnJvcjogJyArIChlcnIubWVzc2FnZXx8IlBsZWFzZSB0cnkgYWdhaW4uIikgKyAnPC9wPic7CiAgICB9KTsKfQoKZnVuY3Rpb24gYXBDb25maXJtU3RyaXBlKCkgewogIGlmKCFhcFN0YXRlLnN0cmlwZUVsZW1lbnRzKSByZXR1cm47CiAgdmFyIGJ0biA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcENvbmZpcm1QYXlCdG4iKTsKICB2YXIgdHh0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwQ29uZmlybVBheUJ0blR4dCIpOwogIGlmKGJ0bikgYnRuLmRpc2FibGVkID0gdHJ1ZTsKICBpZih0eHQpIHR4dC50ZXh0Q29udGVudCA9ICJQcm9jZXNzaW5nLi4uIjsKICBhcFN0YXRlLnN0cmlwZS5jb25maXJtUGF5bWVudCh7CiAgICBlbGVtZW50czogYXBTdGF0ZS5zdHJpcGVFbGVtZW50cywKICAgIHJlZGlyZWN0OiAiaWZfcmVxdWlyZWQiLAogICAgY29uZmlybVBhcmFtczogewogICAgICByZXR1cm5fdXJsOiB3aW5kb3cubG9jYXRpb24uaHJlZiwKICAgICAgcmVjZWlwdF9lbWFpbDogYXBTdGF0ZS5jdXJyZW50RGF0YSA/IGFwU3RhdGUuY3VycmVudERhdGEuZW0gOiAiIgogICAgfQogIH0pLnRoZW4oZnVuY3Rpb24ocmVzdWx0KXsKICAgIGlmKHJlc3VsdC5lcnJvcikgewogICAgICB2YXIgYnRuID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwQ29uZmlybVBheUJ0biIpOwogICAgICB2YXIgdHh0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwQ29uZmlybVBheUJ0blR4dCIpOwogICAgICBpZihidG4pIGJ0bi5kaXNhYmxlZCA9IGZhbHNlOwogICAgICBpZih0eHQpIHR4dC50ZXh0Q29udGVudCA9ICJQYXkgbm93IjsKICAgICAgLyogU2hvdyBlcnJvciBpbiBtb2RhbCAqLwogICAgICB2YXIgZXJyRGl2ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwU3RyaXBlV3JhcCIpOwogICAgICB2YXIgZXJyUCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoInAiKTsKICAgICAgZXJyUC5zdHlsZS5jc3NUZXh0ID0gImNvbG9yOiNFMjFFNTE7Zm9udC1zaXplOjEzcHg7Zm9udC1mYW1pbHk6TGV4ZW5kLHNhbnMtc2VyaWY7bWFyZ2luLXRvcDoxMHB4O3RleHQtYWxpZ246Y2VudGVyOyI7CiAgICAgIGVyclAudGV4dENvbnRlbnQgPSByZXN1bHQuZXJyb3IubWVzc2FnZTsKICAgICAgZXJyRGl2LmFwcGVuZENoaWxkKGVyclApOwogICAgICBzZXRUaW1lb3V0KGZ1bmN0aW9uKCl7IGlmKGVyclAucGFyZW50Tm9kZSkgZXJyUC5wYXJlbnROb2RlLnJlbW92ZUNoaWxkKGVyclApOyB9LCA0MDAwKTsKICAgIH0gZWxzZSBpZihyZXN1bHQucGF5bWVudEludGVudCAmJiByZXN1bHQucGF5bWVudEludGVudC5zdGF0dXMgPT09ICJzdWNjZWVkZWQiKSB7CiAgICAgIGFwQ2xvc2VQYXlNb2RhbCgpOwogICAgICBhcFJlY29yZE9yZGVyKHJlc3VsdC5wYXltZW50SW50ZW50LmlkKTsKICAgIH0KICB9KTsKfQoKLyog4pSA4pSAIFJFQ09SRCBPUkRFUiArIFNIT1cgU1VDQ0VTUyDilIDilIAgKi8KZnVuY3Rpb24gYXBSZWNvcmRPcmRlcihwaUlkKSB7CiAgdmFyIGQgPSBhcFN0YXRlLmN1cnJlbnREYXRhOwogIGlmKCFkKSByZXR1cm47CgogIGlmKGFwU3RhdGUuc29sZC5pbmRleE9mKGQuc24pPT09LTEpIGFwU3RhdGUuc29sZC5wdXNoKGQuc24pOwogIGFwTWFya1NvbGQoKTsKCiAgLyogUmVjb3JkIG9yZGVyICovCiAgZmV0Y2goYXBVKCJyZWNvcmRPcmRlciIsInBpSWQ9IitlbmNvZGVVUklDb21wb25lbnQocGlJZCkrIiZidXllck5hbWU9IitlbmNvZGVVUklDb21wb25lbnQoZC5ubSkrIiZidXllckVtYWlsPSIrZW5jb2RlVVJJQ29tcG9uZW50KGQuZW0pKyImc3BlYWtlck5hbWU9IitlbmNvZGVVUklDb21wb25lbnQoZC5zbikrIiZwa2c9IitlbmNvZGVVUklDb21wb25lbnQoZC5wa2cubikrIiZhbW91bnQ9IitkLnBrZy5wKSkKICAgIC5jYXRjaChmdW5jdGlvbigpe30pCiAgICAudGhlbihmdW5jdGlvbigpewogICAgICAvKiBHZW5lcmF0ZSBzZWN1cmUgZ2FsbGVyeSB0b2tlbiAqLwogICAgICByZXR1cm4gZmV0Y2goYXBVKCJnZW5lcmF0ZUdhbGxlcnlUb2tlbiIsInBpSWQ9IitlbmNvZGVVUklDb21wb25lbnQocGlJZCkrIiZzcGVha2VyTmFtZT0iK2VuY29kZVVSSUNvbXBvbmVudChkLnNuKSsiJnBrZz0iK2VuY29kZVVSSUNvbXBvbmVudChkLnBrZy5uKSkpOwogICAgfSkKICAgIC50aGVuKGZ1bmN0aW9uKHIpe3JldHVybiByLmpzb24oKTt9KQogICAgLmNhdGNoKGZ1bmN0aW9uKCl7cmV0dXJuIHt9O30pCiAgICAudGhlbihmdW5jdGlvbihyZXMpewogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBTdWNjTXNnIikudGV4dENvbnRlbnQgPSBkLnBrZy5uKyIgZm9yICIrZC5zbisiICAtICBjb25maXJtZWQhIjsKCiAgICAgIC8qIEdhbGxlcnkgbGluayAgLSAgb25seSBzaG93biBhZnRlciBwYXltZW50LCBuZXZlciBpbiBwYWdlIHNvdXJjZSAqLwogICAgICBpZihyZXMgJiYgcmVzLm9rICYmIHJlcy5nYWxsZXJ5VXJsKSB7CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwU3VjY0xpbmtXcmFwIikuc3R5bGUuZGlzcGxheSA9ICJibG9jayI7CiAgICAgICAgdmFyIGxuayA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFN1Y2NMaW5rIik7CiAgICAgICAgbG5rLmhyZWYgPSByZXMuZ2FsbGVyeVVybDsKICAgICAgICBsbmsudGV4dENvbnRlbnQgPSByZXMuZ2FsbGVyeVVybDsKICAgICAgfQoKICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwU3VjY01vZGFsIikuY2xhc3NMaXN0LmFkZCgic2hvdyIpOwogICAgfSk7Cn0KCi8qIOKUgOKUgCBTT0xEIFNQRUFLRVJTIOKUgOKUgCAqLwpmdW5jdGlvbiBhcE1hcmtTb2xkKCkgewogIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoIi5hcFNwa09wdCIpLmZvckVhY2goZnVuY3Rpb24obyl7CiAgICBpZihhcFN0YXRlLnNvbGQuaW5kZXhPZihvLmRhdGFzZXQudmFsKSAhPT0gLTEpIG8uY2xhc3NMaXN0LmFkZCgic29sZCIpOwogIH0pOwogIC8qIFVwZGF0ZSBiYW5uZXIgaWYgY3VycmVudCBzcGVha2VyIGlzIHNvbGQgKi8KICB2YXIgc29sZEJhbm5lciA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFNvbGRCYW5uZXIiKTsKICBpZihhcFN0YXRlLnNwZWFrZXIgJiYgYXBTdGF0ZS5zb2xkLmluZGV4T2YoYXBTdGF0ZS5zcGVha2VyKSAhPT0gLTEpIHsKICAgIHNvbGRCYW5uZXIuc3R5bGUuZGlzcGxheSA9ICJibG9jayI7CiAgfQp9CgpmdW5jdGlvbiBhcExvYWRTb2xkKCkgewogIGZldGNoKGFwVSgiZ2V0U29sZCIsIiIpKQogICAgLnRoZW4oZnVuY3Rpb24ocil7cmV0dXJuIHIuanNvbigpO30pCiAgICAudGhlbihmdW5jdGlvbihkKXtpZihkLnNvbGQpe2FwU3RhdGUuc29sZD1kLnNvbGQ7YXBNYXJrU29sZCgpO319KQogICAgLmNhdGNoKGZ1bmN0aW9uKCl7fSk7Cn0KCmFwTG9hZFNvbGQoKTsKCi8qIOKUgOKUgCBQUkVWSUVXIFNZU1RFTSDilIDilIAgKi8KdmFyIF9hcExvZ29JbWcgPSBudWxsOwooZnVuY3Rpb24oKXsKICBmZXRjaChhcFUoImdldExvZ28iLCIiKSkKICAgIC50aGVuKGZ1bmN0aW9uKHIpe3JldHVybiByLmJsb2IoKTt9KQogICAgLnRoZW4oZnVuY3Rpb24oYil7CiAgICAgIHZhciB1PVVSTC5jcmVhdGVPYmplY3RVUkwoYik7CiAgICAgIHZhciBpPW5ldyBJbWFnZSgpOwogICAgICBpLm9ubG9hZD1mdW5jdGlvbigpe19hcExvZ29JbWc9aTt9OwogICAgICBpLnNyYz11OwogICAgfSkuY2F0Y2goZnVuY3Rpb24oKXt9KTsKfSkoKTsKCnZhciBfYXBQcmV2ID0ge2ltZ0lkczpbXSx2aWRJZHM6W10saWR4OjAsdGFiOiJpbWciLHZpZEVsOm51bGx9OwoKZnVuY3Rpb24gYXBPcGVuUHJldmlldygpewogIGlmKCFhcFN0YXRlLnNwZWFrZXIgfHwgIUFQX0ZPTERFUlNbYXBTdGF0ZS5zcGVha2VyXSkgcmV0dXJuOwogIHZhciBzcGsgPSBhcFN0YXRlLnNwZWFrZXI7CiAgLyogTW9kYWwgaXMgaW4gc2VwYXJhdGUgYmxvY2sgYmVsb3cgKi8KICB2YXIgbW9kYWwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBQcmV2TW9kYWwiKTsKICBpZighbW9kYWwpIHJldHVybjsKICBtb2RhbC5jbGFzc0xpc3QuYWRkKCJvcGVuIik7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUHJldlRpdGxlIikudGV4dENvbnRlbnQgPSBzcGsgKyAiIC0gU2FtcGxlIFByZXZpZXciOwogIF9hcFByZXYgPSB7aW1nSWRzOltdLHZpZElkczpbXSxpZHg6MCx0YWI6ImltZyIsdmlkRWw6bnVsbH07CiAgYXBQcmV2U2hvd0xvYWQoIkZldGNoaW5nIGZpbGVzLi4uIik7CiAgYXBQcmV2U3dpdGNoVGFiKCJpbWciKTsKICBmZXRjaChhcFUoImxpc3RGb2xkZXIiLCJmb2xkZXJJZD0iK2VuY29kZVVSSUNvbXBvbmVudChBUF9GT0xERVJTW3Nwa10pKSkKICAgIC50aGVuKGZ1bmN0aW9uKHIpe3JldHVybiByLmpzb24oKTt9KQogICAgLnRoZW4oZnVuY3Rpb24oZCl7CiAgICAgIGlmKCFkLm9rKXthcFByZXZTaG93TG9hZCgiQ291bGQgbm90IGxvYWQgZmlsZXMuIik7cmV0dXJuO30KICAgICAgX2FwUHJldi5pbWdJZHM9ZC5pbWFnZXN8fFtdOwogICAgICBfYXBQcmV2LnZpZElkcz1kLnZpZGVvc3x8W107CiAgICAgIGFwQnVpbGRUaHVtYnMoX2FwUHJldi5pbWdJZHMpOwogICAgICBpZihfYXBQcmV2LmltZ0lkcy5sZW5ndGg+MCkgYXBQcmV2TG9hZEltZygwKTsKICAgICAgZWxzZSBpZihfYXBQcmV2LnZpZElkcy5sZW5ndGg+MCl7YXBQcmV2U3dpdGNoVGFiKCJ2aWQiKTthcFByZXZMb2FkVmlkKDApO30KICAgICAgZWxzZSBhcFByZXZTaG93TG9hZCgiTm8gcHJldmlldyBmaWxlcyBhdmFpbGFibGUgeWV0LiIpOwogICAgfSkuY2F0Y2goZnVuY3Rpb24oKXthcFByZXZTaG93TG9hZCgiQ29ubmVjdGlvbiBlcnJvci4iKTt9KTsKfQoKZnVuY3Rpb24gYXBDbG9zZVByZXZpZXcoKXsKICB2YXIgbW9kYWw9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUHJldk1vZGFsIik7CiAgaWYobW9kYWwpIG1vZGFsLmNsYXNzTGlzdC5yZW1vdmUoIm9wZW4iKTsKICBpZihfYXBQcmV2LnZpZEVsKXtfYXBQcmV2LnZpZEVsLnBhdXNlKCk7X2FwUHJldi52aWRFbD1udWxsO30KfQoKZnVuY3Rpb24gYXBQcmV2U2hvd0xvYWQodHh0KXsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBQcmV2TG9hZCIpLnN0eWxlLmRpc3BsYXk9ImZsZXgiOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFByZXZDYW52YXMiKS5zdHlsZS5kaXNwbGF5PSJub25lIjsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBQcmV2VmlkQ2FudmFzIikuc3R5bGUuZGlzcGxheT0ibm9uZSI7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUHJldlByZXYiKS5zdHlsZS5kaXNwbGF5PSJub25lIjsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBQcmV2TmV4dCIpLnN0eWxlLmRpc3BsYXk9Im5vbmUiOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFByZXZQbGF5Iikuc3R5bGUuZGlzcGxheT0ibm9uZSI7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUHJldkNvdW50ZXIiKS50ZXh0Q29udGVudD0iIjsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBQcmV2TG9hZFR4dCIpLnRleHRDb250ZW50PXR4dDsKfQoKZnVuY3Rpb24gYXBQcmV2U3dpdGNoVGFiKHRhYil7CiAgX2FwUHJldi50YWI9dGFiOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFRhYkltZyIpLmNsYXNzTmFtZT0iYXBQcmV2VGFiIisodGFiPT09ImltZyI/IiBvbiI6IiIpOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFRhYlZpZCIpLmNsYXNzTmFtZT0iYXBQcmV2VGFiIisodGFiPT09InZpZCI/IiBvbiI6IiIpOwogIGlmKHRhYj09PSJpbWciJiZfYXBQcmV2LmltZ0lkcy5sZW5ndGg+MCkgYXBQcmV2TG9hZEltZyhfYXBQcmV2LmlkeCk7CiAgZWxzZSBpZih0YWI9PT0idmlkIiYmX2FwUHJldi52aWRJZHMubGVuZ3RoPjApIGFwUHJldkxvYWRWaWQoMCk7CiAgZWxzZSBhcFByZXZTaG93TG9hZCh0YWI9PT0iaW1nIj8iTm8gcGhvdG9zIGF2YWlsYWJsZS4iOiJObyB2aWRlb3MgYXZhaWxhYmxlLiIpOwp9CgpmdW5jdGlvbiBhcERyYXdXTShjdHgsVyxIKXsKICBpZihfYXBMb2dvSW1nJiZfYXBMb2dvSW1nLndpZHRoKXsKICAgIGN0eC5zYXZlKCk7Y3R4Lmdsb2JhbEFscGhhPTAuMjI7CiAgICB2YXIgbHc9TWF0aC5yb3VuZChXKjAuMjgpLGxoPU1hdGgucm91bmQobHcqKF9hcExvZ29JbWcuaGVpZ2h0L19hcExvZ29JbWcud2lkdGgpKTsKICAgIHZhciBzeD1sdytNYXRoLnJvdW5kKFcqMC4wNiksc3k9bGgrTWF0aC5yb3VuZChIKjAuMDgpOwogICAgdmFyIGNvbHM9TWF0aC5jZWlsKFcvc3gpKzIscm93cz1NYXRoLmNlaWwoSC9zeSkrMjsKICAgIHZhciBveD0oVy0oY29scypzeCkpLzIsb3k9KEgtKHJvd3Mqc3kpKS8yOwogICAgZm9yKHZhciByPTA7cjxyb3dzO3IrKyl7Zm9yKHZhciBjPTA7Yzxjb2xzO2MrKyl7CiAgICAgIHZhciB4PW94K2Mqc3grKHIlMj09PTA/MDpzeC8yKSx5PW95K3Iqc3k7CiAgICAgIGN0eC5zYXZlKCk7Y3R4LnRyYW5zbGF0ZSh4K2x3LzIseStsaC8yKTtjdHgucm90YXRlKC1NYXRoLlBJLzE4KTsKICAgICAgY3R4LmRyYXdJbWFnZShfYXBMb2dvSW1nLC1sdy8yLC1saC8yLGx3LGxoKTtjdHgucmVzdG9yZSgpOwogICAgfX0KICAgIGN0eC5yZXN0b3JlKCk7CiAgfSBlbHNlIHsKICAgIGN0eC5zYXZlKCk7Y3R4Lmdsb2JhbEFscGhhPTAuMjA7CiAgICBjdHguZm9udD0iYm9sZCAiK01hdGgubWF4KE1hdGgucm91bmQoVyowLjA0MiksMTIpKyJweCBBcmlhbCxzYW5zLXNlcmlmIjsKICAgIGN0eC5maWxsU3R5bGU9IiNmZmYiO2N0eC50ZXh0QWxpZ249ImNlbnRlciI7Y3R4LnRleHRCYXNlbGluZT0ibWlkZGxlIjsKICAgIHZhciBmcz1NYXRoLm1heChNYXRoLnJvdW5kKFcqMC4wNDIpLDEyKSo2OwogICAgdmFyIGMyPU1hdGguY2VpbChXL2ZzKSsyLHIyPU1hdGguY2VpbChIL2ZzKSsyOwogICAgZm9yKHZhciByaT0wO3JpPHIyO3JpKyspe2Zvcih2YXIgY2k9MDtjaTxjMjtjaSsrKXsKICAgICAgY3R4LnNhdmUoKTtjdHgudHJhbnNsYXRlKGNpKmZzLHJpKmZzKTtjdHgucm90YXRlKC1NYXRoLlBJLzYpOwogICAgICBjdHguZmlsbFRleHQoIkFJRk9EIFBSRVZJRVciLDAsMCk7Y3R4LnJlc3RvcmUoKTsKICAgIH19CiAgICBjdHgucmVzdG9yZSgpOwogIH0KfQoKZnVuY3Rpb24gYXBQcmV2TG9hZEltZyhpZHgpewogIHZhciBpZHM9X2FwUHJldi5pbWdJZHM7CiAgaWR4PSgoaWR4JWlkcy5sZW5ndGgpK2lkcy5sZW5ndGgpJWlkcy5sZW5ndGg7CiAgX2FwUHJldi5pZHg9aWR4OwogIGFwUHJldlNob3dMb2FkKCJMb2FkaW5nIHBob3RvICIrKGlkeCsxKSsiIG9mICIraWRzLmxlbmd0aCsiLi4uIik7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUHJldkNvdW50ZXIiKS50ZXh0Q29udGVudD0oaWR4KzEpKyIgLyAiK2lkcy5sZW5ndGg7CiAgYXBQcmV2VXBkYXRlVGh1bWIoaWR4KTsKICBmZXRjaChhcFUoImdldFRodW1iIiwiZmlsZUlkPSIrZW5jb2RlVVJJQ29tcG9uZW50KGlkc1tpZHhdKSkpCiAgICAudGhlbihmdW5jdGlvbihyKXtpZighci5vayl0aHJvdyBuZXcgRXJyb3IoIkhUVFAgIityLnN0YXR1cyk7cmV0dXJuIHIuYmxvYigpO30pCiAgICAudGhlbihmdW5jdGlvbihibG9iKXsKICAgICAgdmFyIGJ1cmw9VVJMLmNyZWF0ZU9iamVjdFVSTChibG9iKTsKICAgICAgdmFyIGltZz1uZXcgSW1hZ2UoKTsKICAgICAgaW1nLm9ubG9hZD1mdW5jdGlvbigpewogICAgICAgIFVSTC5yZXZva2VPYmplY3RVUkwoYnVybCk7CiAgICAgICAgdmFyIGNhbnZhcz1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBQcmV2Q2FudmFzIik7CiAgICAgICAgdmFyIHN0YWdlPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFByZXZTdGFnZSIpOwogICAgICAgIHZhciBzY2FsZT1NYXRoLm1pbigoc3RhZ2Uub2Zmc2V0V2lkdGgtNCkvaW1nLndpZHRoLChzdGFnZS5vZmZzZXRIZWlnaHQtNCkvaW1nLmhlaWdodCk7CiAgICAgICAgY2FudmFzLndpZHRoPWltZy53aWR0aCpzY2FsZTtjYW52YXMuaGVpZ2h0PWltZy5oZWlnaHQqc2NhbGU7CiAgICAgICAgdmFyIGN0eD1jYW52YXMuZ2V0Q29udGV4dCgiMmQiKTsKICAgICAgICBjdHguZHJhd0ltYWdlKGltZywwLDAsY2FudmFzLndpZHRoLGNhbnZhcy5oZWlnaHQpOwogICAgICAgIGFwRHJhd1dNKGN0eCxjYW52YXMud2lkdGgsY2FudmFzLmhlaWdodCk7CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUHJldkxvYWQiKS5zdHlsZS5kaXNwbGF5PSJub25lIjsKICAgICAgICBjYW52YXMuc3R5bGUuZGlzcGxheT0iYmxvY2siOwogICAgICAgIHZhciBtdWx0aT1pZHMubGVuZ3RoPjE7CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUHJldlByZXYiKS5zdHlsZS5kaXNwbGF5PW11bHRpPyJmbGV4Ijoibm9uZSI7CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUHJldk5leHQiKS5zdHlsZS5kaXNwbGF5PW11bHRpPyJmbGV4Ijoibm9uZSI7CiAgICAgIH07CiAgICAgIGltZy5vbmVycm9yPWZ1bmN0aW9uKCl7VVJMLnJldm9rZU9iamVjdFVSTChidXJsKTthcFByZXZTaG93TG9hZCgiQ291bGQgbm90IGxvYWQgaW1hZ2UuIik7fTsKICAgICAgaW1nLnNyYz1idXJsOwogICAgfSkuY2F0Y2goZnVuY3Rpb24oZSl7YXBQcmV2U2hvd0xvYWQoIkVycm9yOiAiK2UubWVzc2FnZSk7fSk7Cn0KCmZ1bmN0aW9uIGFwUHJldk5hdihkaXIpe2FwUHJldkxvYWRJbWcoX2FwUHJldi5pZHgrZGlyKTt9CgpmdW5jdGlvbiBhcFByZXZMb2FkVmlkKGlkeCl7CiAgdmFyIGlkcz1fYXBQcmV2LnZpZElkczsKICBpZighaWRzLmxlbmd0aClyZXR1cm47CiAgYXBQcmV2U2hvd0xvYWQoIkxvYWRpbmcgdmlkZW8uLi4iKTsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBQcmV2Q291bnRlciIpLnRleHRDb250ZW50PSJWaWRlbyBwcmV2aWV3IjsKICB2YXIgdmlkPWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoInZpZGVvIik7CiAgdmlkLnN0eWxlLmRpc3BsYXk9Im5vbmUiO3ZpZC5wcmVsb2FkPSJhdXRvIjtfYXBQcmV2LnZpZEVsPXZpZDsKICB2aWQub25sb2FkZWRkYXRhPWZ1bmN0aW9uKCl7CiAgICB2YXIgY2FudmFzPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFByZXZWaWRDYW52YXMiKTsKICAgIHZhciBzdGFnZT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBQcmV2U3RhZ2UiKTsKICAgIHZhciBzY2FsZT1NYXRoLm1pbigoc3RhZ2Uub2Zmc2V0V2lkdGgtNCkvdmlkLnZpZGVvV2lkdGgsKHN0YWdlLm9mZnNldEhlaWdodC00KS92aWQudmlkZW9IZWlnaHQpOwogICAgY2FudmFzLndpZHRoPXZpZC52aWRlb1dpZHRoKnNjYWxlO2NhbnZhcy5oZWlnaHQ9dmlkLnZpZGVvSGVpZ2h0KnNjYWxlOwogICAgdmFyIGN0eD1jYW52YXMuZ2V0Q29udGV4dCgiMmQiKTsKICAgIGN0eC5kcmF3SW1hZ2UodmlkLDAsMCxjYW52YXMud2lkdGgsY2FudmFzLmhlaWdodCk7YXBEcmF3V00oY3R4LGNhbnZhcy53aWR0aCxjYW52YXMuaGVpZ2h0KTsKICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFByZXZMb2FkIikuc3R5bGUuZGlzcGxheT0ibm9uZSI7CiAgICBjYW52YXMuc3R5bGUuZGlzcGxheT0iYmxvY2siOwogICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImFwUHJldlBsYXkiKS5zdHlsZS5kaXNwbGF5PSJmbGV4IjsKICAgIGZ1bmN0aW9uIHJmKCl7CiAgICAgIGlmKCF2aWQucGF1c2VkJiYhdmlkLmVuZGVkKXsKICAgICAgICBjdHguZHJhd0ltYWdlKHZpZCwwLDAsY2FudmFzLndpZHRoLGNhbnZhcy5oZWlnaHQpOwogICAgICAgIGFwRHJhd1dNKGN0eCxjYW52YXMud2lkdGgsY2FudmFzLmhlaWdodCk7cmVxdWVzdEFuaW1hdGlvbkZyYW1lKHJmKTsKICAgICAgfQogICAgfQogICAgdmlkLm9ucGxheT1mdW5jdGlvbigpe2RvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFByZXZQbGF5Iikuc3R5bGUuZGlzcGxheT0ibm9uZSI7cmVxdWVzdEFuaW1hdGlvbkZyYW1lKHJmKTt9OwogICAgdmlkLm9ucGF1c2U9ZnVuY3Rpb24oKXtkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBQcmV2UGxheSIpLnN0eWxlLmRpc3BsYXk9ImZsZXgiO307CiAgICB2aWQub25lbmRlZD1mdW5jdGlvbigpe3ZpZC5jdXJyZW50VGltZT0wO2RvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFByZXZQbGF5Iikuc3R5bGUuZGlzcGxheT0iZmxleCI7fTsKICAgIGNhbnZhcy5zdHlsZS5wb2ludGVyRXZlbnRzPSJhdXRvIjtjYW52YXMuc3R5bGUuY3Vyc29yPSJwb2ludGVyIjsKICAgIGNhbnZhcy5vbmNsaWNrPWZ1bmN0aW9uKCl7aWYodmlkLnBhdXNlZHx8dmlkLmVuZGVkKXZpZC5wbGF5KCk7ZWxzZSB2aWQucGF1c2UoKTt9OwogIH07CiAgdmlkLm9uZXJyb3I9ZnVuY3Rpb24oKXthcFByZXZTaG93TG9hZCgiQ291bGQgbm90IGxvYWQgdmlkZW8uIik7fTsKICB2aWQuc3JjPWFwVSgic3RyZWFtVmlkZW8iLCJmaWxlSWQ9IitlbmNvZGVVUklDb21wb25lbnQoaWRzW2lkeF0pKTt2aWQubG9hZCgpOwp9CgpmdW5jdGlvbiBhcFByZXZQbGF5VmlkKCl7aWYoX2FwUHJldi52aWRFbCl7aWYoX2FwUHJldi52aWRFbC5wYXVzZWQpX2FwUHJldi52aWRFbC5wbGF5KCk7ZWxzZSBfYXBQcmV2LnZpZEVsLnBhdXNlKCk7fX0KCmZ1bmN0aW9uIGFwQnVpbGRUaHVtYnMoaW1nSWRzKXsKICB2YXIgbGlzdD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBQcmV2VGh1bWJMaXN0Iik7CiAgaWYoIWxpc3QpcmV0dXJuO2xpc3QuaW5uZXJIVE1MPSIiOwogIGltZ0lkcy5mb3JFYWNoKGZ1bmN0aW9uKGZpZCxpKXsKICAgIHZhciBkaXY9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgiZGl2Iik7CiAgICBkaXYuY2xhc3NOYW1lPSJhcFRodW1iIGxvYWRpbmctdGh1bWIiKyhpPT09MD8iIGFjdGl2ZSI6IiIpOwogICAgZGl2LmRhdGFzZXQuaWR4PWk7ZGl2Lm9uY2xpY2s9ZnVuY3Rpb24oKXthcFByZXZMb2FkSW1nKHBhcnNlSW50KHRoaXMuZGF0YXNldC5pZHgpKTt9OwogICAgbGlzdC5hcHBlbmRDaGlsZChkaXYpOwogICAgKGZ1bmN0aW9uKGQsZil7CiAgICAgIGZldGNoKGFwVSgiZ2V0VGh1bWIiLCJmaWxlSWQ9IitlbmNvZGVVUklDb21wb25lbnQoZikpKQogICAgICAgIC50aGVuKGZ1bmN0aW9uKHIpe3JldHVybiByLmJsb2IoKTt9KQogICAgICAgIC50aGVuKGZ1bmN0aW9uKGIpewogICAgICAgICAgdmFyIHU9VVJMLmNyZWF0ZU9iamVjdFVSTChiKTsKICAgICAgICAgIGQuX2J1cmw9dTtkLnN0eWxlLmJhY2tncm91bmRJbWFnZT0idXJsKCciK3UrIicpIjsKICAgICAgICAgIGQuc3R5bGUuYmFja2dyb3VuZFNpemU9ImNvdmVyIjtkLnN0eWxlLmJhY2tncm91bmRQb3NpdGlvbj0iY2VudGVyIjsKICAgICAgICAgIGQuY2xhc3NMaXN0LnJlbW92ZSgibG9hZGluZy10aHVtYiIpOwogICAgICAgIH0pLmNhdGNoKGZ1bmN0aW9uKCl7ZC5jbGFzc0xpc3QucmVtb3ZlKCJsb2FkaW5nLXRodW1iIik7ZC5zdHlsZS5iYWNrZ3JvdW5kPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDgpIjt9KTsKICAgIH0pKGRpdixmaWQpOwogIH0pOwp9CgpmdW5jdGlvbiBhcFByZXZVcGRhdGVUaHVtYihpZHgpewogIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoIi5hcFRodW1iIikuZm9yRWFjaChmdW5jdGlvbih0LGkpe3QuY2xhc3NMaXN0LnRvZ2dsZSgiYWN0aXZlIixpPT09aWR4KTt9KTsKICB2YXIgYT1kb2N1bWVudC5xdWVyeVNlbGVjdG9yKCIuYXBUaHVtYi5hY3RpdmUiKTtpZihhKWEuc2Nyb2xsSW50b1ZpZXcoe2Jsb2NrOiJuZWFyZXN0IixiZWhhdmlvcjoic21vb3RoIn0pOwp9CgovKiBTY3JlZW5zaG90IHByb3RlY3Rpb24gKi8KKGZ1bmN0aW9uKCl7CiAgZnVuY3Rpb24gYmx1cigpe3ZhciBjPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFByZXZDYW52YXMiKSx2PWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFByZXZWaWRDYW52YXMiKTtpZihjKWMuc3R5bGUuZmlsdGVyPSJibHVyKDE0cHgpIjtpZih2KXYuc3R5bGUuZmlsdGVyPSJibHVyKDE0cHgpIjt9CiAgZnVuY3Rpb24gdW5ibHVyKCl7c2V0VGltZW91dChmdW5jdGlvbigpe3ZhciBjPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFByZXZDYW52YXMiKSx2PWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJhcFByZXZWaWRDYW52YXMiKTtpZihjKWMuc3R5bGUuZmlsdGVyPSIiO2lmKHYpdi5zdHlsZS5maWx0ZXI9IiI7fSw3MDApO30KICBmdW5jdGlvbiBpc09wZW4oKXt2YXIgbT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiYXBQcmV2TW9kYWwiKTtyZXR1cm4gbSYmbS5jbGFzc0xpc3QuY29udGFpbnMoIm9wZW4iKTt9CiAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoImJsdXIiLGZ1bmN0aW9uKCl7aWYoaXNPcGVuKCkpYmx1cigpO30pOwogIHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCJmb2N1cyIsZnVuY3Rpb24oKXt1bmJsdXIoKTt9KTsKICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCJ2aXNpYmlsaXR5Y2hhbmdlIixmdW5jdGlvbigpe2lmKGlzT3BlbigpKXtpZihkb2N1bWVudC5oaWRkZW4pYmx1cigpO2Vsc2UgdW5ibHVyKCk7fX0pOwogIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoImtleXVwIixmdW5jdGlvbihlKXsKICAgIGlmKCFpc09wZW4oKSlyZXR1cm47CiAgICBpZihlLmtleT09PSJQcmludFNjcmVlbiJ8fGUua2V5Q29kZT09PTQ0fHwoZS5zaGlmdEtleSYmKGUubWV0YUtleXx8ZS5jdHJsS2V5KSkpewogICAgICBibHVyKCk7dHJ5e25hdmlnYXRvci5jbGlwYm9hcmQud3JpdGVUZXh0KCIiKS5jYXRjaChmdW5jdGlvbigpe30pO31jYXRjaCh4KXt9c2V0VGltZW91dCh1bmJsdXIsMjUwMCk7CiAgICB9CiAgfSk7Cn0pKCk7Cgo=");
+s.textContent=c;
+document.head.appendChild(s);
+})();
+</script>
+
+<!-- SPEAKER PICKER POPUP -->
+<div id="apSpkPopup">
+  <div id="apSpkPopBox">
+    <div id="apSpkPopHead">
+      <h3>Select a speaker</h3>
+      <p>Choose the speaker this media package is for</p>
+      <div style="margin-top:14px;">
+        <input type="text" id="apSpkPopSearch" placeholder="Search by name..." oninput="apFilterSpkPop(this.value)" autocomplete="off" style="width:100%;padding:11px 14px;font-size:14px;font-family:Lexend,sans-serif;border:1.5px solid rgba(13,27,58,.15);border-radius:8px;color:#0d1b3a;outline:none;background:#f9f9f9;box-sizing:border-box;"/>
+      </div>
+    </div>
+    <div id="apSpkPopList">
+          <div class="apSpkPopOpt" data-val="Fredrik Kocon" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">FK</div>Fredrik Kocon</div>
+          <div class="apSpkPopOpt" data-val="Valerie Pelton" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">VP</div>Valerie Pelton</div>
+          <div class="apSpkPopOpt" data-val="Dushyant Kanungo" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">DK</div>Dushyant Kanungo</div>
+          <div class="apSpkPopOpt" data-val="Hesti Aryani" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">HA</div>Hesti Aryani</div>
+          <div class="apSpkPopOpt" data-val="Hyunwoo Kim" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">HK</div>Hyunwoo Kim</div>
+          <div class="apSpkPopOpt" data-val="Ivana Brutenic" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">IB</div>Ivana Brutenic</div>
+          <div class="apSpkPopOpt" data-val="Imtiaz Ahmed" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">IA</div>Imtiaz Ahmed</div>
+          <div class="apSpkPopOpt" data-val="Aldor Nini" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">AN</div>Aldor Nini</div>
+          <div class="apSpkPopOpt" data-val="Fabrizio Degni" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">FD</div>Fabrizio Degni</div>
+          <div class="apSpkPopOpt" data-val="Gladwin Mendez" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">GM</div>Gladwin Mendez</div>
+          <div class="apSpkPopOpt" data-val="David Williams" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">DW</div>David Williams</div>
+          <div class="apSpkPopOpt" data-val="Frederic Emane" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">FE</div>Frederic Emane</div>
+          <div class="apSpkPopOpt" data-val="Hammad Ali Nasir" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">HA</div>Hammad Ali Nasir</div>
+          <div class="apSpkPopOpt" data-val="Meha Aftab" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">MA</div>Meha Aftab</div>
+          <div class="apSpkPopOpt" data-val="Nobu Ota" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">NO</div>Nobu Ota</div>
+          <div class="apSpkPopOpt" data-val="Sundara Rajan Aravamuthan" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">SR</div>Sundara Rajan Aravamuthan</div>
+          <div class="apSpkPopOpt" data-val="Shiva Kumar" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">SK</div>Shiva Kumar</div>
+          <div class="apSpkPopOpt" data-val="Raja Gopalan Balasubramanyan" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">RG</div>Raja Gopalan Balasubramanyan</div>
+          <div class="apSpkPopOpt" data-val="Sonke Lund" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">SL</div>Sonke Lund</div>
+          <div class="apSpkPopOpt" data-val="Deniz Sherifoglu" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">DS</div>Deniz Sherifoglu</div>
+          <div class="apSpkPopOpt" data-val="Ahmed Shochin" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">AS</div>Ahmed Shochin</div>
+          <div class="apSpkPopOpt" data-val="Alejandro Castaneira" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">AC</div>Alejandro Castaneira</div>
+          <div class="apSpkPopOpt" data-val="Dip Nandi" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">DN</div>Dip Nandi</div>
+          <div class="apSpkPopOpt" data-val="Derrick Davis" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">DD</div>Derrick Davis</div>
+          <div class="apSpkPopOpt" data-val="Chirag Dhirajlal Lakhani" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">CD</div>Chirag Dhirajlal Lakhani</div>
+          <div class="apSpkPopOpt" data-val="Eric Famanas" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">EF</div>Eric Famanas</div>
+          <div class="apSpkPopOpt" data-val="Giorgio Bortoli" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">GB</div>Giorgio Bortoli</div>
+          <div class="apSpkPopOpt" data-val="Mikael Loefstrand" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">ML</div>Mikael Loefstrand</div>
+          <div class="apSpkPopOpt" data-val="Orsolya Kneitner" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">OK</div>Orsolya Kneitner</div>
+          <div class="apSpkPopOpt" data-val="Tomal Ganguly" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">TG</div>Tomal Ganguly</div>
+          <div class="apSpkPopOpt" data-val="Abasiama Idaresit" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">AI</div>Abasiama Idaresit</div>
+          <div class="apSpkPopOpt" data-val="Adina Suciu" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">AS</div>Adina Suciu</div>
+          <div class="apSpkPopOpt" data-val="Boris Grivic" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">BG</div>Boris Grivic</div>
+          <div class="apSpkPopOpt" data-val="Cyrille C. Catel" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">CC</div>Cyrille C. Catel</div>
+          <div class="apSpkPopOpt" data-val="Dimitri Boylan" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">DB</div>Dimitri Boylan</div>
+          <div class="apSpkPopOpt" data-val="Andrei Dumitrica" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">AD</div>Andrei Dumitrica</div>
+          <div class="apSpkPopOpt" data-val="Elzbieta Deja" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">ED</div>Elzbieta Deja</div>
+          <div class="apSpkPopOpt" data-val="Nelson T. Ajulo" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">NT</div>Nelson T. Ajulo</div>
+          <div class="apSpkPopOpt" data-val="Pascal Hetzscholdt" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">PH</div>Pascal Hetzscholdt</div>
+          <div class="apSpkPopOpt" data-val="Patricia Krall" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">PK</div>Patricia Krall</div>
+          <div class="apSpkPopOpt" data-val="Jeremy Stein" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">JS</div>Jeremy Stein</div>
+          <div class="apSpkPopOpt" data-val="Anand Tatavarthi" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">AT</div>Anand Tatavarthi</div>
+          <div class="apSpkPopOpt" data-val="Daniel Osuna" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">DO</div>Daniel Osuna</div>
+          <div class="apSpkPopOpt" data-val="Frederic JALLAT" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">FJ</div>Frederic JALLAT</div>
+          <div class="apSpkPopOpt" data-val="Rahul Ghatalia" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">RG</div>Rahul Ghatalia</div>
+          <div class="apSpkPopOpt" data-val="Jean-simon Venne" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">JV</div>Jean-simon Venne</div>
+          <div class="apSpkPopOpt" data-val="Marisa Boller" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">MB</div>Marisa Boller</div>
+          <div class="apSpkPopOpt" data-val="Nathalie Simille" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">NS</div>Nathalie Simille</div>
+          <div class="apSpkPopOpt" data-val="Ivica Srncevic" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">IS</div>Ivica Srncevic</div>
+          <div class="apSpkPopOpt" data-val="Sheila Jagannathan" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">SJ</div>Sheila Jagannathan</div>
+          <div class="apSpkPopOpt" data-val="Marybelle Cherfan" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">MC</div>Marybelle Cherfan</div>
+          <div class="apSpkPopOpt" data-val="Clas Neumann" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">CN</div>Clas Neumann</div>
+          <div class="apSpkPopOpt" data-val="Joanne Sweeney" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">JS</div>Joanne Sweeney</div>
+          <div class="apSpkPopOpt" data-val="Oyedayo Otokiti" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">OO</div>Oyedayo Otokiti</div>
+          <div class="apSpkPopOpt" data-val="Tan James Anthony" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">TJ</div>Tan James Anthony</div>
+          <div class="apSpkPopOpt" data-val="Kunal Panchamia" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">KP</div>Kunal Panchamia</div>
+          <div class="apSpkPopOpt" data-val="Yogesh Gupta" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">YG</div>Yogesh Gupta</div>
+          <div class="apSpkPopOpt" data-val="Alex Cogdill" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">AC</div>Alex Cogdill</div>
+          <div class="apSpkPopOpt" data-val="Helen Pino Vera" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">HP</div>Helen Pino Vera</div>
+          <div class="apSpkPopOpt" data-val="Nav Thethi" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">NT</div>Nav Thethi</div>
+          <div class="apSpkPopOpt" data-val="Georg Zangl" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">GZ</div>Georg Zangl</div>
+          <div class="apSpkPopOpt" data-val="Konrad Sztolc" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">KS</div>Konrad Sztolc</div>
+          <div class="apSpkPopOpt" data-val="Mohamed Arafat" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">MA</div>Mohamed Arafat</div>
+          <div class="apSpkPopOpt" data-val="Rory Macmillan" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">RM</div>Rory Macmillan</div>
+          <div class="apSpkPopOpt" data-val="Wolfgang Pinegger" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">WP</div>Wolfgang Pinegger</div>
+          <div class="apSpkPopOpt" data-val="Craig Gibbs" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">CG</div>Craig Gibbs</div>
+          <div class="apSpkPopOpt" data-val="Tijn van der Zant" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">TV</div>Tijn van der Zant</div>
+          <div class="apSpkPopOpt" data-val="Tianze Zhang" onclick="apPickSpkFromPopup(this)"><div class="apPopInit">TZ</div>Tianze Zhang</div>
+    </div>
+    <button id="apSpkPopClose" onclick="apCloseSpkPopup()">Cancel</button>
+  </div>
+</div>
+
+<!-- PREVIEW MODAL -->
+<style>
+#apPrevModal{display:none;position:fixed;inset:0;z-index:999999;background:rgba(4,9,22,0.55);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);align-items:center;justify-content:center;padding:16px;}
+#apPrevModal.open{display:flex;}
+#apPrevBox2{background:#0a1628;border-radius:20px;width:100%;max-width:960px;height:86vh;max-height:86vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 50px 120px rgba(0,0,0,0.9),0 0 0 1px rgba(255,255,255,0.06);}
+#apPrevHead2{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;background:linear-gradient(135deg,rgba(13,27,58,0.9),rgba(26,44,84,0.9));}
+#apPrevTitle{font-family:Lexend,sans-serif;font-size:15px;font-weight:700;color:#fff;}
+#apPrevSub2{font-family:Lexend,sans-serif;font-size:11px;color:rgba(255,255,255,0.35);margin-top:3px;}
+#apPrevX2{background:rgba(255,255,255,0.08);border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;}
+#apPrevX2:hover{background:rgba(255,255,255,0.18);}
+#apPrevTabs2{display:flex!important;justify-content:center!important;gap:12px!important;padding:12px 24px!important;border-bottom:1px solid rgba(255,255,255,0.08)!important;flex-shrink:0!important;background:rgba(0,0,0,0.15)!important;}
+.apPrevTab{padding:10px 28px!important;font-family:Lexend,sans-serif!important;font-size:13px!important;font-weight:600!important;color:rgba(255,255,255,0.45)!important;background:rgba(255,255,255,0.04)!important;border:1px solid rgba(255,255,255,0.08)!important;border-radius:8px!important;cursor:pointer!important;display:inline-flex!important;align-items:center!important;gap:7px!important;box-shadow:none!important;text-transform:none!important;margin:0!important;}
+.apPrevTab.on{color:#fff!important;background:rgba(226,30,81,0.18)!important;border:1px solid rgba(226,30,81,0.50)!important;}
+.apPrevTab:hover{background:rgba(255,255,255,0.08)!important;}
+#apPrevOuter2{display:flex!important;flex:1!important;overflow:hidden!important;min-height:0!important;user-select:none!important;-webkit-user-select:none!important;}
+#apPrevSidebar2{width:96px!important;min-width:96px!important;flex-shrink:0!important;background:rgba(0,0,0,0.35)!important;border-right:1px solid rgba(255,255,255,0.08)!important;overflow-y:auto!important;display:flex!important;flex-direction:column!important;padding:6px!important;}
+#apPrevThumbList{display:flex!important;flex-direction:column!important;gap:5px!important;width:100%!important;}
+.apThumb{display:block!important;width:84px!important;height:63px!important;border-radius:6px!important;background-color:#0a1628!important;cursor:pointer!important;border:2px solid transparent!important;background-size:cover!important;background-position:center!important;flex-shrink:0!important;opacity:0.55!important;transition:all .2s!important;}
+.apThumb:hover{opacity:0.85!important;border-color:rgba(255,255,255,0.28)!important;}
+.apThumb.active{border-color:#E21E51!important;opacity:1!important;}
+.apThumb.loading-thumb{animation:apThumbShimmer 1.4s ease-in-out infinite!important;}
+@keyframes apThumbShimmer{0%,100%{opacity:0.3;}50%{opacity:0.6;}}
+#apPrevStage{flex:1!important;position:relative!important;overflow:hidden!important;background:#07102a!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:0!important;}
+#apPrevCanvas{display:none;max-width:100%;max-height:100%;pointer-events:none;-webkit-user-drag:none;user-select:none;}
+#apPrevVidCanvas{display:none;max-width:100%;max-height:100%;pointer-events:none;-webkit-user-drag:none;user-select:none;}
+#apPrevLoad{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#07102a;z-index:5;}
+#apPrevLoad .aps{width:40px;height:40px;border:3px solid rgba(255,255,255,0.12);border-top-color:#E21E51;border-radius:50%;animation:apSpin .8s linear infinite;}
+#apPrevLoad p{font-family:Lexend,sans-serif;font-size:13px;color:rgba(255,255,255,0.45);}
+#apPrevPrev,#apPrevNext{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.10);border:none;border-radius:50%;width:44px;height:44px;cursor:pointer;color:#fff;font-size:22px;display:none;align-items:center;justify-content:center;z-index:6;}
+#apPrevPrev{left:14px;}#apPrevNext{right:14px;}
+#apPrevPlay{position:absolute;width:60px;height:60px;border-radius:50%;background:rgba(226,30,81,0.88);border:none;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:6;}
+#apPrevFoot2{padding:10px 22px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(0,0,0,0.20);}
+#apPrevCounter{font-family:Lexend,sans-serif;font-size:12px;color:rgba(255,255,255,0.35);}
+#apPrevDisclaimer2{font-family:Lexend,sans-serif;font-size:11px;color:rgba(255,255,255,0.25);display:flex;align-items:center;gap:5px;}
+</style>
+
+<div id="apPrevModal">
+  <div id="apPrevBox2">
+    <div id="apPrevHead2">
+      <div><div id="apPrevTitle">Speaker Preview</div><div id="apPrevSub2">Sample only &mdash; watermarked &mdash; not downloadable</div></div>
+      <button id="apPrevX2" onclick="apClosePreview()">&times;</button>
+    </div>
+    <div id="apPrevTabs2">
+      <button class="apPrevTab on" id="apTabImg" onclick="apPrevSwitchTab('img')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        Photos
+      </button>
+      <button class="apPrevTab" id="apTabVid" onclick="apPrevSwitchTab('vid')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2"></rect></svg>
+        Videos
+      </button>
+    </div>
+    <div id="apPrevOuter2">
+      <div id="apPrevSidebar2"><div id="apPrevThumbList"></div></div>
+      <div id="apPrevStage">
+        <div id="apPrevLoad"><div class="aps"></div><p id="apPrevLoadTxt">Loading...</p></div>
+        <canvas id="apPrevCanvas"></canvas>
+        <canvas id="apPrevVidCanvas"></canvas>
+        <button id="apPrevPrev" onclick="apPrevNav(-1)">&#8249;</button>
+        <button id="apPrevNext" onclick="apPrevNav(1)">&#8250;</button>
+        <button id="apPrevPlay" onclick="apPrevPlayVid()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        </button>
+      </div>
+    </div>
+    <div id="apPrevFoot2">
+      <div id="apPrevCounter"></div>
+      <div id="apPrevDisclaimer2">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        Preview only &mdash; full resolution after purchase
+      </div>
+    </div>
+  </div>
+</div>

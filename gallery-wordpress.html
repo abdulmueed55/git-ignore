@@ -1,0 +1,414 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Lexend,sans-serif;color:#1f2937;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+
+
+/* ── COUNTER BAR ── */
+.gl-counter{background:#fff;border-bottom:1px solid rgba(13,27,58,.10);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:99;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 20px rgba(13,27,58,.08);}
+.gl-counter-info{font-size:14px;color:#0d1b3a;font-weight:500;}
+.gl-counter-info strong{color:#E21E51;font-size:18px;}
+.gl-counter-bar{flex:1;max-width:300px;height:6px;background:rgba(13,27,58,.10);border-radius:3px;overflow:hidden;}
+.gl-counter-fill{height:100%;background:#E21E51;border-radius:3px;transition:width .3s;}
+.gl-confirm-btn{padding:10px 24px;background:#E21E51;color:#fff;border:0;border-radius:7px;font-family:Lexend,sans-serif;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(226,30,81,.28);transition:all .2s;display:flex;align-items:center;gap:8px;}
+.gl-confirm-btn:hover{background:#ff2f6b;transform:translateY(-1px);}
+.gl-confirm-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+/* ── GRID ── */
+.gl-body{max-width:1200px;margin:0 auto;padding:28px 20px;}
+.gl-speaker{font-size:13px;color:#6b7280;margin-bottom:20px;font-weight:500;}
+.gl-speaker strong{color:#0d1b3a;}
+.gl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
+.gl-card{position:relative;border-radius:10px;overflow:hidden;background:#0a1628;cursor:pointer;transition:transform .2s,box-shadow .2s;aspect-ratio:4/3;}
+.gl-card:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(13,27,58,.20);}
+.gl-card.selected{box-shadow:0 0 0 3px #E21E51,0 12px 32px rgba(226,30,81,.25)!important;}
+.gl-canvas{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none;user-select:none;}
+.gl-check{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;transition:all .2s;backdrop-filter:blur(4px);}
+.gl-card.selected .gl-check{background:#E21E51;border-color:#E21E51;}
+.gl-check svg{display:none;}
+.gl-card.selected .gl-check svg{display:block;}
+.gl-card-load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#0a1628;}
+.gl-card-load .sp{width:28px;height:28px;border:2px solid rgba(255,255,255,.12);border-top-color:#E21E51;border-radius:50%;animation:spin .8s linear infinite;}
+.gl-limit-msg{position:absolute;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;text-align:center;padding:12px;border-radius:10px;}
+.gl-limit-msg p{font-size:12px;color:#fff;line-height:1.5;}
+
+/* Loading / Error states */
+.gl-loading{text-align:center;padding:80px 20px;}
+.gl-loading .sp{width:48px;height:48px;border:3px solid rgba(13,27,58,.12);border-top-color:#E21E51;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 20px;}
+.gl-loading p{font-size:15px;color:#6b7280;}
+.gl-error{text-align:center;padding:80px 20px;}
+.gl-error h2{font-size:22px;font-weight:700;color:#0d1b3a;margin-bottom:10px;}
+.gl-error p{font-size:14px;color:#6b7280;line-height:1.65;}
+
+/* Confirmed state */
+.gl-confirmed{background:#fff;border:1px solid rgba(34,197,94,.3);border-radius:12px;padding:28px;text-align:center;margin-bottom:24px;animation:fadeUp .4s ease both;}
+.gl-confirmed h3{font-size:18px;font-weight:700;color:#0d1b3a;margin-bottom:8px;}
+.gl-confirmed p{font-size:13px;color:#6b7280;line-height:1.65;margin-bottom:16px;}
+.gl-dl-btn{display:inline-flex;align-items:center;gap:9px;padding:12px 26px;background:#0d1b3a;color:#fff;border:0;border-radius:8px;font-family:Lexend,sans-serif;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .2s;}
+.gl-dl-btn:hover{background:#1a2c54;}
+
+/* Confirm modal */
+.gl-modal{display:none;position:fixed;inset:0;z-index:9999;background:rgba(13,27,58,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;}
+.gl-modal.show{display:flex;}
+.gl-modal-box{background:#fff;border-radius:14px;padding:36px 32px;max-width:440px;width:100%;text-align:center;box-shadow:0 40px 80px rgba(13,27,58,.40);}
+.gl-modal-box h2{font-size:20px;font-weight:700;color:#0d1b3a;margin-bottom:10px;}
+.gl-modal-box p{font-size:13px;color:#6b7280;line-height:1.65;margin-bottom:24px;}
+.gl-modal-btns{display:flex;gap:12px;justify-content:center;}
+.gl-modal-confirm{padding:12px 28px;background:#E21E51;color:#fff;border:0;border-radius:7px;font-family:Lexend,sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+.gl-modal-cancel{padding:12px 22px;background:#f5efe4;color:#6b7280;border:1px solid rgba(13,27,58,.12);border-radius:7px;font-family:Lexend,sans-serif;font-size:14px;cursor:pointer;}
+
+@media(max-width:600px){
+  .gl-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+  .gl-counter{top:53px;}
+}
+</style>
+
+
+
+<div class="gl-counter" id="glCounterBar" style="display:none;"><div class="gl-pkg-badge" id="glPkgBadge" style="display:none;"></div>
+  <div class="gl-counter-info">
+    <strong id="glSelCount">0</strong> / <span id="glSelLimit">0</span> selected
+  </div>
+  <div class="gl-counter-bar">
+    <div class="gl-counter-fill" id="glFill" style="width:0%"></div>
+  </div>
+  <button class="gl-confirm-btn" id="glConfirmBtn" onclick="glShowConfirmModal()" disabled>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    Confirm my selection
+  </button>
+</div>
+
+<div class="gl-body">
+  <!-- Loading -->
+  <!-- Gallery intro - WordPress site header is above this -->
+<div id="glIntro" style="padding:32px 0 8px;display:none;">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:8px;">
+    <div>
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(226,30,81,.08);border:1px solid rgba(226,30,81,.20);border-radius:6px;padding:5px 14px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E21E51;margin-bottom:12px;">
+        &#127974; Geneva Summit 2026 &nbsp;&middot;&nbsp; Palais des Nations
+      </div>
+      <h1 style="font-family:Lexend,sans-serif;font-size:clamp(22px,4vw,32px);font-weight:800;color:#0d1b3a;letter-spacing:-.02em;margin-bottom:6px;" id="glPageTitle">Your Media Gallery</h1>
+      <p style="font-family:Lexend,sans-serif;font-size:14px;color:#6b7280;line-height:1.6;" id="glPageSub">Select your photos below.</p>
+    </div>
+  </div>
+</div>
+
+<div class="gl-loading" id="glLoading">
+    <div class="sp"></div>
+    <p>Loading your gallery...</p>
+  </div>
+  
+  <!-- Error -->
+  <div class="gl-error" id="glError" style="display:none;">
+    <h2>Gallery unavailable</h2>
+    <p id="glErrorMsg">This gallery link is invalid or has expired.</p>
+  </div>
+  
+  <!-- Confirmed -->
+  <div class="gl-confirmed" id="glConfirmed" style="display:none;">
+    <h2>&#10003; Selection confirmed!</h2>
+    <p id="glConfirmedMsg">Your photos are being prepared for delivery.</p>
+    <p style="font-size:12px;color:#9ca3af;margin-top:4px;">All media will be delivered to your email by <strong style="color:#0d1b3a;">25 August 2026</strong>.</p>
+  </div>
+
+  <!-- Gallery grid -->
+  <div id="glGallery" style="display:none;">
+    <p class="gl-speaker" id="glSpeakerInfo"></p>
+    <div class="gl-grid" id="glGrid"></div>
+  </div>
+</div>
+
+<!-- Confirm modal -->
+<div class="gl-modal" id="glModal">
+  <div class="gl-modal-box">
+    <h2>Confirm your selection?</h2>
+    <p id="glModalMsg">You have selected X photos. Once confirmed, this cannot be changed.</p>
+    <div class="gl-modal-btns">
+      <button class="gl-modal-cancel" onclick="document.getElementById('glModal').classList.remove('show')">Go back</button>
+      <button class="gl-modal-confirm" id="glModalConfirmBtn" onclick="glConfirmSelection()">Yes, confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var GL_BASE = "https://af.net/stripe-proxy.php";
+function glU(action, params) {
+  var sep = String.fromCharCode(38);
+  return GL_BASE + "?action=" + action + (params ? sep + params : "");
+}
+
+var glState = {
+  token:     "",
+  data:      null,
+  images:    [],
+  limit:     null,
+  selected:  new Set(),
+  confirmed: false,
+  canvases:  {}
+};
+
+/* ── INIT ── */
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  glState.token = params.get("token") || "";
+  
+  if(!glState.token) {
+    showError("No gallery token found. Please use the link from your email.");
+    return;
+  }
+  
+  fetch(glU("getGalleryFiles","token="+encodeURIComponent(glState.token)))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.ok){ showError(d.error || "Could not load gallery."); return; }
+      
+      glState.data    = d;
+      glState.images  = d.images || [];
+      glState.limit   = d.limit;
+      glState.confirmed = d.confirmed;
+      
+      /* Package badge */
+      document.getElementById("glPkgBadge").textContent = d.pkg;
+      
+      /* Speaker info */
+      document.getElementById("glSpeakerInfo").innerHTML =
+        "Speaker: <strong>" + d.speaker + "</strong> &nbsp;&middot;&nbsp; Package: <strong>" + d.pkg + "</strong>";
+      document.getElementById("glPageTitle").textContent = d.speaker + "  -  Media Gallery";
+      var subTxt = d.limit ? "Select any " + d.limit + " photos from your Summit gallery below." : "Your complete photo gallery from the Summit.";
+      document.getElementById("glPageSub").textContent = subTxt;
+      
+      document.getElementById("glLoading").style.display = "none";
+      
+      if(d.confirmed) {
+        /* Already confirmed  -  show confirmation */
+        showConfirmed(d.selection ? d.selection.length : 0);
+      } else if(glState.limit) {
+        /* Selection required */
+        document.getElementById("glSelLimit").textContent = glState.limit;
+        document.getElementById("glCounterBar").style.display = "flex";
+        buildGrid();
+      } else {
+        /* No selection needed  -  all photos */
+        document.getElementById("glCounterBar").style.display = "none";
+        buildGrid();
+      }
+      
+      document.getElementById("glGallery").style.display = "block";
+    })
+    .catch(function(e){ showError("Connection error: " + (e.message||"Please try again.")); });
+})();
+
+function showError(msg) {
+  document.getElementById("glLoading").style.display = "none";
+  document.getElementById("glError").style.display   = "block";
+  document.getElementById("glErrorMsg").textContent  = msg;
+}
+
+function showConfirmed(count) {
+  document.getElementById("glConfirmed").style.display = "block";
+  document.getElementById("glConfirmedMsg").textContent = 
+    count + " photos selected and confirmed. Our team is preparing your delivery.";
+}
+
+/* ── BUILD GRID ── */
+function buildGrid() {
+  var grid = document.getElementById("glGrid");
+  grid.innerHTML = "";
+  
+  glState.images.forEach(function(img, i){
+    var card = document.createElement("div");
+    card.className = "gl-card";
+    card.dataset.id = img.id;
+    card.dataset.idx = i;
+    
+    /* Loading spinner */
+    var loadEl = document.createElement("div");
+    loadEl.className = "gl-card-load";
+    loadEl.innerHTML = '<div class="sp"></div>';
+    card.appendChild(loadEl);
+    
+    /* Canvas */
+    var canvas = document.createElement("canvas");
+    canvas.className = "gl-canvas";
+    card.appendChild(canvas);
+    
+    /* Checkmark */
+    var check = document.createElement("div");
+    check.className = "gl-check";
+    check.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    card.appendChild(check);
+    
+    /* Limit overlay */
+    var limitEl = document.createElement("div");
+    limitEl.className = "gl-limit-msg";
+    limitEl.innerHTML = "<p>Selection limit reached.<br>Deselect a photo to choose this one.</p>";
+    card.appendChild(limitEl);
+    
+    card.onclick = function(){ glToggleSelect(this); };
+    grid.appendChild(card);
+    
+    /* Load image */
+    glLoadCardImage(card, canvas, loadEl, img.id);
+  });
+}
+
+/* ── LOAD IMAGE TO CANVAS (no URLs in DOM) ── */
+var _glLogo = null;
+(function(){
+  fetch(glU("getLogo",""))
+    .then(function(r){return r.blob();})
+    .then(function(b){
+      var u=URL.createObjectURL(b);
+      var i=new Image();
+      i.onload=function(){_glLogo=i;};
+      i.src=u;
+    }).catch(function(){});
+})();
+
+function glLoadCardImage(card, canvas, loadEl, fileId) {
+  fetch(glU("getThumb","fileId="+encodeURIComponent(fileId)))
+    .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.blob(); })
+    .then(function(blob){
+      var burl = URL.createObjectURL(blob);
+      var img  = new Image();
+      img.onload = function(){
+        URL.revokeObjectURL(burl);
+        var W = card.offsetWidth  || 220;
+        var H = card.offsetHeight || 165;
+        canvas.width  = W;
+        canvas.height = H;
+        var ctx = canvas.getContext("2d");
+        /* Fill + cover */
+        var scale = Math.max(W/img.width, H/img.height);
+        var sw    = img.width*scale, sh = img.height*scale;
+        ctx.drawImage(img, (W-sw)/2, (H-sh)/2, sw, sh);
+        /* Watermark */
+        glDrawWM(ctx, W, H);
+        loadEl.style.display = "none";
+      };
+      img.onerror = function(){ URL.revokeObjectURL(burl); loadEl.innerHTML = '<p style="color:rgba(255,255,255,.4);font-size:11px;">Could not load</p>'; };
+      img.src = burl;
+    })
+    .catch(function(){ loadEl.innerHTML = '<p style="color:rgba(255,255,255,.4);font-size:11px;">Error</p>'; });
+}
+
+function glDrawWM(ctx, W, H) {
+  if(_glLogo && _glLogo.width) {
+    ctx.save(); ctx.globalAlpha = 0.18;
+    var lw = Math.round(W*0.45), lh = Math.round(lw*(_glLogo.height/_glLogo.width));
+    ctx.save(); ctx.translate(W/2, H/2); ctx.rotate(-Math.PI/18);
+    ctx.drawImage(_glLogo, -lw/2, -lh/2, lw, lh); ctx.restore();
+    ctx.restore();
+  } else {
+    ctx.save(); ctx.globalAlpha=0.15; ctx.fillStyle="#fff";
+    ctx.font="bold "+Math.max(Math.round(W*0.08),10)+"px Arial,sans-serif";
+    ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.translate(W/2,H/2); ctx.rotate(-Math.PI/8);
+    ctx.fillText("AIFOD PREVIEW",0,0); ctx.restore();
+  }
+}
+
+/* ── SELECT / DESELECT ── */
+function glToggleSelect(card) {
+  if(glState.confirmed) return;
+  var id = card.dataset.id;
+  
+  if(glState.selected.has(id)) {
+    /* Deselect */
+    glState.selected.delete(id);
+    card.classList.remove("selected");
+    /* Remove limit overlays */
+    document.querySelectorAll(".gl-limit-msg").forEach(function(el){
+      el.style.display = "none";
+    });
+  } else {
+    /* Check limit */
+    if(glState.limit !== null && glState.selected.size >= glState.limit) {
+      /* Show limit overlay on this card briefly */
+      var limitEl = card.querySelector(".gl-limit-msg");
+      if(limitEl) { limitEl.style.display = "flex"; setTimeout(function(){ limitEl.style.display="none"; }, 1800); }
+      return;
+    }
+    glState.selected.add(id);
+    card.classList.add("selected");
+  }
+  
+  glUpdateCounter();
+}
+
+function glUpdateCounter() {
+  var count = glState.selected.size;
+  var limit = glState.limit;
+  
+  document.getElementById("glSelCount").textContent = count;
+  
+  if(limit !== null) {
+    var pct = Math.min(count/limit*100, 100);
+    document.getElementById("glFill").style.width = pct + "%";
+    
+    var btn = document.getElementById("glConfirmBtn");
+    btn.disabled = (count !== limit);
+    
+    /* Show limit overlays on unselected cards if at limit */
+    document.querySelectorAll(".gl-card").forEach(function(c){
+      var limitEl = c.querySelector(".gl-limit-msg");
+      if(!limitEl) return;
+      if(count >= limit && !c.classList.contains("selected")) {
+        limitEl.style.display = "flex";
+      } else {
+        limitEl.style.display = "none";
+      }
+    });
+  } else {
+    document.getElementById("glConfirmBtn").disabled = false;
+  }
+}
+
+/* ── CONFIRM MODAL ── */
+function glShowConfirmModal() {
+  var count = glState.selected.size;
+  var limit = glState.limit;
+  document.getElementById("glModalMsg").textContent = 
+    "You have selected " + count + " photo" + (count!==1?"s":"") + " out of " + (limit||count) + ". Once confirmed, this selection cannot be changed.";
+  document.getElementById("glModal").classList.add("show");
+}
+
+/* ── CONFIRM SELECTION ── */
+function glConfirmSelection() {
+  var btn = document.getElementById("glModalConfirmBtn");
+  btn.disabled = true;
+  btn.textContent = "Confirming...";
+  
+  var ids = Array.from(glState.selected).join(",");
+  
+  fetch(glU("saveSelection","token="+encodeURIComponent(glState.token)+"&selection="+encodeURIComponent(ids)))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.ok) {
+        document.getElementById("glModal").classList.remove("show");
+        document.getElementById("glCounterBar").style.display = "none";
+        glState.confirmed = true;
+        showConfirmed(d.saved);
+        /* Fade out unselected cards */
+        document.querySelectorAll(".gl-card").forEach(function(c){
+          if(!c.classList.contains("selected")) c.style.opacity = "0.25";
+        });
+      } else {
+        btn.disabled = false;
+        btn.textContent = "Yes, confirm";
+        alert("Error: " + (d.error || "Could not save selection."));
+      }
+    })
+    .catch(function(){
+      btn.disabled = false;
+      btn.textContent = "Yes, confirm";
+      alert("Connection error. Please try again.");
+    });
+}
+
+/* Block right click */
+document.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+document.addEventListener("dragstart", function(e){ e.preventDefault(); });
+</script>
