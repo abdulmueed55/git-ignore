@@ -278,6 +278,32 @@ if ($action === 'viewOrders' && ($_GET['key']??'') === 'aifod2026') {
     exit;
 }
 
+/* ══ 8b. Reset all orders (ADMIN — testing only) ══
+ * Visit: stripe-proxy.php?action=resetOrders&key=aifod2026&confirm=yes
+ * Clears the orders CSV, every gallery token, the fail log, and (if the Apps
+ * Script is deployed) the Google Sheet rows. After this nothing is sold-out. */
+if ($action === 'resetOrders' && ($_GET['key'] ?? '') === 'aifod2026') {
+    if (($_GET['confirm'] ?? '') !== 'yes') {
+        echo json_encode(['ok'=>false,'error'=>'Add &confirm=yes to the URL to proceed']); exit;
+    }
+    $out = ['orders'=>false, 'tokens'=>0, 'sheet'=>false];
+
+    if (file_exists(ORDERS_FILE)) { @unlink(ORDERS_FILE); $out['orders'] = true; }
+    if (file_exists(FAIL_LOG))    { @unlink(FAIL_LOG); }
+
+    $tokenDir = __DIR__ . '/gallery-tokens/';
+    if (is_dir($tokenDir)) {
+        foreach (glob($tokenDir . '*.json') as $tf) { @unlink($tf); $out['tokens']++; }
+    }
+
+    /* Clear the Google Sheet too (needs the latest Apps Script deployed). */
+    $r = apps_script_call(['action'=>'clearOrders', 'key'=>'aifod2026']);
+    $out['sheet'] = !empty($r['ok']);
+
+    echo json_encode(['ok'=>true, 'cleared'=>$out]);
+    exit;
+}
+
 /* ══ 9. Generate secure gallery token ══ */
 if ($action === 'generateGalleryToken') {
     $piId        = $_GET['piId']        ?? '';

@@ -27,7 +27,8 @@ var CONFIG = {
 
   NOTIFY:     ['z@af.net', 'abdul@af.net'],   // team notification recipients
   FROM_NAME:  'AIFOD Geneva Summit 2026',
-  DELIVER_BY: '25 August 2026'
+  DELIVER_BY: '25 August 2026',
+  ADMIN_KEY:  'aifod2026'                      // guards the clearOrders reset
 };
 
 /* ── SPEAKER → SOURCE (MASTER) DRIVE FOLDER ─────────────────────────────────
@@ -70,6 +71,7 @@ function handle_(e) {
     if (action === 'getSold')     return json_(getSold_());
     if (action === 'deliver')     return json_(deliver_(p));
     if (action === 'sendGalleryLink') return json_(sendGalleryLink_(p));
+    if (action === 'clearOrders') return json_(clearOrders_(p));
     if (action === 'ping')        return json_({ ok: true, pong: true });
     return json_({ ok: false, error: 'Unknown action: ' + action });
   } catch (err) {
@@ -123,6 +125,18 @@ function getSheet_() {
                      'Status', 'Package', 'Amount', 'Payment Intent ID']);
   }
   return sheet;
+}
+
+/* ═══════════════════════════ RESET (clear the sheet) ═══════════════════════════
+ * Wipes all order rows (keeps the header). Guarded by ADMIN_KEY. Called by the
+ * PHP resetOrders admin URL during testing.
+ */
+function clearOrders_(p) {
+  if (String(p.key || '') !== CONFIG.ADMIN_KEY) return { ok: false, error: 'Bad key' };
+  var sheet = getSheet_();
+  var last = sheet.getLastRow();
+  if (last > 1) sheet.deleteRows(2, last - 1);
+  return { ok: true, cleared: Math.max(0, last - 1) };
 }
 
 /* ═══════════════════════════ 2. GET SOLD ═══════════════════════════ */
