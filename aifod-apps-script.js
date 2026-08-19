@@ -22,9 +22,8 @@ var CONFIG = {
   SHEET_ID:  '1QGYSBawEBefEgw-SrU9qgjXfSqy1rnZDGbxy2SkLF6I',
   SHEET_TAB: 'Orders',            // tab name; created automatically if missing
 
-  // TODO(Shalom): parent folder "AIFOD Media Deliveries 2026" — paste its ID.
-  // Get it from the folder URL: drive.google.com/drive/folders/<THIS_ID>
-  DELIVERY_PARENT_ID: 'PASTE_DELIVERY_PARENT_FOLDER_ID_HERE',
+  // Parent folder "AIFOD Media Deliveries 2026" — per-order folders go in here.
+  DELIVERY_PARENT_ID: '1wysRT7lAZXch2oJzaKbv7V3u2brRb6QB',
 
   NOTIFY:     ['z@af.net', 'abdul@af.net'],   // team notification recipients
   FROM_NAME:  'AIFOD Geneva Summit 2026',
