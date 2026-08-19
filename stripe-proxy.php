@@ -47,7 +47,8 @@ function pkg_info($name) {
  */
 function speaker_folders() {
     return [
-        'Tianze Zhang' => '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U',
+        'Test Speaker'  => '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U', // TEST — uses Tianze's folder; remove before live
+        'Tianze Zhang'  => '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U',
         // 'Fredrik Kocon' => '...',
     ];
 }

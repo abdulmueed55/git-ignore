@@ -38,7 +38,8 @@ var CONFIG = {
  * TODO: add every speaker as  'Speaker Name': 'DRIVE_FOLDER_ID'
  */
 var SPEAKER_FOLDERS = {
-  'Tianze Zhang': '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U'
+  'Test Speaker':  '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U', // TEST — uses Tianze's folder; remove before live
+  'Tianze Zhang':  '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U'
   // 'Fredrik Kocon': '...',
   // 'Valerie Pelton': '...',
 };
@@ -361,7 +362,7 @@ function esc_(s) {
 function testDelivery_() {
   var out = deliver_({
     action: 'deliver',
-    speakerName: 'Tianze Zhang',
+    speakerName: 'Test Speaker',
     pkg: 'All Photos Super XL',
     buyerName: 'Test Buyer',
     buyerEmail: Session.getActiveUser().getEmail(),
