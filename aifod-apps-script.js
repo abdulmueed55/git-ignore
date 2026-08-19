@@ -116,10 +116,10 @@ function recordOrder_(p) {
 
 function getSheet_() {
   var ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
-  var sheet = ss.getSheetByName(CONFIG.SHEET_TAB);
-  if (!sheet) {
-    sheet = ss.insertSheet(CONFIG.SHEET_TAB);
-  }
+  /* Use the named tab if it exists, otherwise the existing first sheet — so we
+   * record into and clear the SAME sheet the orders already live in (never
+   * spawn a second, orphaned tab). */
+  var sheet = ss.getSheetByName(CONFIG.SHEET_TAB) || ss.getSheets()[0];
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(['Timestamp', 'Buyer Name', 'Buyer Email', 'Speaker',
                      'Status', 'Package', 'Amount', 'Payment Intent ID']);
