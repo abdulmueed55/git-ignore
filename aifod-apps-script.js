@@ -355,11 +355,11 @@ function esc_(s) {
 }
 
 /* ═══════════════════════════ TEST HELPERS ═══════════════════════════
- * Run testDelivery_ manually from the editor (Run ▸ testDelivery_) once you've
+ * Run testDelivery_ manually from the editor (Run ▸ testDelivery) once you've
  * set DELIVERY_PARENT_ID and a real speaker folder, to confirm copy + email
  * work end-to-end. Uses a fake piId so it's easy to delete afterwards.
  */
-function testDelivery_() {
+function testDelivery() {
   var out = deliver_({
     action: 'deliver',
     speakerName: 'Test Speaker',
