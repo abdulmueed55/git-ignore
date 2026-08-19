@@ -69,6 +69,7 @@ function handle_(e) {
     if (action === 'recordOrder') return json_(recordOrder_(p));
     if (action === 'getSold')     return json_(getSold_());
     if (action === 'deliver')     return json_(deliver_(p));
+    if (action === 'sendGalleryLink') return json_(sendGalleryLink_(p));
     if (action === 'ping')        return json_({ ok: true, pong: true });
     return json_({ ok: false, error: 'Unknown action: ' + action });
   } catch (err) {
@@ -336,6 +337,54 @@ function sendDeliveryEmail_(to, name, speaker, pkg, link, counts) {
           ' is ready (' + summary + ').\n\nOpen your media folder: ' + link +
           '\n\nAIFOD Geneva Summit 2026'
   });
+}
+
+/* ── Purchase email: send the buyer their secure gallery link ── */
+function sendGalleryLink_(p) {
+  var to = String(p.buyerEmail || '').trim();
+  if (!to) return { ok: false, error: 'No buyerEmail' };
+  var name    = String(p.buyerName || '').trim();
+  var speaker = String(p.speakerName || '').trim();
+  var pkg     = String(p.pkg || '').trim();
+  var url     = String(p.galleryUrl || '').trim();
+  var ent     = PACKAGES[pkg] || {};
+
+  var actionLine = (ent.limit != null)
+    ? 'Open your gallery to choose your ' + ent.limit + ' photos, then confirm.'
+    : 'Open your gallery to review your media, then confirm to receive it.';
+
+  var html =
+    '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1f2937;">' +
+      '<div style="background:#0d1b3a;padding:28px 24px;border-radius:12px 12px 0 0;text-align:center;">' +
+        '<div style="color:#fff;font-size:20px;font-weight:800;">AIFOD Geneva Summit 2026</div>' +
+        '<div style="color:#ff2f6b;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-top:6px;">Payment received</div>' +
+      '</div>' +
+      '<div style="border:1px solid #eee;border-top:0;border-radius:0 0 12px 12px;padding:28px 24px;">' +
+        '<p style="font-size:15px;line-height:1.6;margin:0 0 14px;">Hi ' + esc_(name || 'there') + ',</p>' +
+        '<p style="font-size:14px;line-height:1.7;margin:0 0 18px;">Thank you for your <strong>' + esc_(pkg) +
+          '</strong> for <strong>' + esc_(speaker) + '</strong>. ' + esc_(actionLine) + '</p>' +
+        '<p style="text-align:center;margin:26px 0;">' +
+          '<a href="' + url + '" style="display:inline-block;background:#E21E51;color:#fff;text-decoration:none;' +
+          'font-size:15px;font-weight:700;padding:14px 32px;border-radius:8px;">Open my gallery</a>' +
+        '</p>' +
+        '<p style="font-size:12px;color:#6b7280;line-height:1.6;margin:0 0 4px;">Or paste this link into your browser:<br>' +
+          '<a href="' + url + '" style="color:#E21E51;word-break:break-all;">' + url + '</a></p>' +
+        '<p style="font-size:12px;color:#9ca3af;line-height:1.6;margin:18px 0 0;">After you confirm, we email your ' +
+          'final high-resolution files (no watermark). Keep this link private — it is unique to your order.</p>' +
+      '</div>' +
+      '<p style="text-align:center;font-size:11px;color:#9ca3af;margin:16px 0 0;">AIFOD · Palais des Nations, Geneva</p>' +
+    '</div>';
+
+  MailApp.sendEmail({
+    to: to,
+    name: CONFIG.FROM_NAME,
+    subject: 'Select your media — AIFOD Geneva Summit 2026',
+    htmlBody: html,
+    body: 'Hi ' + (name || 'there') + ',\n\nThank you for your ' + pkg + ' for ' + speaker + '.\n' +
+          actionLine + '\n\nOpen your gallery: ' + url +
+          '\n\nAfter you confirm, we email your final high-resolution files (no watermark).\n\nAIFOD Geneva Summit 2026'
+  });
+  return { ok: true };
 }
 
 function notifyTeam_(subject, body) {

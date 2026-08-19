@@ -226,22 +226,18 @@ function glMedia(pkg){
 
       /* Photos section */
       if(media.photos) {
-        if(glState.limit) {
-          document.getElementById("glSelLimit").textContent = glState.limit;
-          document.getElementById("glCounterBar").style.display = "flex";
-        } else {
-          document.getElementById("glCounterBar").style.display = "none";
-        }
         buildGrid();
       } else {
         document.getElementById("glGrid").style.display = "none";
-        document.getElementById("glCounterBar").style.display = "none";
       }
 
       /* Videos section */
       if(media.video) {
         glBuildVideoGrid();
       }
+
+      /* Confirm bar — every package confirms in the gallery now */
+      glSetupConfirmBar();
 
       /* Default visible tab: photos first, else videos */
       glSwitchTab(media.photos ? "photos" : "videos");
@@ -259,8 +255,12 @@ function showError(msg) {
 
 function showConfirmed(count) {
   document.getElementById("glConfirmed").style.display = "block";
-  document.getElementById("glConfirmedMsg").textContent = 
-    count + " photos selected and confirmed. Our team is preparing your delivery.";
+  var tabs = document.getElementById("glTabs");
+  if(tabs) tabs.style.display = "none";
+  document.getElementById("glConfirmedMsg").textContent =
+    (count > 0)
+      ? (count + " photos selected and confirmed. Our team is preparing your delivery.")
+      : "Confirmed! Your media is being prepared — you'll receive a download link by email shortly.";
 }
 
 /* ── BUILD GRID ── */
@@ -419,10 +419,17 @@ function glUpdateCounter() {
 
 /* ── CONFIRM MODAL ── */
 function glShowConfirmModal() {
-  var count = glState.selected.size;
-  var limit = glState.limit;
-  document.getElementById("glModalMsg").textContent = 
-    "You have selected " + count + " photo" + (count!==1?"s":"") + " out of " + (limit||count) + ". Once confirmed, this selection cannot be changed.";
+  var msg;
+  if(glState.limit) {
+    var count = glState.selected.size;
+    msg = "You have selected " + count + " photo" + (count!==1?"s":"") + " out of " +
+          glState.limit + ". Once confirmed, this selection cannot be changed.";
+  } else {
+    var pkg = (glState.data && glState.data.pkg) ? glState.data.pkg : "media package";
+    msg = "Confirm to receive your complete " + pkg + ". We'll email your final " +
+          "high-resolution files (no watermark). This cannot be changed.";
+  }
+  document.getElementById("glModalMsg").textContent = msg;
   document.getElementById("glModal").classList.add("show");
 }
 
@@ -442,10 +449,14 @@ function glConfirmSelection() {
         document.getElementById("glCounterBar").style.display = "none";
         glState.confirmed = true;
         showConfirmed(d.saved);
-        /* Fade out unselected cards */
-        document.querySelectorAll(".gl-card").forEach(function(c){
-          if(!c.classList.contains("selected")) c.style.opacity = "0.25";
-        });
+        document.getElementById("glVidGrid").style.display = "none";
+        document.getElementById("glGrid").style.display = "none";
+        /* Fade out unselected cards (only meaningful for photo selection) */
+        if(glState.limit) {
+          document.querySelectorAll(".gl-card").forEach(function(c){
+            if(!c.classList.contains("selected")) c.style.opacity = "0.25";
+          });
+        }
       } else {
         btn.disabled = false;
         btn.textContent = "Yes, confirm";
@@ -482,6 +493,31 @@ function glBuildVideoGrid() {
   });
 }
 
+/* ── CONFIRM BAR SETUP (all packages confirm in the gallery) ── */
+var GL_CHK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> ';
+function glSetupConfirmBar() {
+  var cb   = document.getElementById("glCounterBar");
+  var info = document.querySelector(".gl-counter-info");
+  var bar  = document.querySelector(".gl-counter-bar");
+  var btn  = document.getElementById("glConfirmBtn");
+  if(!cb) return;
+  cb.style.display = "flex";
+  if(glState.limit) {
+    /* Photo-selection packages (25 / 50) */
+    document.getElementById("glSelLimit").textContent = glState.limit;
+    if(info) info.style.display = "";
+    if(bar)  bar.style.display  = "";
+    btn.disabled = true;                       /* enabled at the limit */
+    btn.innerHTML = GL_CHK + "Confirm my selection";
+  } else {
+    /* All Photos / Video / Bundle — nothing to select, just confirm */
+    if(info) info.style.display = "none";
+    if(bar)  bar.style.display  = "none";
+    btn.disabled = false;
+    btn.innerHTML = GL_CHK + "Confirm &amp; receive my media";
+  }
+}
+
 /* ── TAB SWITCH (photos / videos) ── */
 function glSwitchTab(t) {
   var tp = document.getElementById("glTabPhotos");
@@ -490,10 +526,11 @@ function glSwitchTab(t) {
   if(tv) tv.className = "gl-tab" + (t === "videos" ? " on" : "");
   document.getElementById("glGrid").style.display    = (t === "photos") ? "grid" : "none";
   document.getElementById("glVidGrid").style.display = (t === "videos") ? "grid" : "none";
-  /* Counter/confirm bar is only for photo selection */
+  /* Keep the confirm bar visible: on the photos tab for selection packages,
+     and on every tab for non-selection packages (single order-wide confirm). */
   var cb = document.getElementById("glCounterBar");
-  if(cb && glState.limit && !glState.confirmed) {
-    cb.style.display = (t === "photos") ? "flex" : "none";
+  if(cb && !glState.confirmed) {
+    cb.style.display = glState.limit ? ((t === "photos") ? "flex" : "none") : "flex";
   }
 }
 

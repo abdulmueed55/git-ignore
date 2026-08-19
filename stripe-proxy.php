@@ -304,16 +304,22 @@ if ($action === 'generateGalleryToken') {
         'created'     => time(),
     ];
 
-    /* Packages with no selection limit are delivered immediately (no gallery
-     * step). Fire delivery once and remember we did, so retries don't dupe. */
-    $info = pkg_info($pkg);
-    if ($info && $info['limit'] === null) {
-        trigger_delivery($record, []);
-        $record['deliveryTriggered'] = time();
-    }
-
     file_put_contents($tokenDir . $token . '.json', json_encode($record));
-    echo json_encode(['ok'=>true,'token'=>$token,'galleryUrl'=>'https://af.net/gallery-2/?token='.$token]);
+
+    /* Email the buyer their secure gallery link so they can review + confirm.
+     * Delivery of the final files happens later, when they confirm in the
+     * gallery (for every package type). */
+    $galleryUrl = 'https://af.net/gallery-2/?token=' . $token;
+    apps_script_call([
+        'action'      => 'sendGalleryLink',
+        'buyerEmail'  => $record['buyerEmail'],
+        'buyerName'   => $record['buyerName'],
+        'speakerName' => $record['speakerName'],
+        'pkg'         => $record['pkg'],
+        'galleryUrl'  => $galleryUrl,
+    ]);
+
+    echo json_encode(['ok'=>true,'token'=>$token,'galleryUrl'=>$galleryUrl]);
     exit;
 }
 
@@ -367,36 +373,41 @@ if ($action === 'saveSelection') {
         echo json_encode(['ok'=>true,'saved'=>count($data['selection']??[]),'locked'=>true]); exit;
     }
 
-    /* Resolve the limit from the ORDER'S package, never from the request. */
-    $info  = pkg_info($data['pkg'] ?? '');
-    $limit = $info ? $info['limit'] : null;
-    $ids   = array_values(array_filter(array_map('trim', explode(',', $selection))));
-
-    if ($limit === null) { echo json_encode(['ok'=>false,'error'=>'This package does not require a selection']); exit; }
-    if (count($ids) > $limit) {
-        echo json_encode(['ok'=>false,'error'=>'Exceeds limit of '.$limit]); exit;
-    }
-
-    /* Verify the payment. */
+    /* Verify the payment first. */
     $pi = stripe_call('GET', '/v1/payment_intents/' . urlencode($data['piId']));
     if (($pi['status'] ?? '') !== 'succeeded') {
         echo json_encode(['ok'=>false,'error'=>'Payment not verified']); exit;
     }
 
-    /* SECURITY (spec check #3): every submitted photo id must belong to this
-     * speaker's own master folder — otherwise a tampered browser could turn a
-     * €299 order into the full collection or another speaker's photos. */
-    $folders  = speaker_folders();
-    $folderId = $folders[$data['speakerName'] ?? ''] ?? '';
-    if (!$folderId) { echo json_encode(['ok'=>false,'error'=>'No folder for speaker']); exit; }
-    $allowed = [];
-    foreach (drive_list($folderId, 300) as $fi) {
-        if (strpos($fi['mimeType'] ?? '', 'image/') === 0) $allowed[$fi['id']] = true;
-    }
-    foreach ($ids as $id) {
-        if (!isset($allowed[$id])) {
-            echo json_encode(['ok'=>false,'error'=>'Invalid photo in selection']); exit;
+    /* Resolve the limit from the ORDER'S package, never from the request. */
+    $info  = pkg_info($data['pkg'] ?? '');
+    $limit = $info ? $info['limit'] : null;
+    $ids   = array_values(array_filter(array_map('trim', explode(',', $selection))));
+
+    if ($limit !== null) {
+        /* Photo-selection packages (25 / 50): validate the chosen photos. */
+        if (count($ids) > $limit) {
+            echo json_encode(['ok'=>false,'error'=>'Exceeds limit of '.$limit]); exit;
         }
+        /* SECURITY (spec check #3): every submitted photo id must belong to this
+         * speaker's own master folder — otherwise a tampered browser could turn a
+         * €299 order into the full collection or another speaker's photos. */
+        $folders  = speaker_folders();
+        $folderId = $folders[$data['speakerName'] ?? ''] ?? '';
+        if (!$folderId) { echo json_encode(['ok'=>false,'error'=>'No folder for speaker']); exit; }
+        $allowed = [];
+        foreach (drive_list($folderId, 300) as $fi) {
+            if (strpos($fi['mimeType'] ?? '', 'image/') === 0) $allowed[$fi['id']] = true;
+        }
+        foreach ($ids as $id) {
+            if (!isset($allowed[$id])) {
+                echo json_encode(['ok'=>false,'error'=>'Invalid photo in selection']); exit;
+            }
+        }
+    } else {
+        /* All Photos / Video / Bundle: nothing to select — confirming delivers
+         * everything the package entitles. Ignore any submitted ids. */
+        $ids = [];
     }
 
     $data['selection']          = $ids;
