@@ -284,15 +284,17 @@ if ($action === 'viewOrders' && ($_GET['key']??'') === 'aifod2026') {
     exit;
 }
 
-/* ══ 8b. Reset all orders (ADMIN — testing only) ══
+/* ══ 8b. Reset ALL previous data (ADMIN — testing only) ══
  * Visit: stripe-proxy.php?action=resetOrders&key=aifod2026&confirm=yes
- * Clears the orders CSV, every gallery token, the fail log, and (if the Apps
- * Script is deployed) the Google Sheet rows. After this nothing is sold-out. */
+ * Clears the orders CSV, every gallery token, the fail log, the Google Sheet
+ * rows, and (reversibly — moved to Drive trash, not deleted) every test
+ * delivery folder. After this nothing is sold-out and the delivery folder is
+ * empty. Needs the latest Apps Script deployed for the sheet/deliveries part. */
 if ($action === 'resetOrders' && ($_GET['key'] ?? '') === 'aifod2026') {
     if (($_GET['confirm'] ?? '') !== 'yes') {
         echo json_encode(['ok'=>false,'error'=>'Add &confirm=yes to the URL to proceed']); exit;
     }
-    $out = ['orders'=>false, 'tokens'=>0, 'sheet'=>false];
+    $out = ['orders'=>false, 'tokens'=>0, 'sheet'=>false, 'deliveries'=>0];
 
     if (file_exists(ORDERS_FILE)) { @unlink(ORDERS_FILE); $out['orders'] = true; }
     if (file_exists(FAIL_LOG))    { @unlink(FAIL_LOG); }
@@ -302,9 +304,13 @@ if ($action === 'resetOrders' && ($_GET['key'] ?? '') === 'aifod2026') {
         foreach (glob($tokenDir . '*.json') as $tf) { @unlink($tf); $out['tokens']++; }
     }
 
-    /* Clear the Google Sheet too (needs the latest Apps Script deployed). */
+    /* Clear the Google Sheet rows. */
     $r = apps_script_call(['action'=>'clearOrders', 'key'=>'aifod2026']);
     $out['sheet'] = !empty($r['ok']);
+
+    /* Trash every test delivery folder (reversible — Drive trash, not gone). */
+    $r2 = apps_script_call(['action'=>'clearDeliveries', 'key'=>'aifod2026']);
+    $out['deliveries'] = $r2['cleared'] ?? 0;
 
     echo json_encode(['ok'=>true, 'cleared'=>$out]);
     exit;

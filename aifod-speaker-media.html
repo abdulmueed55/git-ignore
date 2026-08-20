@@ -42,7 +42,8 @@
 #afpp .apStepNum{width:22px;height:22px;border-radius:50%;background:#E21E51;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 
 /* ── SPEAKER SELECTOR ── */
-#afpp .apSpkBox{background:#fff;border:1.5px solid rgba(13,27,58,.12);border-radius:10px;padding:20px;position:relative;}
+#afpp .apSpkBox{background:#fff;border:1.5px solid rgba(13,27,58,.12);border-radius:14px;padding:22px;position:relative;transition:box-shadow .2s;}
+#afpp .apSpkBox:hover{box-shadow:0 8px 24px rgba(13,27,58,.08);}
 #afpp .apSpkSelected{display:flex;align-items:center;gap:12px;cursor:pointer;padding:4px 0;}
 #afpp .apSpkAvatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#0d1b3a,#1a2c54);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:15px;flex-shrink:0;}
 #afpp .apSpkName{font-size:16px;font-weight:600;color:#0d1b3a;}
@@ -65,7 +66,7 @@
 #afpp .apPkgs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
 @media(max-width:700px){#afpp .apPkgs{grid-template-columns:1fr 1fr;}}
 @media(max-width:480px){#afpp .apPkgs{grid-template-columns:1fr;}}
-#afpp .apPkg{background:#fff;border:1.5px solid rgba(13,27,58,.12);border-radius:10px;padding:22px 18px 18px;cursor:pointer;position:relative;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(13,27,58,.06);}
+#afpp .apPkg{background:#fff;border:1.5px solid rgba(13,27,58,.12);border-radius:14px;padding:26px 20px 22px;cursor:pointer;position:relative;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(13,27,58,.06);}
 #afpp .apPkg:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(13,27,58,.10);}
 #afpp .apPkg.sel{border:2px solid #E21E51!important;box-shadow:0 12px 32px rgba(226,30,81,.14)!important;}
 #afpp .apPkg.feat{border:2px solid #E21E51;}
@@ -84,7 +85,7 @@
 
 
 /* ── FORM ── */
-#afpp .apForm{background:#fff;border:1.5px solid rgba(13,27,58,.12);border-radius:10px;padding:26px;}
+#afpp .apForm{background:#fff;border:1.5px solid rgba(13,27,58,.12);border-radius:14px;padding:30px;}
 #afpp .apFrow{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;}
 @media(max-width:520px){#afpp .apFrow{grid-template-columns:1fr;}}
 #afpp .apFg{margin-bottom:14px;}
@@ -178,8 +179,10 @@
 <div class="apBody">
 
   <!-- CAUTION: one package per speaker -->
-  <div style="display:flex;align-items:flex-start;gap:13px;background:linear-gradient(180deg,rgba(226,30,81,.09),rgba(226,30,81,.04));border:1px solid rgba(226,30,81,.28);border-left:4px solid #E21E51;border-radius:12px;padding:16px 18px;margin:0 0 16px;font-family:Lexend,sans-serif;">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E21E51" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+  <div style="display:flex;align-items:flex-start;gap:14px;background:linear-gradient(180deg,rgba(226,30,81,.09),rgba(226,30,81,.04));border:1px solid rgba(226,30,81,.28);border-left:4px solid #E21E51;border-radius:14px;padding:18px 20px;margin:0 0 16px;font-family:Lexend,sans-serif;">
+    <div style="flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:rgba(226,30,81,.12);">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#E21E51" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+    </div>
     <div>
       <div style="font-size:14px;font-weight:700;color:#0d1b3a;margin-bottom:3px;">One package per speaker</div>
       <div style="font-size:13px;color:#6b7280;line-height:1.6;">Each speaker may purchase a media package <strong style="color:#0d1b3a;">only once</strong>. Please review the available packages carefully before completing your purchase &mdash; a speaker cannot be purchased again once an order is placed.</div>
@@ -187,8 +190,10 @@
   </div>
 
   <!-- NOTICE: media library still growing -->
-  <div style="display:flex;align-items:flex-start;gap:13px;background:#fff;border:1px solid rgba(13,27,58,.10);border-radius:12px;padding:16px 18px;margin:0 0 30px;font-family:Lexend,sans-serif;">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0d1b3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;opacity:.55;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+  <div style="display:flex;align-items:flex-start;gap:14px;background:#fff;border:1px solid rgba(13,27,58,.10);border-radius:14px;padding:18px 20px;margin:0 0 30px;font-family:Lexend,sans-serif;">
+    <div style="flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:rgba(13,27,58,.06);">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#0d1b3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.65;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+    </div>
     <div>
       <div style="font-size:14px;font-weight:700;color:#0d1b3a;margin-bottom:3px;">Media library update</div>
       <div style="font-size:13px;color:#6b7280;line-height:1.6;">Our team will continue reviewing, organizing, and improving the Geneva Summit photo library over approximately the next three weeks. Additional and improved media selections may be added during this period.</div>
@@ -421,8 +426,10 @@
   </div>
 
   <!-- COMMERCIAL USE -->
-  <div style="display:flex;align-items:flex-start;gap:13px;background:linear-gradient(180deg,rgba(13,27,58,.05),rgba(13,27,58,.02));border:1px solid rgba(13,27,58,.14);border-left:4px solid #0d1b3a;border-radius:12px;padding:16px 18px;margin:0 0 30px;font-family:Lexend,sans-serif;">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0d1b3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+  <div style="display:flex;align-items:flex-start;gap:14px;background:linear-gradient(180deg,rgba(13,27,58,.05),rgba(13,27,58,.02));border:1px solid rgba(13,27,58,.14);border-left:4px solid #0d1b3a;border-radius:14px;padding:18px 20px;margin:0 0 30px;font-family:Lexend,sans-serif;">
+    <div style="flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:rgba(13,27,58,.08);">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#0d1b3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+    </div>
     <div>
       <div style="font-size:14px;font-weight:700;color:#0d1b3a;margin-bottom:3px;">Commercial use included</div>
       <div style="font-size:13px;color:#6b7280;line-height:1.6;">Purchased media may be used for business, professional, marketing, PR, website, and social media purposes, subject to the licence terms.</div>

@@ -72,6 +72,7 @@ function handle_(e) {
     if (action === 'deliver')     return json_(deliver_(p));
     if (action === 'sendGalleryLink') return json_(sendGalleryLink_(p));
     if (action === 'clearOrders') return json_(clearOrders_(p));
+    if (action === 'clearDeliveries') return json_(clearDeliveries_(p));
     if (action === 'ping')        return json_({ ok: true, pong: true });
     return json_({ ok: false, error: 'Unknown action: ' + action });
   } catch (err) {
@@ -137,6 +138,24 @@ function clearOrders_(p) {
   var last = sheet.getLastRow();
   if (last > 1) sheet.deleteRows(2, last - 1);
   return { ok: true, cleared: Math.max(0, last - 1) };
+}
+
+/* Trashes every per-order delivery folder under DELIVERY_PARENT_ID (reversible —
+ * moves to Drive trash, does not permanently delete). Never touches speaker
+ * master folders. Guarded by ADMIN_KEY, same as clearOrders_. */
+function clearDeliveries_(p) {
+  if (String(p.key || '') !== CONFIG.ADMIN_KEY) return { ok: false, error: 'Bad key' };
+  if (!CONFIG.DELIVERY_PARENT_ID || CONFIG.DELIVERY_PARENT_ID.indexOf('PASTE') === 0) {
+    return { ok: true, cleared: 0 };
+  }
+  var parent = DriveApp.getFolderById(CONFIG.DELIVERY_PARENT_ID);
+  var it = parent.getFolders();
+  var n = 0;
+  while (it.hasNext()) {
+    it.next().setTrashed(true);
+    n++;
+  }
+  return { ok: true, cleared: n };
 }
 
 /* ═══════════════════════════ 2. GET SOLD ═══════════════════════════ */
