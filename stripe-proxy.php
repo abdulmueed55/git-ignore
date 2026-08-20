@@ -275,9 +275,30 @@ if ($action === 'listFolder') {
 if ($action === 'getThumb') {
     $fileId = $_GET['fileId'] ?? '';
     if (!$fileId) { http_response_code(400); exit; }
+    $small = ($_GET['size'] ?? '') === 'small';
 
-    /* Drive thumbnail — try sizes from largest to smallest */
-    $sizes = ['w1200', 'w800', 'w400', 'w200'];
+    /* Disk cache — same file+size is requested over and over (sidebar
+     * rebuilds, repeat gallery visits, multiple buyers of the same speaker).
+     * Serving from disk skips Google Drive entirely and is what actually
+     * fixes the "images take forever" slowness. */
+    $cacheDir = __DIR__ . '/thumb-cache/';
+    if (!is_dir($cacheDir)) @mkdir($cacheDir, 0755, true);
+    $cacheKey  = preg_replace('/[^a-zA-Z0-9_-]/', '', $fileId) . ($small ? '_s' : '_l');
+    $cacheBin  = $cacheDir . $cacheKey . '.bin';
+    $cacheType = $cacheDir . $cacheKey . '.ctype';
+
+    if (is_file($cacheBin) && is_file($cacheType)) {
+        header('Content-Type: ' . trim((string)@file_get_contents($cacheType)));
+        header('Cache-Control: public, max-age=604800, immutable');
+        header('Access-Control-Allow-Origin: *');
+        readfile($cacheBin);
+        exit;
+    }
+
+    /* Small (sidebar/grid thumbnails) only needs a small size — one fast
+     * request instead of cascading through every size. Large (main preview
+     * image) still tries a smaller fallback if the biggest size is slow/down. */
+    $sizes = $small ? ['w400', 'w200'] : ['w1200', 'w800'];
     $imgData = null; $ctype = 'image/jpeg';
     foreach ($sizes as $sz) {
         $url = "https://drive.google.com/thumbnail?id={$fileId}&sz={$sz}";
@@ -286,7 +307,7 @@ if ($action === 'getThumb') {
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_MAXREDIRS      => 5,
-            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_TIMEOUT        => 8,
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_USERAGENT      => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         ]);
@@ -324,8 +345,12 @@ if ($action === 'getThumb') {
         exit;
     }
 
+    /* Best-effort cache write — a failure here must never break the response. */
+    @file_put_contents($cacheBin, $imgData);
+    @file_put_contents($cacheType, $ctype);
+
     header('Content-Type: ' . $ctype);
-    header('Cache-Control: no-store');
+    header('Cache-Control: public, max-age=604800, immutable');
     header('Access-Control-Allow-Origin: *');
     echo $imgData;
     exit;
@@ -385,6 +410,20 @@ if ($action === 'viewOrders' && ($_GET['key']??'') === 'aifod2026') {
         echo '</tr>'; $first=false;
     }
     fclose($fp); echo '</table>';
+    exit;
+}
+
+/* ══ 8a. Clear the thumbnail cache (ADMIN) ══
+ * Visit: stripe-proxy.php?action=clearThumbCache&key=aifod2026
+ * Only needed if a photo is replaced/re-edited in Drive under the same file
+ * ID and the cached copy needs to be dropped so it's re-fetched fresh. */
+if ($action === 'clearThumbCache' && ($_GET['key'] ?? '') === 'aifod2026') {
+    $n = 0;
+    $dir = __DIR__ . '/thumb-cache/';
+    if (is_dir($dir)) {
+        foreach (glob($dir . '*') as $f) { @unlink($f); $n++; }
+    }
+    echo json_encode(['ok'=>true,'cleared'=>$n]);
     exit;
 }
 
