@@ -155,6 +155,7 @@ var SPEAKER_FOLDERS = {
  * full name -> ID list from that collection.
  */
 var SPEAKER_VIDEO_FOLDERS = {
+  'Ayu Indirawanty': '1D51va7qxHVv_ayq0T6c38hvSuI_fwmg5',
   'Abasiama Idaresit': '15-N1qoiCq1hiQeOhw-U9sskLL-2gXznZ',
   'Adina Suciu': '1LJH3gkDfMQlWfspY5ia4HqE1TZGkigSI',
   'Alejandro Castañeira': '1hFG8d3LsfWyAL9mp_JiIOMPmQp_3hOVH',
@@ -164,7 +165,6 @@ var SPEAKER_VIDEO_FOLDERS = {
   'Bernardo Cartoni': '1xvdaOLKvxhsxZa-ykN-ozo4PHZylH0Qv',
   'Craig Gibbs': '1A86ZG0QZCV_G8rXvNHqtlj8gx76ZmCIU',
   'Deniz Şerifoğlu': '1jhUmR9kuExp69C10iK5-FPMdHl8LbwGv',
-  // 'Ayu': '1D51va7qxHVv_ayq0T6c38hvSuI_fwmg5', // unmatched — no "Ayu" in the current speaker roster, confirm full name before adding
 };
 
 /* ── PACKAGE ENTITLEMENTS (single source of truth, mirrors the spec) ─────────
