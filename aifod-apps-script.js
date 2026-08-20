@@ -443,6 +443,30 @@ function esc_(s) {
  * set DELIVERY_PARENT_ID and a real speaker folder, to confirm copy + email
  * work end-to-end. Uses a fake piId so it's easy to delete afterwards.
  */
+/* Run this once (Run ▸ listMasterFolders) to get every speaker folder name +
+ * ID from the master photo collection, ready to paste into SPEAKER_FOLDERS
+ * here, speaker_folders() in stripe-proxy.php, and AP_FOLDERS in the HTML.
+ * View the output in Executions (View ▸ Executions ▸ click this run ▸ Logs).
+ */
+function listMasterFolders() {
+  var MASTER_ID = '1qoC8gjSQknjOIiRxGjaqWaLv9FN36Od3'; // the shared master folder
+  var parent = DriveApp.getFolderById(MASTER_ID);
+  var it = parent.getFolders();
+  var rows = [];
+  while (it.hasNext()) {
+    var f = it.next();
+    rows.push({ name: f.getName(), id: f.getId() });
+  }
+  rows.sort(function (a, b) { return a.name.localeCompare(b.name); });
+
+  Logger.log('Found ' + rows.length + ' folders:\n');
+  rows.forEach(function (r) {
+    // Strip the leading "001 " numbering to get just the speaker name
+    var speaker = r.name.replace(/^\d+\s+/, '');
+    Logger.log("  '" + speaker + "': '" + r.id + "',");
+  });
+}
+
 function testDelivery() {
   var out = deliver_({
     action: 'deliver',
