@@ -39,8 +39,10 @@ var CONFIG = {
  * TODO: add every speaker as  'Speaker Name': 'DRIVE_FOLDER_ID'
  */
 var SPEAKER_FOLDERS = {
-  'Test Speaker':  '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U', // TEST — uses Tianze's folder; remove before live
-  'Tianze Zhang':  '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U'
+  'Test Speaker':   '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U', // TEST — uses Tianze's folder; remove before live
+  'Tianze Zhang':   '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U',
+  'Tšiu Khathibe':  '1fOhPqeFXqatfCgtZsuLQZuc-kxEP7FGz',
+  'Kiyoshi Adachi': '17BYsmIhQx5b9R_MC1TZEzNivG7ERM-Du'
   // 'Fredrik Kocon': '...',
   // 'Valerie Pelton': '...',
 };

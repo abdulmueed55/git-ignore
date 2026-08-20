@@ -47,8 +47,10 @@ function pkg_info($name) {
  */
 function speaker_folders() {
     return [
-        'Test Speaker'  => '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U', // TEST — uses Tianze's folder; remove before live
-        'Tianze Zhang'  => '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U',
+        'Test Speaker'   => '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U', // TEST — uses Tianze's folder; remove before live
+        'Tianze Zhang'   => '1j_MWqd6dS7qhAyReOWq-K2swFt4FRj7U',
+        'Tšiu Khathibe'  => '1fOhPqeFXqatfCgtZsuLQZuc-kxEP7FGz',
+        'Kiyoshi Adachi' => '17BYsmIhQx5b9R_MC1TZEzNivG7ERM-Du',
         // 'Fredrik Kocon' => '...',
     ];
 }
