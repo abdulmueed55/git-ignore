@@ -67,6 +67,12 @@ if ($action === 'createIntent') {
         echo json_encode(['ok'=>false,'error'=>'Missing fields']); exit;
     }
 
+    /* One package per speaker — enforced server-side so a stale/tampered
+     * front-end can never start a second payment for an already-sold speaker. */
+    if ($speakerName && speaker_already_sold($speakerName)) {
+        echo json_encode(['ok'=>false,'error'=>'This speaker\'s package has already been purchased.']); exit;
+    }
+
     $result = stripe_call('POST', '/v1/payment_intents', [
         'amount'                => $amount * 100,
         'currency'              => 'eur',
@@ -455,6 +461,22 @@ if ($action === 'saveSelection') {
 echo json_encode(['ok'=>false,'error'=>'Unknown action: '.$action]);
 
 /* ═══════════════════════════ HELPERS ═══════════════════════════ */
+
+/* ── One-package-per-speaker check: any 'Paid' row for this speaker in the
+ *    orders CSV? Used by createIntent to block a duplicate purchase. ── */
+function speaker_already_sold($speakerName) {
+    if ($speakerName === '' || !file_exists(ORDERS_FILE)) return false;
+    $fp = fopen(ORDERS_FILE, 'r');
+    fgetcsv($fp); // header
+    while (($row = fgetcsv($fp)) !== false) {
+        if (isset($row[3]) && trim($row[3]) === $speakerName && ($row[4] ?? '') === 'Paid') {
+            fclose($fp);
+            return true;
+        }
+    }
+    fclose($fp);
+    return false;
+}
 
 /* ── Stripe ── */
 function stripe_call($method, $path, $data=[]) {
