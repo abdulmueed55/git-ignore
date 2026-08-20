@@ -157,6 +157,18 @@ function speaker_folders() {
     ];
 }
 
+/* ── SPEAKER → VIDEO DRIVE FOLDER ────────────────────────────────────────────
+ * Separate collection from speaker_folders() above — videos live in their own
+ * per-speaker folder tree (Siphiwe's collection), not mixed in with photos.
+ * Keep in sync with SPEAKER_VIDEO_FOLDERS in aifod-apps-script.js and
+ * AP_VIDEO_FOLDERS in the sales-page HTML.
+ */
+function speaker_video_folders() {
+    return [
+        // 'Speaker Name' => 'DRIVE_VIDEO_FOLDER_ID',
+    ];
+}
+
 $action = $_GET['action'] ?? '';
 
 /* ══ 1. Create Payment Intent ══ */
@@ -255,18 +267,41 @@ if ($action === 'getSold') {
     exit;
 }
 
-/* ══ 4. List Drive Folder Files ══ */
+/* ══ 4. List Drive Folder Files ══
+ * Photos and videos now live in two SEPARATE per-speaker folder trees, so this
+ * resolves both for the given speaker and merges the results. `folderId` is
+ * kept as a fallback (photos only) for any old caller that still uses it. */
 if ($action === 'listFolder') {
+    $speaker  = trim($_GET['speaker']  ?? '');
     $folderId = $_GET['folderId'] ?? '';
-    if (!$folderId) { echo json_encode(['ok'=>false,'error'=>'No folderId']); exit; }
 
-    $res = drive_list($folderId);
     $images = []; $videos = [];
-    foreach ($res as $f) {
-        $mime = $f['mimeType'] ?? '';
-        if (strpos($mime, 'image/') === 0)      $images[] = $f['id'];
-        elseif (strpos($mime, 'video/') === 0)  $videos[] = $f['id'];
+
+    if ($speaker !== '') {
+        $photoId = speaker_folders()[$speaker] ?? '';
+        $videoId = speaker_video_folders()[$speaker] ?? '';
+        if (!$photoId && !$videoId) { echo json_encode(['ok'=>false,'error'=>'No folder for speaker']); exit; }
+
+        if ($photoId) {
+            foreach (drive_list($photoId) as $f) {
+                if (strpos($f['mimeType'] ?? '', 'image/') === 0) $images[] = $f['id'];
+            }
+        }
+        if ($videoId) {
+            foreach (drive_list($videoId) as $f) {
+                if (strpos($f['mimeType'] ?? '', 'video/') === 0) $videos[] = $f['id'];
+            }
+        }
+    } elseif ($folderId) {
+        foreach (drive_list($folderId) as $f) {
+            $mime = $f['mimeType'] ?? '';
+            if (strpos($mime, 'image/') === 0)      $images[] = $f['id'];
+            elseif (strpos($mime, 'video/') === 0)  $videos[] = $f['id'];
+        }
+    } else {
+        echo json_encode(['ok'=>false,'error'=>'No speaker or folderId']); exit;
     }
+
     echo json_encode(['ok'=>true,'images'=>$images,'videos'=>$videos]);
     exit;
 }
@@ -522,16 +557,20 @@ if ($action === 'getGalleryFiles') {
     if (!file_exists($f)) { echo json_encode(['ok'=>false,'error'=>'Invalid token']); exit; }
     $data = json_decode(file_get_contents($f), true);
     $spk  = $data['speakerName'] ?? '';
-    $folders  = speaker_folders();
-    $folderId = $folders[$spk] ?? '';
-    if (!$folderId) { echo json_encode(['ok'=>false,'error'=>'No folder for speaker']); exit; }
+    $photoId = speaker_folders()[$spk] ?? '';
+    $videoId = speaker_video_folders()[$spk] ?? '';
+    if (!$photoId && !$videoId) { echo json_encode(['ok'=>false,'error'=>'No folder for speaker']); exit; }
 
-    $files  = drive_list($folderId, 200);
     $images = []; $videos = [];
-    foreach ($files as $fi) {
-        $mime = $fi['mimeType'] ?? '';
-        if (strpos($mime,'image/')===0) $images[] = ['id'=>$fi['id'],'name'=>$fi['name']];
-        elseif (strpos($mime,'video/')===0) $videos[] = ['id'=>$fi['id'],'name'=>$fi['name']];
+    if ($photoId) {
+        foreach (drive_list($photoId, 200) as $fi) {
+            if (strpos($fi['mimeType'] ?? '', 'image/') === 0) $images[] = ['id'=>$fi['id'],'name'=>$fi['name']];
+        }
+    }
+    if ($videoId) {
+        foreach (drive_list($videoId, 200) as $fi) {
+            if (strpos($fi['mimeType'] ?? '', 'video/') === 0) $videos[] = ['id'=>$fi['id'],'name'=>$fi['name']];
+        }
     }
     $info  = pkg_info($data['pkg'] ?? '');
     $limit = $info ? $info['limit'] : null;

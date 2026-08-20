@@ -147,6 +147,17 @@ var SPEAKER_FOLDERS = {
   'Velynne Ji': '1muQe6IY-vTQzgjT0sdhxqBD7NYHHRShO'
 };
 
+/* ── SPEAKER → VIDEO DRIVE FOLDER ─────────────────────────────────────────────
+ * Separate collection from SPEAKER_FOLDERS above — videos live in their own
+ * per-speaker folder tree (Siphiwe's collection), not mixed in with photos.
+ * Keep in sync with speaker_video_folders() in stripe-proxy.php and
+ * AP_VIDEO_FOLDERS in the sales-page HTML. Run ▸ listVideoFolders to get the
+ * full name -> ID list from that collection.
+ */
+var SPEAKER_VIDEO_FOLDERS = {
+  // 'Speaker Name': 'DRIVE_VIDEO_FOLDER_ID',
+};
+
 /* ── PACKAGE ENTITLEMENTS (single source of truth, mirrors the spec) ─────────
  *   limit  : selection_limit — a number means "buyer selects", null means
  *            skip selection and deliver everything they're entitled to.
@@ -303,13 +314,24 @@ function deliver_(p) {
     return { ok: false, error: 'DELIVERY_PARENT_ID not configured' };
   }
 
-  var sourceId = SPEAKER_FOLDERS[speaker];
-  if (!sourceId && (ent.photos === 'all' || ent.photos === 'limited' || ent.video)) {
-    notifyTeam_('⚠️ Missing speaker folder',
+  var sourceId      = SPEAKER_FOLDERS[speaker];        // photos
+  var videoSourceId = SPEAKER_VIDEO_FOLDERS[speaker];  // videos — separate collection
+  var needsPhotos = (ent.photos === 'all' || ent.photos === 'limited');
+  var needsVideo  = ent.video;
+
+  if (needsPhotos && !sourceId) {
+    notifyTeam_('⚠️ Missing speaker photo folder',
       'Paid order for "' + speaker + '" (' + pkg + ') cannot be delivered — no ' +
-      'source folder mapped in SPEAKER_FOLDERS.\nBuyer: ' + buyerName +
+      'photo folder mapped in SPEAKER_FOLDERS.\nBuyer: ' + buyerName +
       ' <' + buyerEmail + '>');
-    return { ok: false, error: 'No source folder for speaker: ' + speaker };
+    return { ok: false, error: 'No photo source folder for speaker: ' + speaker };
+  }
+  if (needsVideo && !videoSourceId) {
+    notifyTeam_('⚠️ Missing speaker video folder',
+      'Paid order for "' + speaker + '" (' + pkg + ') cannot be delivered — no ' +
+      'video folder mapped in SPEAKER_VIDEO_FOLDERS.\nBuyer: ' + buyerName +
+      ' <' + buyerEmail + '>');
+    return { ok: false, error: 'No video source folder for speaker: ' + speaker };
   }
 
   var parent = DriveApp.getFolderById(CONFIG.DELIVERY_PARENT_ID);
@@ -328,10 +350,8 @@ function deliver_(p) {
 
   var counts = { photos: 0, videos: 0 };
 
-  if (ent.photos !== 'none' || ent.video) {
+  if (needsPhotos) {
     var src = DriveApp.getFolderById(sourceId);
-
-    // Photos
     if (ent.photos === 'all') {
       var pf = orderFolder.createFolder('Photos');
       counts.photos = copyByType_(src, pf, 'image/');
@@ -339,12 +359,12 @@ function deliver_(p) {
       var pf2 = orderFolder.createFolder('Photos');
       counts.photos = copySelected_(selection, sourceId, pf2, ent.limit);
     }
+  }
 
-    // Videos
-    if (ent.video) {
-      var vf = orderFolder.createFolder('Videos');
-      counts.videos = copyByType_(src, vf, 'video/');
-    }
+  if (needsVideo) {
+    var vsrc = DriveApp.getFolderById(videoSourceId);
+    var vf = orderFolder.createFolder('Videos');
+    counts.videos = copyByType_(vsrc, vf, 'video/');
   }
 
   // Share the per-order folder only (never the master).
@@ -549,7 +569,7 @@ function esc_(s) {
  * View the output in Executions (View ▸ Executions ▸ click this run ▸ Logs).
  */
 function listMasterFolders() {
-  var MASTER_ID = '1qoC8gjSQknjOIiRxGjaqWaLv9FN36Od3'; // the shared master folder
+  var MASTER_ID = '1qoC8gjSQknjOIiRxGjaqWaLv9FN36Od3'; // the shared master PHOTO folder
   var parent = DriveApp.getFolderById(MASTER_ID);
   var it = parent.getFolders();
   var rows = [];
@@ -561,8 +581,31 @@ function listMasterFolders() {
 
   Logger.log('Found ' + rows.length + ' folders:\n');
   rows.forEach(function (r) {
-    // Strip the leading "001 " numbering to get just the speaker name
-    var speaker = r.name.replace(/^\d+\s+/, '');
+    // Strip the leading "001 " / "001_" numbering to get just the speaker name
+    var speaker = r.name.replace(/^\d+[\s_]+/, '');
+    Logger.log("  '" + speaker + "': '" + r.id + "',");
+  });
+}
+
+/* Same as listMasterFolders but for Siphiwe's VIDEO collection (separate
+ * folder tree from the photo one — each speaker's video folder lives here).
+ * Run ▸ listVideoFolders, then View ▸ Executions ▸ open the run ▸ Logs.
+ */
+function listVideoFolders() {
+  var MASTER_ID = '11DVsziW0hM_6jJL82OZKCMjRFVjl3DQm'; // the shared master VIDEO folder
+  var parent = DriveApp.getFolderById(MASTER_ID);
+  var it = parent.getFolders();
+  var rows = [];
+  while (it.hasNext()) {
+    var f = it.next();
+    rows.push({ name: f.getName(), id: f.getId() });
+  }
+  rows.sort(function (a, b) { return a.name.localeCompare(b.name); });
+
+  Logger.log('Found ' + rows.length + ' video folders:\n');
+  rows.forEach(function (r) {
+    // Strip the leading "018_" / "018 " numbering to get just the speaker name
+    var speaker = r.name.replace(/^\d+[\s_]+/, '');
     Logger.log("  '" + speaker + "': '" + r.id + "',");
   });
 }
