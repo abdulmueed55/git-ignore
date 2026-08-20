@@ -407,21 +407,55 @@ if ($action === 'streamVideo') {
 
     $url = "https://www.googleapis.com/drive/v3/files/{$fileId}?alt=media&key=" . DRIVE_API_KEY;
 
-    $ch = curl_init($url);
-    curl_setopt_array($ch,[
-        CURLOPT_RETURNTRANSFER=>true,CURLOPT_FOLLOWLOCATION=>true,
-        CURLOPT_MAXREDIRS=>5,CURLOPT_TIMEOUT=>60,CURLOPT_SSL_VERIFYPEER=>false,
-        CURLOPT_USERAGENT=>'Mozilla/5.0 AIFOD-Proxy/1.0',
-    ]);
-    $data = curl_exec($ch);
-    $ct   = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-    curl_close($ch);
+    /* Forward the browser's Range request so <video> can seek and start
+     * playback before the whole file arrives — without this, browsers get
+     * an unseekable, all-or-nothing response and often refuse to play it. */
+    $reqHeaders = ['User-Agent: Mozilla/5.0 AIFOD-Proxy/1.0'];
+    if (!empty($_SERVER['HTTP_RANGE'])) $reqHeaders[] = 'Range: ' . $_SERVER['HTTP_RANGE'];
 
-    if (!$data) { http_response_code(502); exit; }
-    header('Content-Type: ' . ($ct ?: 'video/mp4'));
-    header('Cache-Control: no-store');
-    header('Content-Disposition: inline');
-    echo $data;
+    $statusCode   = 200;
+    $contentType  = 'video/mp4';
+    $contentLen   = null;
+    $contentRange = null;
+    $headersSent  = false;
+
+    while (ob_get_level() > 0) ob_end_clean(); /* disable output buffering so flush() really streams */
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => false, /* stream straight through instead of buffering the whole video in memory */
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_MAXREDIRS      => 5,
+        CURLOPT_CONNECTTIMEOUT => 15,
+        CURLOPT_TIMEOUT        => 0, /* no cap on total transfer time — large videos stream progressively */
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_HTTPHEADER     => $reqHeaders,
+        CURLOPT_HEADERFUNCTION => function ($curl, $header) use (&$statusCode, &$contentType, &$contentLen, &$contentRange) {
+            $t = trim($header);
+            if (preg_match('#^HTTP/\S+\s+(\d+)#', $t, $m))       $statusCode   = (int)$m[1];
+            elseif (stripos($t, 'content-type:') === 0)          $contentType  = trim(substr($t, 13));
+            elseif (stripos($t, 'content-length:') === 0)        $contentLen   = trim(substr($t, 15));
+            elseif (stripos($t, 'content-range:') === 0)          $contentRange = trim(substr($t, 14));
+            return strlen($header);
+        },
+        CURLOPT_WRITEFUNCTION => function ($curl, $chunk) use (&$headersSent, &$statusCode, &$contentType, &$contentLen, &$contentRange) {
+            if (!$headersSent) {
+                $headersSent = true;
+                http_response_code($statusCode === 206 ? 206 : 200);
+                header('Content-Type: ' . $contentType);
+                header('Accept-Ranges: bytes');
+                header('Cache-Control: public, max-age=86400');
+                if ($contentLen)   header('Content-Length: ' . $contentLen);
+                if ($contentRange) header('Content-Range: ' . $contentRange);
+            }
+            echo $chunk;
+            flush();
+            return strlen($chunk);
+        },
+    ]);
+    curl_exec($ch);
+    if (!$headersSent) http_response_code(502);
+    curl_close($ch);
     exit;
 }
 
