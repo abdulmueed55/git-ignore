@@ -313,15 +313,19 @@ if ($action === 'listFolder') {
         $videoId = speaker_video_folders()[$speaker] ?? '';
         if (!$photoId && !$videoId) { echo json_encode(['ok'=>false,'error'=>'No folder for speaker']); exit; }
 
-        if ($photoId) {
-            foreach (drive_list_deep($photoId) as $f) {
+        $cacheKey = 'lf_' . md5($photoId . '|' . $videoId);
+        $cached   = list_cache_get($cacheKey);
+        if ($cached) {
+            $images = $cached['images']; $videos = $cached['videos'];
+        } else {
+            $lists = drive_list_deep_multi([$photoId, $videoId]);
+            foreach ($lists[$photoId] ?? [] as $f) {
                 if (strpos($f['mimeType'] ?? '', 'image/') === 0) $images[] = $f['id'];
             }
-        }
-        if ($videoId) {
-            foreach (drive_list_deep($videoId) as $f) {
+            foreach ($lists[$videoId] ?? [] as $f) {
                 if (strpos($f['mimeType'] ?? '', 'video/') === 0) $videos[] = $f['id'];
             }
+            list_cache_put($cacheKey, ['images'=>$images,'videos'=>$videos]);
         }
     } elseif ($folderId) {
         foreach (drive_list($folderId) as $f) {
@@ -513,15 +517,17 @@ if ($action === 'viewOrders' && ($_GET['key']??'') === 'aifod2026') {
     exit;
 }
 
-/* ══ 8a. Clear the thumbnail cache (ADMIN) ══
+/* ══ 8a. Clear the thumbnail + folder-listing cache (ADMIN) ══
  * Visit: stripe-proxy.php?action=clearThumbCache&key=aifod2026
- * Only needed if a photo is replaced/re-edited in Drive under the same file
- * ID and the cached copy needs to be dropped so it's re-fetched fresh. */
+ * Needed if a photo/video is replaced under the same file ID, or if new
+ * media was just uploaded and you don't want to wait out the 10-min
+ * folder-listing cache. */
 if ($action === 'clearThumbCache' && ($_GET['key'] ?? '') === 'aifod2026') {
     $n = 0;
-    $dir = __DIR__ . '/thumb-cache/';
-    if (is_dir($dir)) {
-        foreach (glob($dir . '*') as $f) { @unlink($f); $n++; }
+    foreach ([__DIR__ . '/thumb-cache/', __DIR__ . '/list-cache/'] as $dir) {
+        if (is_dir($dir)) {
+            foreach (glob($dir . '*') as $f) { @unlink($f); $n++; }
+        }
     }
     echo json_encode(['ok'=>true,'cleared'=>$n]);
     exit;
@@ -627,15 +633,19 @@ if ($action === 'getGalleryFiles') {
     if (!$photoId && !$videoId) { echo json_encode(['ok'=>false,'error'=>'No folder for speaker']); exit; }
 
     $images = []; $videos = [];
-    if ($photoId) {
-        foreach (drive_list_deep($photoId, 200) as $fi) {
+    $cacheKey = 'gf_' . md5($photoId . '|' . $videoId);
+    $cached   = list_cache_get($cacheKey);
+    if ($cached) {
+        $images = $cached['images']; $videos = $cached['videos'];
+    } else {
+        $lists = drive_list_deep_multi([$photoId, $videoId], 200);
+        foreach ($lists[$photoId] ?? [] as $fi) {
             if (strpos($fi['mimeType'] ?? '', 'image/') === 0) $images[] = ['id'=>$fi['id'],'name'=>$fi['name']];
         }
-    }
-    if ($videoId) {
-        foreach (drive_list_deep($videoId, 200) as $fi) {
+        foreach ($lists[$videoId] ?? [] as $fi) {
             if (strpos($fi['mimeType'] ?? '', 'video/') === 0) $videos[] = ['id'=>$fi['id'],'name'=>$fi['name']];
         }
+        list_cache_put($cacheKey, ['images'=>$images,'videos'=>$videos]);
     }
     $info  = pkg_info($data['pkg'] ?? '');
     $limit = $info ? $info['limit'] : null;
@@ -772,6 +782,82 @@ function drive_list_deep($folderId, $pageSize = 200) {
         }
     }
     return $out;
+}
+
+/* ── Drive: list several folders CONCURRENTLY (curl_multi) instead of one
+ * request after another. Preview/gallery need both a speaker's photo folder
+ * AND their separate video folder — fetching them one at a time doubled the
+ * wait before anything showed up. Returns [folderId => files[]]. ── */
+function drive_list_multi($folderIds, $pageSize = 200) {
+    $folderIds = array_values(array_unique(array_filter($folderIds)));
+    $out = [];
+    if (!$folderIds) return $out;
+    $mh = curl_multi_init();
+    $handles = [];
+    foreach ($folderIds as $fid) {
+        $q   = urlencode("'" . $fid . "' in parents and trashed=false");
+        $url = "https://www.googleapis.com/drive/v3/files?q={$q}&fields=files(id,name,mimeType)&pageSize={$pageSize}&key=" . DRIVE_API_KEY;
+        $ch  = curl_init($url);
+        curl_setopt_array($ch,[CURLOPT_RETURNTRANSFER=>true,CURLOPT_FOLLOWLOCATION=>true,CURLOPT_TIMEOUT=>15,CURLOPT_SSL_VERIFYPEER=>false]);
+        curl_multi_add_handle($mh, $ch);
+        $handles[$fid] = $ch;
+    }
+    $running = null;
+    do { curl_multi_exec($mh, $running); if ($running > 0) curl_multi_select($mh); } while ($running > 0);
+    foreach ($handles as $fid => $ch) {
+        $resp = curl_multi_getcontent($ch);
+        $out[$fid] = json_decode($resp, true)['files'] ?? [];
+        curl_multi_remove_handle($mh, $ch);
+        curl_close($ch);
+    }
+    curl_multi_close($mh);
+    return $out;
+}
+
+/* ── Same one-level subfolder recursion as drive_list_deep(), but for several
+ * top-level folders at once, batched into at most 2 concurrent round trips
+ * total (one for the top-level folders, one for any subfolders found)
+ * instead of 2 sequential round trips PER folder. ── */
+function drive_list_deep_multi($folderIds, $pageSize = 200) {
+    $direct = drive_list_multi($folderIds, $pageSize);
+    $subIds = [];
+    foreach ($direct as $items) {
+        foreach ($items as $it) {
+            if (($it['mimeType'] ?? '') === 'application/vnd.google-apps.folder') $subIds[] = $it['id'];
+        }
+    }
+    $deep = $subIds ? drive_list_multi($subIds, $pageSize) : [];
+    $out = [];
+    foreach ($folderIds as $fid) {
+        $files = [];
+        foreach ($direct[$fid] ?? [] as $it) {
+            if (($it['mimeType'] ?? '') === 'application/vnd.google-apps.folder') {
+                foreach ($deep[$it['id']] ?? [] as $sub) $files[] = $sub;
+            } else {
+                $files[] = $it;
+            }
+        }
+        $out[$fid] = $files;
+    }
+    return $out;
+}
+
+/* ── Short-lived disk cache for a speaker's photo+video file-ID lists.
+ * The Drive round trip (even parallelized) still costs real network time on
+ * every preview open; caching it means re-opening the same speaker (very
+ * common while browsing/testing) is instant. 10 min is long enough to help,
+ * short enough that newly-uploaded media shows up without a manual clear. ── */
+function list_cache_get($key) {
+    $f = __DIR__ . '/list-cache/' . $key . '.json';
+    if (!file_exists($f)) return null;
+    if (time() - filemtime($f) > 600) return null;
+    $d = json_decode(file_get_contents($f), true);
+    return is_array($d) ? $d : null;
+}
+function list_cache_put($key, $data) {
+    $dir = __DIR__ . '/list-cache/';
+    if (!is_dir($dir)) @mkdir($dir, 0775, true);
+    @file_put_contents($dir . $key . '.json', json_encode($data));
 }
 
 /* ── Apps Script call with retry + failure log (fixes orders not reaching the
