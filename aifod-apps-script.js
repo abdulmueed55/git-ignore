@@ -218,6 +218,10 @@ var SPEAKER_VIDEO_FOLDERS = {
   'Ivana Brutenic': '14lb9ia2FO8_tB_49fyRnd0O7mcmi1q-0',
   'Ivica Srncevic': '1NeXZtBfVQI26Ml7agWqGoQPF2SMBDm9P',
   'Yogesh Gupta': '1wsj8fAHwG1dpTf2rbPvXN6SXCEPFzLxd',
+  'Hesti Aryani': '1p0263_Aj_9E0DsiuNjG_oU2aB9PWVzGD',
+  'Joanne Sweeney': '1wczbXBqIW6YU5JJ-2xmpnVTqB19wS4yV',
+  'Wilhelm Loderer': '1PbCckXhARJ7e4PADBGoNVgtpigxQc9Rq',
+  'Wolfgang Pinegger': '1yBoTx68RtSsSb4Xds6GfsH7FhAQB7XEe',
 };
 
 /* ── PACKAGE ENTITLEMENTS (single source of truth, mirrors the spec) ─────────
