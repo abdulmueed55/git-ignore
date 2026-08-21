@@ -144,7 +144,9 @@ var SPEAKER_FOLDERS = {
   'Philip Leaper': '1v6AAd9CoHKEJcqkUJ-YWyrIihQtq3TfO',
   'Tijn van der Zant': '1VjKQReqZJUyIjJxx9MkzAY3VuV3C1T6q',
   'Wolfgang Pinegger': '128rQksdJOzppB13Fc7xwWj_sdnQpp0-E',
-  'Velynne Ji': '1muQe6IY-vTQzgjT0sdhxqBD7NYHHRShO'
+  'Velynne Ji': '1muQe6IY-vTQzgjT0sdhxqBD7NYHHRShO',
+  'Yogesh Gupta': '121z85HFDEJCXNBpzLO7JFIAWKi3AvyYz',
+  'Wilhelm Loderer': '1l87jGNOE5Og-3xgiPFqTOi8vVLcu8Cwe'
 };
 
 /* ── SPEAKER → VIDEO DRIVE FOLDER ─────────────────────────────────────────────
@@ -187,6 +189,15 @@ var SPEAKER_VIDEO_FOLDERS = {
   'Joy-Marie King': '1ZmFxGGylGNLpp2lu_7nDamCNsariYyJk',
   'Chet Greene': '1dI5632WTsEqvPTNPzfn2gyo-ghzSHYIu',
   'Jon Ray': '1XkWgkZvGAOHUP1ecKgT_8C_yaLdriYg_',
+  'David Williams': '1-g-Wva4H0PnTSqUorfuQVO4Sria_1YJS',
+  'Derrick Davis': '1syjgbFr8TwdteoLGa_3P8Va6Vlt8VmIt',
+  'Dimitri Boylan': '1Mg-nBcIW1TXl6Xdw3cvVUTaGQR_fumvW',
+  'Elżbieta Deja': '1OqrnhiAF8Q7_OSHqaTTH-hrh87zF9jDa',
+  'Eric Famanas': '1fQ9BAPq_T2Fv4y2ZnSr7Hw17OgpGEg04',
+  'Ezekiel Barclay Pajibo': '1GAfcRRL5H7siLuPO_UNw1Xc2f_DvPN4d',
+  'Fabrizio Degni': '1nMMoU12Y1PLKjSJ_41FJVtudxVYs88IN',
+  'Frederic Emane': '1n4ca6xtdCT_WFSuNlAqwEQq6Vy9O6ahx',
+  'Frédéric Jallat': '1epYzKtFFB3OaNoL_0ixNiZdlvOoUc-1M',
 };
 
 /* ── PACKAGE ENTITLEMENTS (single source of truth, mirrors the spec) ─────────
