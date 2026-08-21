@@ -185,6 +185,8 @@ var SPEAKER_VIDEO_FOLDERS = {
   'John Hemery': '1FT-EcDVVGFc667cGDK0iMFe5Q8iC78CD',
   'Jon-Hans Coetzer': '1Hz1Ply9aOkPO-JvnEXa04myymA0uKQtm',
   'Joy-Marie King': '1ZmFxGGylGNLpp2lu_7nDamCNsariYyJk',
+  'Chet Greene': '1dI5632WTsEqvPTNPzfn2gyo-ghzSHYIu',
+  'Jon Ray': '1XkWgkZvGAOHUP1ecKgT_8C_yaLdriYg_',
 };
 
 /* ── PACKAGE ENTITLEMENTS (single source of truth, mirrors the spec) ─────────
