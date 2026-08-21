@@ -7,8 +7,21 @@
  *    recordOrder   → append the paid order to the Google Sheet
  *    getSold       → return the list of speakers already sold
  *    deliver       → build the per-order delivery folder, copy the entitled
- *                    files in, share it, and email the buyer + the team
+ *                    files in, share it, and email the buyer + the team.
+ *                    If a speaker's photo or video folder isn't mapped yet,
+ *                    this delivers whatever IS available now and marks the
+ *                    order "pending" — see retryPendingDeliveries below.
  *    ping          → health check
+ *
+ *  PRE-ORDER / AUTO-DELIVER-LATER:
+ *  A purchase for a speaker whose photos or video aren't uploaded yet is
+ *  still accepted — the buyer gets what's ready immediately plus a notice
+ *  that the rest is on its way, no action needed from them. Once you add the
+ *  missing folder to SPEAKER_FOLDERS / SPEAKER_VIDEO_FOLDERS (and redeploy),
+ *  retryPendingDeliveries() finishes the order automatically and emails the
+ *  buyer again. RUN ONCE: Run ▸ installPendingDeliveryTrigger — schedules
+ *  retryPendingDeliveries to run every 2 hours by itself. You never have to
+ *  trigger it manually.
  *
  *  After ANY edit here you MUST redeploy:
  *    Deploy ▸ Manage deployments ▸ (edit) ▸ Version: New version ▸ Deploy
@@ -356,43 +369,43 @@ function deliver_(p) {
     return { ok: false, error: 'DELIVERY_PARENT_ID not configured' };
   }
 
-  var sourceId      = SPEAKER_FOLDERS[speaker];        // photos
-  var videoSourceId = SPEAKER_VIDEO_FOLDERS[speaker];  // videos — separate collection
-  var needsPhotos = (ent.photos === 'all' || ent.photos === 'limited');
-  var needsVideo  = ent.video;
-
-  if (needsPhotos && !sourceId) {
-    notifyTeam_('⚠️ Missing speaker photo folder',
-      'Paid order for "' + speaker + '" (' + pkg + ') cannot be delivered — no ' +
-      'photo folder mapped in SPEAKER_FOLDERS.\nBuyer: ' + buyerName +
-      ' <' + buyerEmail + '>');
-    return { ok: false, error: 'No photo source folder for speaker: ' + speaker };
-  }
-  if (needsVideo && !videoSourceId) {
-    notifyTeam_('⚠️ Missing speaker video folder',
-      'Paid order for "' + speaker + '" (' + pkg + ') cannot be delivered — no ' +
-      'video folder mapped in SPEAKER_VIDEO_FOLDERS.\nBuyer: ' + buyerName +
-      ' <' + buyerEmail + '>');
-    return { ok: false, error: 'No video source folder for speaker: ' + speaker };
-  }
-
   var parent = DriveApp.getFolderById(CONFIG.DELIVERY_PARENT_ID);
 
   // ── Idempotency: one order folder per piId (tagged in the description) ──
   var existing = findOrderFolder_(parent, piId);
   if (existing) {
-    return { ok: true, alreadyDelivered: true,
-             folderUrl: existing.getUrl(), folderId: existing.getId() };
+    var existingMeta = parseOrderDesc_(existing.getDescription());
+    if (!existingMeta.pending) {
+      return { ok: true, alreadyDelivered: true,
+               folderUrl: existing.getUrl(), folderId: existing.getId() };
+    }
+    // A prior partial delivery is waiting on missing media — see if it's
+    // ready now instead of silently treating this as already-done.
+    return topUpDelivery_(existing, existingMeta);
   }
+
+  var sourceId      = SPEAKER_FOLDERS[speaker];        // photos
+  var videoSourceId = SPEAKER_VIDEO_FOLDERS[speaker];  // videos — separate collection
+  var needsPhotos = (ent.photos === 'all' || ent.photos === 'limited');
+  var needsVideo  = ent.video;
+
+  var havePhotos = needsPhotos && !!sourceId;
+  var haveVideo  = needsVideo && !!videoSourceId;
+  var pending = [];
+  if (needsPhotos && !havePhotos) pending.push('photos');
+  if (needsVideo  && !haveVideo)  pending.push('video');
 
   var seq = nextOrderNo_();
   var orderName = 'AIFOD-MEDIA-2026-' + seq + '_' + safeName_(speaker);
   var orderFolder = parent.createFolder(orderName);
-  orderFolder.setDescription('piId=' + piId + '|pkg=' + pkg + '|buyer=' + buyerEmail);
+  orderFolder.setDescription(buildOrderDesc_({
+    piId: piId, pkg: pkg, speaker: speaker, buyerName: buyerName,
+    buyerEmail: buyerEmail, selection: selection.join(','), pending: pending.join(',')
+  }));
 
   var counts = { photos: 0, videos: 0 };
 
-  if (needsPhotos) {
+  if (havePhotos) {
     var src = DriveApp.getFolderById(sourceId);
     if (ent.photos === 'all') {
       var pf = orderFolder.createFolder('Photos');
@@ -403,7 +416,7 @@ function deliver_(p) {
     }
   }
 
-  if (needsVideo) {
+  if (haveVideo) {
     var vsrc = DriveApp.getFolderById(videoSourceId);
     var vf = orderFolder.createFolder('Videos');
     counts.videos = copyByType_(vsrc, vf, 'video/');
@@ -417,16 +430,144 @@ function deliver_(p) {
   var folderUrl = orderFolder.getUrl();
 
   if (buyerEmail) {
-    sendDeliveryEmail_(buyerEmail, buyerName, speaker, pkg, folderUrl, counts);
+    sendDeliveryEmail_(buyerEmail, buyerName, speaker, pkg, folderUrl, counts, pending);
   }
-  notifyTeam_('✅ Delivery ready: ' + orderName,
-    'Package : ' + pkg + '\nSpeaker : ' + speaker +
-    '\nBuyer   : ' + buyerName + ' <' + buyerEmail + '>' +
-    '\nPhotos  : ' + counts.photos + '\nVideos  : ' + counts.videos +
-    '\nFolder  : ' + folderUrl + '\nOrder   : ' + orderName);
+  if (pending.length) {
+    notifyTeam_('⏳ Partial delivery (awaiting ' + pending.join(' + ') + '): ' + orderName,
+      'Package : ' + pkg + '\nSpeaker : ' + speaker +
+      '\nBuyer   : ' + buyerName + ' <' + buyerEmail + '>' +
+      '\nPhotos  : ' + counts.photos + '\nVideos  : ' + counts.videos +
+      '\nPending : ' + pending.join(', ') +
+      '\nFolder  : ' + folderUrl + '\nOrder   : ' + orderName +
+      '\n\nretryPendingDeliveries() will finish this automatically once the ' +
+      'missing media is uploaded — no manual action needed.');
+  } else {
+    notifyTeam_('✅ Delivery ready: ' + orderName,
+      'Package : ' + pkg + '\nSpeaker : ' + speaker +
+      '\nBuyer   : ' + buyerName + ' <' + buyerEmail + '>' +
+      '\nPhotos  : ' + counts.photos + '\nVideos  : ' + counts.videos +
+      '\nFolder  : ' + folderUrl + '\nOrder   : ' + orderName);
+  }
 
   return { ok: true, folderUrl: folderUrl, folderId: orderFolder.getId(),
-           order: orderName, photos: counts.photos, videos: counts.videos };
+           order: orderName, photos: counts.photos, videos: counts.videos,
+           pending: pending };
+}
+
+/* ── Order-folder description: a tiny key=value|key=value store so a partial
+ * delivery carries everything a later retry needs (Apps Script has no access
+ * to the PHP server's gallery-tokens files, so this has to live in Drive). ── */
+function buildOrderDesc_(f) {
+  return ['piId', 'pkg', 'speaker', 'buyerName', 'buyerEmail', 'selection', 'pending']
+    .map(function (k) { return k + '=' + String(f[k] || '').replace(/[|=]/g, ' '); })
+    .join('|');
+}
+function parseOrderDesc_(desc) {
+  var out = {};
+  String(desc || '').split('|').forEach(function (part) {
+    var i = part.indexOf('=');
+    if (i === -1) return;
+    out[part.slice(0, i)] = part.slice(i + 1);
+  });
+  return out;
+}
+
+/* ── Finish a partial delivery once the previously-missing media shows up.
+ * Called both from deliver_() (buyer re-confirms / webhook retries) and from
+ * retryPendingDeliveries() (the scheduled sweep). Only copies what's newly
+ * available — never re-copies what was already delivered. ── */
+function topUpDelivery_(orderFolder, meta) {
+  var speaker    = meta.speaker;
+  var pkg        = meta.pkg;
+  var pending    = (meta.pending || '').split(',').filter(function (s) { return s; });
+  var selection  = (meta.selection || '').split(',').filter(function (s) { return s; });
+  var ent        = PACKAGES[pkg];
+  var folderUrl  = orderFolder.getUrl();
+
+  if (!ent || !pending.length) {
+    return { ok: true, alreadyDelivered: true, folderUrl: folderUrl, folderId: orderFolder.getId() };
+  }
+
+  var added = { photos: 0, videos: 0 };
+  var stillPending = [];
+
+  if (pending.indexOf('photos') !== -1) {
+    var sourceId = SPEAKER_FOLDERS[speaker];
+    if (sourceId) {
+      var pf = findSubfolder_(orderFolder, 'Photos') || orderFolder.createFolder('Photos');
+      if (ent.photos === 'all') added.photos = copyByType_(DriveApp.getFolderById(sourceId), pf, 'image/');
+      else if (ent.photos === 'limited') added.photos = copySelected_(selection, sourceId, pf, ent.limit);
+    } else {
+      stillPending.push('photos');
+    }
+  }
+
+  if (pending.indexOf('video') !== -1) {
+    var videoSourceId = SPEAKER_VIDEO_FOLDERS[speaker];
+    if (videoSourceId) {
+      var vf = findSubfolder_(orderFolder, 'Videos') || orderFolder.createFolder('Videos');
+      added.videos = copyByType_(DriveApp.getFolderById(videoSourceId), vf, 'video/');
+    } else {
+      stillPending.push('video');
+    }
+  }
+
+  orderFolder.setDescription(buildOrderDesc_({
+    piId: meta.piId, pkg: pkg, speaker: speaker, buyerName: meta.buyerName,
+    buyerEmail: meta.buyerEmail, selection: meta.selection, pending: stillPending.join(',')
+  }));
+
+  if (added.photos || added.videos) {
+    if (meta.buyerEmail) sendTopUpEmail_(meta.buyerEmail, meta.buyerName, speaker, pkg, folderUrl, added, stillPending);
+    notifyTeam_((stillPending.length ? '⏳ Partial top-up' : '✅ Delivery completed') + ': ' + orderFolder.getName(),
+      'Speaker : ' + speaker + '\nPackage : ' + pkg +
+      '\nAdded   : ' + added.photos + ' photos, ' + added.videos + ' videos' +
+      '\nStill pending: ' + (stillPending.join(', ') || 'none') +
+      '\nFolder  : ' + folderUrl);
+  }
+
+  return { ok: true, folderUrl: folderUrl, folderId: orderFolder.getId(),
+           added: added, pending: stillPending };
+}
+
+function findSubfolder_(parent, name) {
+  var it = parent.getFoldersByName(name);
+  return it.hasNext() ? it.next() : null;
+}
+
+/* ── Scheduled sweep: run every couple of hours (see installPendingDeliveryTrigger)
+ * to finish any partial deliveries as soon as Velynne/Siphiwe upload the missing
+ * media — buyers get their remaining files automatically, no one has to remember
+ * to go check. ── */
+function retryPendingDeliveries() {
+  if (!CONFIG.DELIVERY_PARENT_ID || CONFIG.DELIVERY_PARENT_ID.indexOf('PASTE') === 0) return;
+  var parent = DriveApp.getFolderById(CONFIG.DELIVERY_PARENT_ID);
+  var it = parent.getFolders();
+  var checked = 0, completed = 0, stillWaiting = 0;
+
+  while (it.hasNext()) {
+    var folder = it.next();
+    var meta = parseOrderDesc_(folder.getDescription());
+    if (!meta.pending) continue;
+    checked++;
+    var result = topUpDelivery_(folder, meta);
+    if (result.pending && result.pending.length) stillWaiting++; else completed++;
+  }
+
+  if (checked) {
+    Logger.log('retryPendingDeliveries: checked ' + checked + ', completed ' + completed +
+      ', still waiting ' + stillWaiting);
+  }
+}
+
+/* Run this ONCE (Run ▸ installPendingDeliveryTrigger) to schedule the sweep
+ * above automatically. Safe to re-run — clears any duplicate trigger first. */
+function installPendingDeliveryTrigger() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === 'retryPendingDeliveries') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('retryPendingDeliveries').timeBased().everyHours(2).create();
+  Logger.log('Installed: retryPendingDeliveries will now run automatically every 2 hours.');
 }
 
 /* ── copy every file of a mime prefix from src → dest ── */
@@ -516,23 +657,39 @@ function safeName_(s) {
 }
 
 /* ═══════════════════════════ EMAILS ═══════════════════════════ */
-function sendDeliveryEmail_(to, name, speaker, pkg, link, counts) {
+function sendDeliveryEmail_(to, name, speaker, pkg, link, counts, pending) {
+  pending = pending || [];
   var bits = [];
   if (counts.photos) bits.push(counts.photos + ' photo' + (counts.photos === 1 ? '' : 's'));
   if (counts.videos) bits.push(counts.videos + ' video' + (counts.videos === 1 ? '' : 's'));
   var summary = bits.join(' + ') || 'your media';
 
+  var pendingNotice = '';
+  if (pending.length) {
+    var pendingWord = pending.join(' and ');
+    pendingNotice =
+      '<p style="font-size:13px;line-height:1.7;margin:0 0 18px;background:#fff7e6;border:1px solid #ffe1a8;' +
+        'border-radius:8px;padding:14px 16px;color:#8a5a00;">' +
+        '<strong>Your ' + esc_(pendingWord) + ' ' + (pending.length === 1 ? 'is' : 'are') +
+        ' still being processed.</strong> No action needed — we\'ll add ' +
+        (pending.length === 1 ? 'it' : 'them') + ' to this same folder and email you again ' +
+        'automatically as soon as ' + (pending.length === 1 ? 'it\'s' : 'they\'re') + ' ready.</p>';
+  }
+
+  var headline = pending.length ? 'Part of your media is ready' : 'Your media is ready';
+
   var html =
     '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1f2937;">' +
       '<div style="background:#0d1b3a;padding:28px 24px;border-radius:12px 12px 0 0;text-align:center;">' +
         '<div style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-.02em;">AIFOD Geneva Summit 2026</div>' +
-        '<div style="color:#ff2f6b;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-top:6px;">Your media is ready</div>' +
+        '<div style="color:#ff2f6b;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-top:6px;">' + esc_(headline) + '</div>' +
       '</div>' +
       '<div style="border:1px solid #eee;border-top:0;border-radius:0 0 12px 12px;padding:28px 24px;">' +
         '<p style="font-size:15px;line-height:1.6;margin:0 0 14px;">Hi ' + esc_(name || 'there') + ',</p>' +
         '<p style="font-size:14px;line-height:1.7;margin:0 0 18px;">Your <strong>' + esc_(pkg) +
-          '</strong> for <strong>' + esc_(speaker) + '</strong> is ready. It contains <strong>' +
-          esc_(summary) + '</strong>.</p>' +
+          '</strong> for <strong>' + esc_(speaker) + '</strong> ' + (pending.length ? 'is partly ready' : 'is ready') +
+          '. It currently contains <strong>' + esc_(summary) + '</strong>.</p>' +
+        pendingNotice +
         '<p style="text-align:center;margin:26px 0;">' +
           '<a href="' + link + '" style="display:inline-block;background:#E21E51;color:#fff;text-decoration:none;' +
           'font-size:15px;font-weight:700;padding:14px 32px;border-radius:8px;">Open your media folder</a>' +
@@ -549,11 +706,63 @@ function sendDeliveryEmail_(to, name, speaker, pkg, link, counts) {
     to: to,
     cc: CONFIG.NOTIFY.join(','),
     name: CONFIG.FROM_NAME,
-    subject: 'Your ' + pkg + ' is ready — AIFOD Geneva Summit 2026',
+    subject: (pending.length ? 'Part of your ' : 'Your ') + pkg + ' is ready — AIFOD Geneva Summit 2026',
     htmlBody: html,
     body: 'Hi ' + (name || 'there') + ',\n\nYour ' + pkg + ' for ' + speaker +
-          ' is ready (' + summary + ').\n\nOpen your media folder: ' + link +
+          (pending.length ? ' is partly ready (' + summary + '). ' + pending.join(' and ') +
+            ' still being processed — you\'ll get another email automatically once ready.'
+            : ' is ready (' + summary + ').') +
+          '\n\nOpen your media folder: ' + link +
           '\n\nAIFOD Geneva Summit 2026'
+  });
+}
+
+/* ── Follow-up email once previously-pending media is topped up. Distinct
+ * from sendDeliveryEmail_ since this is "here's what's new", not the first
+ * notice — the buyer already has the folder link from the original email. ── */
+function sendTopUpEmail_(to, name, speaker, pkg, link, added, stillPending) {
+  var bits = [];
+  if (added.photos) bits.push(added.photos + ' photo' + (added.photos === 1 ? '' : 's'));
+  if (added.videos) bits.push(added.videos + ' video' + (added.videos === 1 ? '' : 's'));
+  var summary = bits.join(' + ') || 'more media';
+
+  var stillNotice = stillPending.length
+    ? '<p style="font-size:13px;line-height:1.7;margin:18px 0 0;background:#fff7e6;border:1px solid #ffe1a8;' +
+      'border-radius:8px;padding:14px 16px;color:#8a5a00;">Your ' + esc_(stillPending.join(' and ')) +
+      ' ' + (stillPending.length === 1 ? 'is' : 'are') + ' still on the way — same automatic process, no action needed.</p>'
+    : '';
+
+  var html =
+    '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1f2937;">' +
+      '<div style="background:#0d1b3a;padding:28px 24px;border-radius:12px 12px 0 0;text-align:center;">' +
+        '<div style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-.02em;">AIFOD Geneva Summit 2026</div>' +
+        '<div style="color:#ff2f6b;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-top:6px;">' +
+          (stillPending.length ? 'More of your media is ready' : 'Your media is now complete') + '</div>' +
+      '</div>' +
+      '<div style="border:1px solid #eee;border-top:0;border-radius:0 0 12px 12px;padding:28px 24px;">' +
+        '<p style="font-size:15px;line-height:1.6;margin:0 0 14px;">Hi ' + esc_(name || 'there') + ',</p>' +
+        '<p style="font-size:14px;line-height:1.7;margin:0 0 18px;">Good news — we just added <strong>' +
+          esc_(summary) + '</strong> to your <strong>' + esc_(pkg) + '</strong> for <strong>' +
+          esc_(speaker) + '</strong>.</p>' +
+        stillNotice +
+        '<p style="text-align:center;margin:26px 0;">' +
+          '<a href="' + link + '" style="display:inline-block;background:#E21E51;color:#fff;text-decoration:none;' +
+          'font-size:15px;font-weight:700;padding:14px 32px;border-radius:8px;">Open your media folder</a>' +
+        '</p>' +
+        '<p style="font-size:12px;color:#6b7280;line-height:1.6;margin:0 0 4px;">Or paste this link into your browser:<br>' +
+          '<a href="' + link + '" style="color:#E21E51;word-break:break-all;">' + link + '</a></p>' +
+      '</div>' +
+      '<p style="text-align:center;font-size:11px;color:#9ca3af;margin:16px 0 0;">AIFOD · Palais des Nations, Geneva</p>' +
+    '</div>';
+
+  MailApp.sendEmail({
+    to: to,
+    cc: CONFIG.NOTIFY.join(','),
+    name: CONFIG.FROM_NAME,
+    subject: (stillPending.length ? 'More of your ' : 'Your ') + pkg + ' is now ready — AIFOD Geneva Summit 2026',
+    htmlBody: html,
+    body: 'Hi ' + (name || 'there') + ',\n\nWe added ' + summary + ' to your ' + pkg + ' for ' + speaker + '.\n\n' +
+          'Open your media folder: ' + link + '\n\nAIFOD Geneva Summit 2026'
   });
 }
 
