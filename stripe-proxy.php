@@ -387,10 +387,14 @@ if ($action === 'getThumb') {
     /* Disk cache — same file+size is requested over and over (sidebar
      * rebuilds, repeat gallery visits, multiple buyers of the same speaker).
      * Serving from disk skips Google Drive entirely and is what actually
-     * fixes the "images take forever" slowness. */
+     * fixes the "images take forever" slowness.
+     * "_wm2" cache-version suffix: bumping this instantly invalidates every
+     * previously-cached file without needing a manual clearThumbCache call —
+     * used here so the switch to server-burned watermarks takes effect for
+     * every image on first request, not just new ones. */
     $cacheDir = __DIR__ . '/thumb-cache/';
     if (!is_dir($cacheDir)) @mkdir($cacheDir, 0755, true);
-    $cacheKey  = preg_replace('/[^a-zA-Z0-9_-]/', '', $fileId) . ($small ? '_s' : '_l');
+    $cacheKey  = preg_replace('/[^a-zA-Z0-9_-]/', '', $fileId) . ($small ? '_s' : '_l') . '_wm2';
     $cacheBin  = $cacheDir . $cacheKey . '.bin';
     $cacheType = $cacheDir . $cacheKey . '.ctype';
 
@@ -451,6 +455,17 @@ if ($action === 'getThumb') {
         echo json_encode(['error'=>'Could not fetch image']);
         exit;
     }
+
+    /* SECURITY: burn the watermark into the actual pixels, server-side, before
+     * this ever leaves the server. The old approach drew the watermark onto a
+     * <canvas> in the browser — that only changed what rendered on screen, the
+     * network response underneath was the clean, full-resolution original, so
+     * anyone opening DevTools (or just calling this URL directly with a known
+     * fileId) could grab the unwatermarked file straight from the network/
+     * cache. Watermarking here means the bytes sent over the wire are never
+     * clean, however they're fetched. */
+    $watermarked = watermark_image_gd($imgData);
+    if ($watermarked) { $imgData = $watermarked; $ctype = 'image/jpeg'; }
 
     /* Best-effort cache write — a failure here must never break the response. */
     @file_put_contents($cacheBin, $imgData);
@@ -793,6 +808,46 @@ function stripe_call($method, $path, $data=[]) {
     }
     $resp = curl_exec($ch); curl_close($ch);
     return json_decode($resp?:'{}',true)??[];
+}
+
+/* ── Burn a tiled "AIFOD PREVIEW" watermark into an image's actual pixels
+ * (server-side, via GD) and return the re-encoded JPEG bytes, or null if GD
+ * isn't available or the image can't be decoded — callers must keep serving
+ * the original in that case rather than break the response. Doing this here
+ * instead of in client-side JS means the network response itself is never
+ * a clean copy, regardless of how it's fetched. ── */
+function watermark_image_gd($imgData) {
+    if (!function_exists('imagecreatefromstring')) return null;
+    $img = @imagecreatefromstring($imgData);
+    if (!$img) return null;
+
+    imagesavealpha($img, true);
+    imagealphablending($img, true);
+
+    $w = imagesx($img);
+    $h = imagesy($img);
+    $text = 'AIFOD PREVIEW';
+    $font = 5; /* largest built-in GD font — no external .ttf dependency */
+    $textW = imagefontwidth($font) * strlen($text);
+    $textH = imagefontheight($font);
+    $color = imagecolorallocatealpha($img, 255, 255, 255, 55); /* semi-transparent white */
+
+    $stepX = $textW + 60;
+    $stepY = $textH + 70;
+    $row = 0;
+    for ($y = -$stepY; $y < $h + $stepY; $y += $stepY) {
+        $offset = ($row % 2 === 0) ? 0 : intval($stepX / 2);
+        for ($x = -$stepX; $x < $w + $stepX; $x += $stepX) {
+            imagestring($img, $font, $x + $offset, $y, $text, $color);
+        }
+        $row++;
+    }
+
+    ob_start();
+    imagejpeg($img, null, 85);
+    $out = ob_get_clean();
+    imagedestroy($img);
+    return $out ?: null;
 }
 
 /* ── Drive: list a folder's files (id, name, mimeType) ── */
