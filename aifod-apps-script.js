@@ -398,12 +398,27 @@ function deliver_(p) {
 
 /* ── copy every file of a mime prefix from src → dest ── */
 function copyByType_(src, dest, mimePrefix) {
-  var it = src.getFiles(), n = 0;
+  var n = 0;
+  var it = src.getFiles();
   while (it.hasNext()) {
     var f = it.next();
     if (String(f.getMimeType()).indexOf(mimePrefix) === 0) {
       f.makeCopy(f.getName(), dest);
       n++;
+    }
+  }
+  /* Some speaker folders keep their media inside one extra numbered
+   * subfolder instead of directly (e.g. a "61" folder) — recurse one level
+   * so those aren't silently delivered as empty. */
+  var subIt = src.getFolders();
+  while (subIt.hasNext()) {
+    var subFiles = subIt.next().getFiles();
+    while (subFiles.hasNext()) {
+      var sf = subFiles.next();
+      if (String(sf.getMimeType()).indexOf(mimePrefix) === 0) {
+        sf.makeCopy(sf.getName(), dest);
+        n++;
+      }
     }
   }
   return n;
@@ -429,7 +444,13 @@ function copySelected_(ids, sourceId, dest, limit) {
 function fileInFolder_(file, folderId) {
   var parents = file.getParents();
   while (parents.hasNext()) {
-    if (parents.next().getId() === folderId) return true;
+    var p = parents.next();
+    if (p.getId() === folderId) return true;
+    /* file lives one level deeper, inside a numbered subfolder under folderId */
+    var grandparents = p.getParents();
+    while (grandparents.hasNext()) {
+      if (grandparents.next().getId() === folderId) return true;
+    }
   }
   return false;
 }

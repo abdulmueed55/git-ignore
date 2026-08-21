@@ -292,12 +292,12 @@ if ($action === 'listFolder') {
         if (!$photoId && !$videoId) { echo json_encode(['ok'=>false,'error'=>'No folder for speaker']); exit; }
 
         if ($photoId) {
-            foreach (drive_list($photoId) as $f) {
+            foreach (drive_list_deep($photoId) as $f) {
                 if (strpos($f['mimeType'] ?? '', 'image/') === 0) $images[] = $f['id'];
             }
         }
         if ($videoId) {
-            foreach (drive_list($videoId) as $f) {
+            foreach (drive_list_deep($videoId) as $f) {
                 if (strpos($f['mimeType'] ?? '', 'video/') === 0) $videos[] = $f['id'];
             }
         }
@@ -606,12 +606,12 @@ if ($action === 'getGalleryFiles') {
 
     $images = []; $videos = [];
     if ($photoId) {
-        foreach (drive_list($photoId, 200) as $fi) {
+        foreach (drive_list_deep($photoId, 200) as $fi) {
             if (strpos($fi['mimeType'] ?? '', 'image/') === 0) $images[] = ['id'=>$fi['id'],'name'=>$fi['name']];
         }
     }
     if ($videoId) {
-        foreach (drive_list($videoId, 200) as $fi) {
+        foreach (drive_list_deep($videoId, 200) as $fi) {
             if (strpos($fi['mimeType'] ?? '', 'video/') === 0) $videos[] = ['id'=>$fi['id'],'name'=>$fi['name']];
         }
     }
@@ -659,7 +659,7 @@ if ($action === 'saveSelection') {
         $folderId = $folders[$data['speakerName'] ?? ''] ?? '';
         if (!$folderId) { echo json_encode(['ok'=>false,'error'=>'No folder for speaker']); exit; }
         $allowed = [];
-        foreach (drive_list($folderId, 300) as $fi) {
+        foreach (drive_list_deep($folderId, 300) as $fi) {
             if (strpos($fi['mimeType'] ?? '', 'image/') === 0) $allowed[$fi['id']] = true;
         }
         foreach ($ids as $id) {
@@ -734,6 +734,22 @@ function drive_list($folderId, $pageSize = 100) {
     curl_setopt_array($ch,[CURLOPT_RETURNTRANSFER=>true,CURLOPT_FOLLOWLOCATION=>true,CURLOPT_TIMEOUT=>15,CURLOPT_SSL_VERIFYPEER=>false]);
     $resp = curl_exec($ch); curl_close($ch);
     return json_decode($resp, true)['files'] ?? [];
+}
+
+/* ── Drive: list a folder's files, plus one level into any subfolders.
+ * Some speaker folders hold their photos inside one extra numbered
+ * subfolder (e.g. a "61" folder) instead of directly — drive_list() alone
+ * would see only that subfolder and report zero images/videos. ── */
+function drive_list_deep($folderId, $pageSize = 200) {
+    $out = [];
+    foreach (drive_list($folderId, $pageSize) as $it) {
+        if (($it['mimeType'] ?? '') === 'application/vnd.google-apps.folder') {
+            foreach (drive_list($it['id'], $pageSize) as $sub) $out[] = $sub;
+        } else {
+            $out[] = $it;
+        }
+    }
+    return $out;
 }
 
 /* ── Apps Script call with retry + failure log (fixes orders not reaching the
