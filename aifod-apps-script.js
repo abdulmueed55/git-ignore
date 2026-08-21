@@ -211,6 +211,13 @@ var SPEAKER_VIDEO_FOLDERS = {
   'Fabrizio Degni': '1nMMoU12Y1PLKjSJ_41FJVtudxVYs88IN',
   'Frederic Emane': '1n4ca6xtdCT_WFSuNlAqwEQq6Vy9O6ahx',
   'Frédéric Jallat': '1epYzKtFFB3OaNoL_0ixNiZdlvOoUc-1M',
+  'Fredrik Kocon': '1vOatVDrTH8Z_owSDgO_SLChIsBBhxkq_',
+  'Giorgio Bortoli': '1bDv60ObDt9lGiypGJPa7FZQWFkNm4Dbt',
+  'Harsh Vardhan': '1sSdStWC1tNMBUPxYo9g4j6exagDVpBGu',
+  'Helen Pino Vera': '1I95xNJGwfRPbbjiCQjEe62upw6SkWV0y',
+  'Ivana Brutenic': '14lb9ia2FO8_tB_49fyRnd0O7mcmi1q-0',
+  'Ivica Srncevic': '1NeXZtBfVQI26Ml7agWqGoQPF2SMBDm9P',
+  'Yogesh Gupta': '1wsj8fAHwG1dpTf2rbPvXN6SXCEPFzLxd',
 };
 
 /* ── PACKAGE ENTITLEMENTS (single source of truth, mirrors the spec) ─────────
