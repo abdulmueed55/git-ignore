@@ -152,7 +152,6 @@ function speaker_folders() {
         'Philip Leaper' => '1v6AAd9CoHKEJcqkUJ-YWyrIihQtq3TfO',
         'Tijn van der Zant' => '1VjKQReqZJUyIjJxx9MkzAY3VuV3C1T6q',
         'Wolfgang Pinegger' => '128rQksdJOzppB13Fc7xwWj_sdnQpp0-E',
-        'Velynne Ji' => '1muQe6IY-vTQzgjT0sdhxqBD7NYHHRShO',
         'Yogesh Gupta' => '121z85HFDEJCXNBpzLO7JFIAWKi3AvyYz',
         'Wilhelm Loderer' => '1l87jGNOE5Og-3xgiPFqTOi8vVLcu8Cwe',
         // add remaining speakers as 'Name' => 'DRIVE_FOLDER_ID'
