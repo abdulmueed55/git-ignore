@@ -238,6 +238,21 @@ if ($action === 'createIntent') {
         echo json_encode(['ok'=>false,'error'=>'This speaker\'s package has already been purchased.']); exit;
     }
 
+    /* Media must actually exist before it can be sold — no pre-orders.
+     * Enforced server-side (not just greyed out in the UI) so a tampered
+     * browser can't buy a package for media that isn't uploaded yet. */
+    $info = pkg_info($pkg);
+    if ($info) {
+        $needsPhotos = ($info['photos'] === 'all' || $info['photos'] === 'limited');
+        $needsVideo  = $info['video'];
+        if ($needsPhotos && empty(speaker_folders()[$speakerName])) {
+            echo json_encode(['ok'=>false,'error'=>'Photos for this speaker are not available yet.']); exit;
+        }
+        if ($needsVideo && empty(speaker_video_folders()[$speakerName])) {
+            echo json_encode(['ok'=>false,'error'=>'Video for this speaker is not available yet.']); exit;
+        }
+    }
+
     $result = stripe_call('POST', '/v1/payment_intents', [
         'amount'                => $amount * 100,
         'currency'              => 'eur',
