@@ -816,6 +816,68 @@ function stripe_call($method, $path, $data=[]) {
  * the original in that case rather than break the response. Doing this here
  * instead of in client-side JS means the network response itself is never
  * a clean copy, regardless of how it's fetched. ── */
+/* ── Fetch the real AIFOD logo, downscale it to a small watermark tile with
+ * reduced opacity baked into its alpha channel, and cache the PROCESSED tile
+ * to disk (not just the raw logo) so the resize + per-pixel alpha pass only
+ * ever runs once, not on every getThumb request. Returns a GD image handle
+ * (caller must imagedestroy it), or null if the logo can't be fetched/decoded
+ * — callers must fall back to the text watermark in that case. ── */
+function get_watermark_logo_gd() {
+    $dir = __DIR__ . '/thumb-cache/';
+    if (!is_dir($dir)) @mkdir($dir, 0775, true);
+    $processedFile = $dir . '_watermark_logo_tile.png';
+
+    if (is_file($processedFile)) {
+        $cached = @imagecreatefrompng($processedFile);
+        if ($cached) return $cached;
+    }
+
+    $ch = curl_init('https://af.net/wp-content/uploads/cropped-aifod-logo-version-2-1320x528.png');
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER=>true, CURLOPT_FOLLOWLOCATION=>true, CURLOPT_TIMEOUT=>8, CURLOPT_SSL_VERIFYPEER=>false]);
+    $data = curl_exec($ch);
+    curl_close($ch);
+    if (!$data) return null;
+
+    $logo = @imagecreatefromstring($data);
+    if (!$logo) return null;
+
+    $srcW = imagesx($logo); $srcH = imagesy($logo);
+    $tileW = 220;
+    $tileH = max(1, intval($tileW * $srcH / $srcW));
+    $tile = imagecreatetruecolor($tileW, $tileH);
+    imagealphablending($tile, false);
+    imagesavealpha($tile, true);
+    $transparent = imagecolorallocatealpha($tile, 0, 0, 0, 127);
+    imagefill($tile, 0, 0, $transparent);
+    imagecopyresampled($tile, $logo, 0, 0, 0, 0, $tileW, $tileH, $srcW, $srcH);
+    imagedestroy($logo);
+
+    /* Bake ~35% opacity into the tile's own alpha channel so a plain
+     * imagecopy (with alpha blending on) composites it correctly later. */
+    imagealphablending($tile, false);
+    for ($y = 0; $y < $tileH; $y++) {
+        for ($x = 0; $x < $tileW; $x++) {
+            $rgba = imagecolorat($tile, $x, $y);
+            $alpha = ($rgba >> 24) & 0x7F; /* 0 = opaque .. 127 = fully transparent */
+            $newAlpha = 127 - intval((127 - $alpha) * 0.35);
+            $r = ($rgba >> 16) & 0xFF; $g = ($rgba >> 8) & 0xFF; $b = $rgba & 0xFF;
+            imagesetpixel($tile, $x, $y, imagecolorallocatealpha($tile, $r, $g, $b, $newAlpha));
+        }
+    }
+
+    imagesavealpha($tile, true);
+    @imagepng($tile, $processedFile);
+    return $tile;
+}
+
+/* ── Burn a tiled watermark into an image's actual pixels (server-side, via
+ * GD) and return the re-encoded JPEG bytes, or null if GD isn't available or
+ * the image can't be decoded — callers must keep serving the original in
+ * that case rather than break the response. Uses the real AIFOD logo when it
+ * can be fetched, falling back to repeated text otherwise (mirrors the old
+ * client-side apDrawWM logo-or-text behavior). Doing this here instead of in
+ * client-side JS means the network response itself is never a clean copy,
+ * regardless of how it's fetched. ── */
 function watermark_image_gd($imgData) {
     if (!function_exists('imagecreatefromstring')) return null;
     $img = @imagecreatefromstring($imgData);
@@ -826,21 +888,36 @@ function watermark_image_gd($imgData) {
 
     $w = imagesx($img);
     $h = imagesy($img);
-    $text = 'AIFOD PREVIEW';
-    $font = 5; /* largest built-in GD font — no external .ttf dependency */
-    $textW = imagefontwidth($font) * strlen($text);
-    $textH = imagefontheight($font);
-    $color = imagecolorallocatealpha($img, 255, 255, 255, 55); /* semi-transparent white */
 
-    $stepX = $textW + 60;
-    $stepY = $textH + 70;
-    $row = 0;
-    for ($y = -$stepY; $y < $h + $stepY; $y += $stepY) {
-        $offset = ($row % 2 === 0) ? 0 : intval($stepX / 2);
-        for ($x = -$stepX; $x < $w + $stepX; $x += $stepX) {
-            imagestring($img, $font, $x + $offset, $y, $text, $color);
+    $logo = get_watermark_logo_gd();
+    if ($logo) {
+        $lw = imagesx($logo); $lh = imagesy($logo);
+        $stepX = $lw + 50; $stepY = $lh + 60;
+        $row = 0;
+        for ($y = -$stepY; $y < $h + $stepY; $y += $stepY) {
+            $offset = ($row % 2 === 0) ? 0 : intval($stepX / 2);
+            for ($x = -$stepX; $x < $w + $stepX; $x += $stepX) {
+                imagecopy($img, $logo, $x + $offset, $y, 0, 0, $lw, $lh);
+            }
+            $row++;
         }
-        $row++;
+        imagedestroy($logo);
+    } else {
+        $text = 'AIFOD PREVIEW';
+        $font = 5; /* largest built-in GD font — no external .ttf dependency */
+        $textW = imagefontwidth($font) * strlen($text);
+        $textH = imagefontheight($font);
+        $color = imagecolorallocatealpha($img, 255, 255, 255, 55); /* semi-transparent white */
+        $stepX = $textW + 60;
+        $stepY = $textH + 70;
+        $row = 0;
+        for ($y = -$stepY; $y < $h + $stepY; $y += $stepY) {
+            $offset = ($row % 2 === 0) ? 0 : intval($stepX / 2);
+            for ($x = -$stepX; $x < $w + $stepX; $x += $stepX) {
+                imagestring($img, $font, $x + $offset, $y, $text, $color);
+            }
+            $row++;
+        }
     }
 
     ob_start();
