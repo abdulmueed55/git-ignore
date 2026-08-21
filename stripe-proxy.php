@@ -154,6 +154,7 @@ function speaker_folders() {
         'Wolfgang Pinegger' => '128rQksdJOzppB13Fc7xwWj_sdnQpp0-E',
         'Yogesh Gupta' => '121z85HFDEJCXNBpzLO7JFIAWKi3AvyYz',
         'Wilhelm Loderer' => '1l87jGNOE5Og-3xgiPFqTOi8vVLcu8Cwe',
+        'Velynne Ji' => '1muQe6IY-vTQzgjT0sdhxqBD7NYHHRShO',
         // add remaining speakers as 'Name' => 'DRIVE_FOLDER_ID'
     ];
 }

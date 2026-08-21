@@ -145,7 +145,8 @@ var SPEAKER_FOLDERS = {
   'Tijn van der Zant': '1VjKQReqZJUyIjJxx9MkzAY3VuV3C1T6q',
   'Wolfgang Pinegger': '128rQksdJOzppB13Fc7xwWj_sdnQpp0-E',
   'Yogesh Gupta': '121z85HFDEJCXNBpzLO7JFIAWKi3AvyYz',
-  'Wilhelm Loderer': '1l87jGNOE5Og-3xgiPFqTOi8vVLcu8Cwe'
+  'Wilhelm Loderer': '1l87jGNOE5Og-3xgiPFqTOi8vVLcu8Cwe',
+  'Velynne Ji': '1muQe6IY-vTQzgjT0sdhxqBD7NYHHRShO'
 };
 
 /* ── SPEAKER → VIDEO DRIVE FOLDER ─────────────────────────────────────────────
