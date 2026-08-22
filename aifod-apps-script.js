@@ -41,7 +41,7 @@ var CONFIG = {
   NOTIFY:     ['z@af.net', 'abdul@af.net'],   // team notification recipients
   FROM_NAME:  'AIFOD Geneva Summit 2026',
   DELIVER_BY: '25 August 2026',
-  ADMIN_KEY:  'aifod2026'                      // guards the clearOrders reset
+  ADMIN_KEY:  'REPLACE_WITH_YOUR_ADMIN_KEY'    // guards the clearOrders reset — must match ADMIN_KEY in stripe-proxy.php exactly
 };
 
 /* ── SPEAKER → SOURCE (MASTER) DRIVE FOLDER ─────────────────────────────────

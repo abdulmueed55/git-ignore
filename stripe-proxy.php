@@ -16,6 +16,20 @@ define('ORDERS_FILE',   __DIR__ . '/orders-data/orders.csv');
 define('FAIL_LOG',      __DIR__ . '/orders-data/apps-script-fails.log');
 define('DRIVE_API_KEY', 'REPLACE_WITH_YOUR_GOOGLE_DRIVE_API_KEY'); /* keep your existing Drive API key here on the server */
 
+/* Admin key for viewOrders/clearThumbCache/resetOrders — rotate this if it's
+ * ever typed/screenshotted somewhere it shouldn't be. Keep your real value on
+ * the server only (never commit it — same rule as STRIPE_SECRET above); must
+ * match ADMIN_KEY in aifod-apps-script.js exactly (clearOrders/clearDeliveries
+ * there check the same value). */
+define('ADMIN_KEY', 'REPLACE_WITH_YOUR_ADMIN_KEY');
+
+/* Stripe webhook signing secret — from Stripe Dashboard ▸ Developers ▸
+ * Webhooks ▸ (your endpoint) ▸ "Signing secret", after adding an endpoint
+ * pointing at ?action=stripeWebhook listening for payment_intent.succeeded.
+ * Without this correctly set, stripeWebhook rejects every request (fails
+ * closed — never trusts an unverified "payment succeeded" claim). */
+define('STRIPE_WEBHOOK_SECRET', 'whsec_REPLACE_WITH_YOUR_WEBHOOK_SIGNING_SECRET');
+
 ob_start(); /* Buffer output to prevent warnings corrupting JSON */
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -293,30 +307,8 @@ if ($action === 'recordOrder') {
         echo json_encode(['ok'=>false,'error'=>'Not paid: '.($pi['status']??'unknown')]); exit;
     }
 
-    $meta      = $pi['metadata'] ?? [];
-    $finalName = $meta['buyerName']   ?? $buyerName;
-    $finalEmail= $meta['buyerEmail']  ?? $buyerEmail;
-    $finalSpk  = $meta['speakerName'] ?? $speakerName;
-    $finalPkg  = $meta['package']     ?? $pkg;
-    $finalAmt  = $meta['price']       ?? $amount;
-
-    /* Save to CSV (reliable local record of truth) */
-    $csvDir = dirname(ORDERS_FILE);
-    if (!is_dir($csvDir)) mkdir($csvDir, 0755, true);
-    $isNew = !file_exists(ORDERS_FILE);
-    $fp = fopen(ORDERS_FILE, 'a');
-    if ($isNew) fputcsv($fp, ['Timestamp','Buyer Name','Buyer Email','Speaker','Status','Package','Amount','Payment Intent ID']);
-    fputcsv($fp, [date('Y-m-d H:i:s'), $finalName, $finalEmail, $finalSpk, 'Paid', $finalPkg, $finalAmt, $piId]);
-    fclose($fp);
-
-    /* Record into the Google Sheet — retried + logged so it stops silently dropping */
-    apps_script_call([
-        'action'=>'recordOrder','piId'=>$piId,
-        'buyerName'=>$finalName,'buyerEmail'=>$finalEmail,
-        'speakerName'=>$finalSpk,'pkg'=>$finalPkg,'amount'=>$finalAmt,
-    ]);
-
-    echo json_encode(['ok'=>true,'speaker'=>$finalSpk]);
+    $result = record_paid_order($piId, $pi['metadata'] ?? [], $buyerName, $buyerEmail, $speakerName, $pkg, $amount);
+    echo json_encode(['ok'=>true,'speaker'=>$result['speakerName']]);
     exit;
 }
 
@@ -483,13 +475,36 @@ if ($action === 'streamVideo') {
     $fileId = $_GET['fileId'] ?? '';
     if (!$fileId) { http_response_code(400); exit; }
 
+    /* SECURITY: this endpoint is preview/review only (sales-page preview
+     * before purchase, and the post-purchase gallery review before the
+     * buyer confirms) — the actual delivered video is copied straight from
+     * Drive by Apps Script's deliver_(), never through this proxy. Capping
+     * here to roughly the first 10-15 seconds means a full, unwatermarked
+     * copy of the video can never be pulled from the network response
+     * (browser DevTools included), the way it could when this streamed the
+     * complete file. Always requesting a bounded Range from Drive — even if
+     * the browser didn't ask for one — is what actually enforces the cap;
+     * relying only on what the client sends would let a client that omits
+     * Range get the whole file. */
+    $PREVIEW_CAP_BYTES = 3000000;
+    $reqStart = 0; $reqEnd = null;
+    if (!empty($_SERVER['HTTP_RANGE']) && preg_match('/bytes=(\d+)-(\d*)/', $_SERVER['HTTP_RANGE'], $rm)) {
+        $reqStart = intval($rm[1]);
+        $reqEnd   = ($rm[2] !== '') ? intval($rm[2]) : null;
+    }
+    if ($reqStart >= $PREVIEW_CAP_BYTES) {
+        http_response_code(416);
+        header('Content-Range: bytes */' . $PREVIEW_CAP_BYTES);
+        exit;
+    }
+    $cappedEnd = ($reqEnd !== null) ? min($reqEnd, $PREVIEW_CAP_BYTES - 1) : ($PREVIEW_CAP_BYTES - 1);
+
     $url = "https://www.googleapis.com/drive/v3/files/{$fileId}?alt=media&key=" . DRIVE_API_KEY;
 
-    /* Forward the browser's Range request so <video> can seek and start
-     * playback before the whole file arrives — without this, browsers get
-     * an unseekable, all-or-nothing response and often refuse to play it. */
-    $reqHeaders = ['User-Agent: Mozilla/5.0 AIFOD-Proxy/1.0'];
-    if (!empty($_SERVER['HTTP_RANGE'])) $reqHeaders[] = 'Range: ' . $_SERVER['HTTP_RANGE'];
+    /* Forward a Range request so <video> can seek and start playback before
+     * the whole file arrives — always bounded to the preview cap above,
+     * regardless of what (if anything) the browser itself asked for. */
+    $reqHeaders = ['User-Agent: Mozilla/5.0 AIFOD-Proxy/1.0', 'Range: bytes=' . $reqStart . '-' . $cappedEnd];
 
     $statusCode   = 200;
     $contentType  = 'video/mp4';
@@ -555,7 +570,7 @@ if ($action === 'getLogo') {
 }
 
 /* ══ 8. View Orders ══ */
-if ($action === 'viewOrders' && ($_GET['key']??'') === 'aifod2026') {
+if ($action === 'viewOrders' && ($_GET['key']??'') === ADMIN_KEY) {
     header('Content-Type: text/html');
     if (!file_exists(ORDERS_FILE)) { echo '<p>No orders yet.</p>'; exit; }
     echo '<table border="1" cellpadding="6" style="border-collapse:collapse;font-family:monospace;font-size:13px;">';
@@ -570,11 +585,11 @@ if ($action === 'viewOrders' && ($_GET['key']??'') === 'aifod2026') {
 }
 
 /* ══ 8a. Clear the thumbnail + folder-listing cache (ADMIN) ══
- * Visit: stripe-proxy.php?action=clearThumbCache&key=aifod2026
+ * Visit: stripe-proxy.php?action=clearThumbCache&key=YOUR_ADMIN_KEY
  * Needed if a photo/video is replaced under the same file ID, or if new
  * media was just uploaded and you don't want to wait out the 10-min
  * folder-listing cache. */
-if ($action === 'clearThumbCache' && ($_GET['key'] ?? '') === 'aifod2026') {
+if ($action === 'clearThumbCache' && ($_GET['key'] ?? '') === ADMIN_KEY) {
     $n = 0;
     foreach ([__DIR__ . '/thumb-cache/', __DIR__ . '/list-cache/'] as $dir) {
         if (is_dir($dir)) {
@@ -586,12 +601,12 @@ if ($action === 'clearThumbCache' && ($_GET['key'] ?? '') === 'aifod2026') {
 }
 
 /* ══ 8b. Reset ALL previous data (ADMIN — testing only) ══
- * Visit: stripe-proxy.php?action=resetOrders&key=aifod2026&confirm=yes
+ * Visit: stripe-proxy.php?action=resetOrders&key=YOUR_ADMIN_KEY&confirm=yes
  * Clears the orders CSV, every gallery token, the fail log, the Google Sheet
  * rows, and (reversibly — moved to Drive trash, not deleted) every test
  * delivery folder. After this nothing is sold-out and the delivery folder is
  * empty. Needs the latest Apps Script deployed for the sheet/deliveries part. */
-if ($action === 'resetOrders' && ($_GET['key'] ?? '') === 'aifod2026') {
+if ($action === 'resetOrders' && ($_GET['key'] ?? '') === ADMIN_KEY) {
     if (($_GET['confirm'] ?? '') !== 'yes') {
         echo json_encode(['ok'=>false,'error'=>'Add &confirm=yes to the URL to proceed']); exit;
     }
@@ -606,11 +621,11 @@ if ($action === 'resetOrders' && ($_GET['key'] ?? '') === 'aifod2026') {
     }
 
     /* Clear the Google Sheet rows. */
-    $r = apps_script_call(['action'=>'clearOrders', 'key'=>'aifod2026']);
+    $r = apps_script_call(['action'=>'clearOrders', 'key'=>ADMIN_KEY]);
     $out['sheet'] = !empty($r['ok']);
 
     /* Trash every test delivery folder (reversible — Drive trash, not gone). */
-    $r2 = apps_script_call(['action'=>'clearDeliveries', 'key'=>'aifod2026']);
+    $r2 = apps_script_call(['action'=>'clearDeliveries', 'key'=>ADMIN_KEY]);
     $out['deliveries'] = $r2['cleared'] ?? 0;
 
     echo json_encode(['ok'=>true, 'cleared'=>$out]);
@@ -626,39 +641,52 @@ if ($action === 'generateGalleryToken') {
     $pi = stripe_call('GET', '/v1/payment_intents/' . urlencode($piId));
     if (($pi['status'] ?? '') !== 'succeeded') { echo json_encode(['ok'=>false,'error'=>'Payment not confirmed']); exit; }
 
-    $meta = $pi['metadata'] ?? [];
-    /* Trust the payment metadata over the query string. */
-    $speakerName = $meta['speakerName'] ?? $speakerName;
-    $pkg         = $meta['package']     ?? $pkg;
+    $result = create_gallery_token($piId, $pi['metadata'] ?? [], $speakerName, $pkg);
+    echo json_encode(['ok'=>true,'token'=>$result['token'],'galleryUrl'=>$result['galleryUrl'],'alreadyExisted'=>$result['alreadyExisted']]);
+    exit;
+}
 
-    $token    = bin2hex(random_bytes(24));
-    $tokenDir = __DIR__ . '/gallery-tokens/';
-    if (!is_dir($tokenDir)) mkdir($tokenDir, 0755, true);
-    $record = [
-        'piId'        => $piId,
-        'speakerName' => $speakerName,
-        'pkg'         => $pkg,
-        'buyerName'   => $meta['buyerName']  ?? '',
-        'buyerEmail'  => $meta['buyerEmail'] ?? '',
-        'created'     => time(),
-    ];
+/* ══ 9b. Stripe webhook — the safety net for lost orders ══
+ * SETUP (one-time): Stripe Dashboard ▸ Developers ▸ Webhooks ▸ Add endpoint
+ *   URL: https://af.net/stripe-proxy.php?action=stripeWebhook
+ *   Event: payment_intent.succeeded
+ * Then copy the "Signing secret" shown there into STRIPE_WEBHOOK_SECRET above.
+ *
+ * WHY THIS EXISTS: recordOrder + generateGalleryToken normally run from the
+ * browser right after Stripe confirms payment. If the buyer's tab crashes,
+ * they close it, or their connection drops in that exact window, Stripe has
+ * already taken the money but our system never finds out — no Sheet row, no
+ * delivery, nothing. This listens for Stripe's own payment_intent.succeeded
+ * event directly, so the order gets recorded and the gallery link gets sent
+ * regardless of what the buyer's browser did. record_paid_order() and
+ * create_gallery_token() are both idempotent (check for the piId first), so
+ * it's safe for this to run even when the normal client-side path already
+ * completed — it just becomes a no-op. */
+if ($action === 'stripeWebhook') {
+    $payload   = file_get_contents('php://input');
+    $sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
 
-    file_put_contents($tokenDir . $token . '.json', json_encode($record));
+    if (!verify_stripe_webhook_signature($payload, $sigHeader, STRIPE_WEBHOOK_SECRET)) {
+        http_response_code(400);
+        echo json_encode(['ok'=>false,'error'=>'Signature verification failed']);
+        exit;
+    }
 
-    /* Email the buyer their secure gallery link so they can review + confirm.
-     * Delivery of the final files happens later, when they confirm in the
-     * gallery (for every package type). */
-    $galleryUrl = 'https://af.net/gallery-2/?token=' . $token;
-    apps_script_call([
-        'action'      => 'sendGalleryLink',
-        'buyerEmail'  => $record['buyerEmail'],
-        'buyerName'   => $record['buyerName'],
-        'speakerName' => $record['speakerName'],
-        'pkg'         => $record['pkg'],
-        'galleryUrl'  => $galleryUrl,
-    ]);
+    $event = json_decode($payload, true);
+    if (($event['type'] ?? '') === 'payment_intent.succeeded') {
+        $pi   = $event['data']['object'] ?? [];
+        $piId = $pi['id'] ?? '';
+        $meta = $pi['metadata'] ?? [];
+        if ($piId) {
+            record_paid_order($piId, $meta);
+            create_gallery_token($piId, $meta);
+        }
+    }
 
-    echo json_encode(['ok'=>true,'token'=>$token,'galleryUrl'=>$galleryUrl]);
+    /* Stripe only cares about the HTTP status — always 200 once verified,
+     * even for event types we don't act on, so Stripe doesn't retry forever. */
+    http_response_code(200);
+    echo json_encode(['ok'=>true,'received'=>true]);
     exit;
 }
 
@@ -1027,6 +1055,139 @@ function list_cache_put($key, $data) {
     $dir = __DIR__ . '/list-cache/';
     if (!is_dir($dir)) @mkdir($dir, 0775, true);
     @file_put_contents($dir . $key . '.json', json_encode($data));
+}
+
+/* ── Shared, idempotent order recording — used by both the recordOrder
+ * action (client-side callback, the common path) and stripeWebhook (the
+ * safety net for when the buyer's tab closes/crashes right after paying and
+ * that client-side callback never runs). Checks the CSV for an existing row
+ * with this piId first so calling it twice for the same order is a no-op,
+ * not a duplicate. ── */
+function order_already_recorded($piId) {
+    if (!file_exists(ORDERS_FILE)) return false;
+    $fp = fopen(ORDERS_FILE, 'r');
+    fgetcsv($fp); /* header */
+    while (($row = fgetcsv($fp)) !== false) {
+        if (($row[7] ?? '') === $piId) { fclose($fp); return true; }
+    }
+    fclose($fp);
+    return false;
+}
+
+function record_paid_order($piId, $meta, $fallbackName = '', $fallbackEmail = '', $fallbackSpeaker = '', $fallbackPkg = '', $fallbackAmount = '') {
+    $finalName = $meta['buyerName']   ?? $fallbackName;
+    $finalEmail= $meta['buyerEmail']  ?? $fallbackEmail;
+    $finalSpk  = $meta['speakerName'] ?? $fallbackSpeaker;
+    $finalPkg  = $meta['package']     ?? $fallbackPkg;
+    $finalAmt  = $meta['price']       ?? $fallbackAmount;
+
+    if (order_already_recorded($piId)) {
+        return ['speakerName' => $finalSpk, 'alreadyRecorded' => true];
+    }
+
+    /* Save to CSV (reliable local record of truth) */
+    $csvDir = dirname(ORDERS_FILE);
+    if (!is_dir($csvDir)) mkdir($csvDir, 0755, true);
+    $isNew = !file_exists(ORDERS_FILE);
+    $fp = fopen(ORDERS_FILE, 'a');
+    if ($isNew) fputcsv($fp, ['Timestamp','Buyer Name','Buyer Email','Speaker','Status','Package','Amount','Payment Intent ID']);
+    fputcsv($fp, [date('Y-m-d H:i:s'), $finalName, $finalEmail, $finalSpk, 'Paid', $finalPkg, $finalAmt, $piId]);
+    fclose($fp);
+
+    /* Record into the Google Sheet — retried + logged so it stops silently dropping */
+    apps_script_call([
+        'action'=>'recordOrder','piId'=>$piId,
+        'buyerName'=>$finalName,'buyerEmail'=>$finalEmail,
+        'speakerName'=>$finalSpk,'pkg'=>$finalPkg,'amount'=>$finalAmt,
+    ]);
+
+    return ['speakerName' => $finalSpk, 'alreadyRecorded' => false];
+}
+
+/* ── Shared, idempotent gallery-token creation — used by generateGalleryToken
+ * (client-side callback) and stripeWebhook (safety net). Scans existing
+ * tokens for this piId first so a webhook firing after the client already
+ * succeeded doesn't email the buyer a second, redundant gallery link. ── */
+function gallery_token_for_piid($piId) {
+    $dir = __DIR__ . '/gallery-tokens/';
+    if (!is_dir($dir)) return null;
+    foreach (glob($dir . '*.json') as $f) {
+        $data = json_decode(file_get_contents($f), true);
+        if (($data['piId'] ?? '') === $piId) {
+            return ['token' => basename($f, '.json'), 'data' => $data];
+        }
+    }
+    return null;
+}
+
+function create_gallery_token($piId, $meta, $fallbackSpeaker = '', $fallbackPkg = '') {
+    $existing = gallery_token_for_piid($piId);
+    if ($existing) {
+        return [
+            'token' => $existing['token'],
+            'galleryUrl' => 'https://af.net/gallery-2/?token=' . $existing['token'],
+            'alreadyExisted' => true,
+        ];
+    }
+
+    $speakerName = $meta['speakerName'] ?? $fallbackSpeaker;
+    $pkg         = $meta['package']     ?? $fallbackPkg;
+
+    $token    = bin2hex(random_bytes(24));
+    $tokenDir = __DIR__ . '/gallery-tokens/';
+    if (!is_dir($tokenDir)) mkdir($tokenDir, 0755, true);
+    $record = [
+        'piId'        => $piId,
+        'speakerName' => $speakerName,
+        'pkg'         => $pkg,
+        'buyerName'   => $meta['buyerName']  ?? '',
+        'buyerEmail'  => $meta['buyerEmail'] ?? '',
+        'created'     => time(),
+    ];
+    file_put_contents($tokenDir . $token . '.json', json_encode($record));
+
+    /* Email the buyer their secure gallery link so they can review + confirm.
+     * Delivery of the final files happens later, when they confirm in the
+     * gallery (for every package type). */
+    $galleryUrl = 'https://af.net/gallery-2/?token=' . $token;
+    apps_script_call([
+        'action'      => 'sendGalleryLink',
+        'buyerEmail'  => $record['buyerEmail'],
+        'buyerName'   => $record['buyerName'],
+        'speakerName' => $record['speakerName'],
+        'pkg'         => $record['pkg'],
+        'galleryUrl'  => $galleryUrl,
+    ]);
+
+    return ['token' => $token, 'galleryUrl' => $galleryUrl, 'alreadyExisted' => false];
+}
+
+/* ── Verify a Stripe webhook request actually came from Stripe. Implements
+ * Stripe's documented signature scheme by hand (no SDK dependency): the
+ * Stripe-Signature header looks like "t=<timestamp>,v1=<hex hmac>", and the
+ * expected signature is HMAC-SHA256 of "<timestamp>.<raw body>" keyed with
+ * the webhook's signing secret. Also rejects stale signatures (>5 min old)
+ * to block replaying a captured request. Fails closed: any error here means
+ * the event is NOT trusted. ── */
+function verify_stripe_webhook_signature($payload, $sigHeader, $secret, $tolerance = 300) {
+    if (!$secret || strpos($secret, 'REPLACE_WITH') === 0) return false;
+    if (!$sigHeader) return false;
+
+    $timestamp = null; $signatures = [];
+    foreach (explode(',', $sigHeader) as $part) {
+        $kv = explode('=', $part, 2);
+        if (count($kv) !== 2) continue;
+        if ($kv[0] === 't') $timestamp = $kv[1];
+        elseif ($kv[0] === 'v1') $signatures[] = $kv[1];
+    }
+    if (!$timestamp || !$signatures) return false;
+    if (abs(time() - intval($timestamp)) > $tolerance) return false;
+
+    $expected = hash_hmac('sha256', $timestamp . '.' . $payload, $secret);
+    foreach ($signatures as $sig) {
+        if (hash_equals($expected, $sig)) return true;
+    }
+    return false;
 }
 
 /* ── Apps Script call with retry + failure log (fixes orders not reaching the
