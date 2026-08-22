@@ -32,9 +32,28 @@ define('STRIPE_WEBHOOK_SECRET', 'whsec_REPLACE_WITH_YOUR_WEBHOOK_SIGNING_SECRET'
 
 ob_start(); /* Buffer output to prevent warnings corrupting JSON */
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: https://af.net');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { ob_end_clean(); exit; }
+
+/* SECURITY: blocks the exact "paste the streamVideo/getThumb URL straight
+ * into a new browser tab" access path — a legitimate request always arrives
+ * as a sub-resource of a page on af.net (the sales page's <video>/<img>
+ * src, or the gallery review page), so the browser attaches a Referer
+ * header pointing at af.net. A URL pasted directly into the address bar, a
+ * link shared in chat, or a bookmark carries no Referer at all and gets
+ * rejected here. Not bulletproof — Referer is client-supplied and a script
+ * (curl, Postman) can fake it — but it stops casual link-sharing/reuse,
+ * which is the realistic threat for a leaked fileId. */
+function require_af_referer_or_die() {
+    $ref  = $_SERVER['HTTP_REFERER'] ?? '';
+    $host = strtolower(parse_url($ref, PHP_URL_HOST) ?: '');
+    if ($host !== 'af.net' && $host !== 'www.af.net') {
+        http_response_code(403);
+        echo json_encode(['ok' => false, 'error' => 'Forbidden']);
+        exit;
+    }
+}
 
 /* ── PACKAGE ENTITLEMENTS — single source of truth (mirrors Apps Script) ──
  *   limit  : selection_limit (null = no selection, deliver everything entitled)
@@ -381,6 +400,7 @@ if ($action === 'listFolder') {
 
 /* ══ 5. Get Image Thumbnail ══ */
 if ($action === 'getThumb') {
+    require_af_referer_or_die();
     $fileId = $_GET['fileId'] ?? '';
     if (!$fileId) { http_response_code(400); exit; }
     $small = ($_GET['size'] ?? '') === 'small';
@@ -481,6 +501,7 @@ if ($action === 'getThumb') {
 
 /* ══ 6. Stream Video ══ */
 if ($action === 'streamVideo') {
+    require_af_referer_or_die();
     $fileId = $_GET['fileId'] ?? '';
     if (!$fileId) { http_response_code(400); exit; }
 
