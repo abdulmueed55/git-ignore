@@ -222,6 +222,13 @@ var SPEAKER_VIDEO_FOLDERS = {
   'Joanne Sweeney': '1wczbXBqIW6YU5JJ-2xmpnVTqB19wS4yV',
   'Wilhelm Loderer': '1PbCckXhARJ7e4PADBGoNVgtpigxQc9Rq',
   'Wolfgang Pinegger': '1yBoTx68RtSsSb4Xds6GfsH7FhAQB7XEe',
+  'Labeeqah Schuurman': '12HEUXq0dZddyUTdgd5sE2lSeCn3Bzzmj',
+  'Kunal Panchamia': '1KowTgqfhiHXyTCJOLM4YGZoKWf3ajbt0',
+  'Gladwin Mendez': '1o1KCwHhHIlpk1rXvCQ7ZF6tv7-IOxeAy',
+  'Vinod Sood': '10XQm31fsipnjA1kFl4eJWokKh02EK5Tx',
+  'Kiyoshi Adachi': '1x0_ABknGtz-WIqMndhHhbcG6B7JRf_Pb',
+  'Kenechi Okeleke': '1EOKYjtyV1FSzmo2rHrDM8YputSiu-mdi',
+  'Kashif Ul Haq': '15H7cKiug8kVLXAfqEti25V9a0aOWqSAZ',
 };
 
 /* ── PACKAGE ENTITLEMENTS (single source of truth, mirrors the spec) ─────────
