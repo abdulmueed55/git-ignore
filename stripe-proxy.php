@@ -564,10 +564,19 @@ if ($action === 'streamVideo') {
         CURLOPT_WRITEFUNCTION => function ($curl, $chunk) use (&$headersSent, &$statusCode, &$contentType, &$contentLen, &$contentRange) {
             if (!$headersSent) {
                 $headersSent = true;
-                http_response_code($statusCode === 206 ? 206 : 200);
+                /* SECURITY/CORRECTNESS: only treat this as a real video and let
+                 * Cloudflare/browsers cache it for a day when Drive actually
+                 * returned a successful video response. Blindly forcing 200 and
+                 * a 24h public cache on WHATEVER came back (a Drive rate-limit
+                 * page, a transient error) would get that bad response stuck at
+                 * the edge for a full day even after Drive recovers — exactly
+                 * what happened during heavy same-key API testing. Anything
+                 * else forwards its real status code and is never cached. */
+                $isGoodVideo = ($statusCode === 200 || $statusCode === 206) && stripos($contentType, 'video/') === 0;
+                http_response_code($statusCode ?: 502);
                 header('Content-Type: ' . $contentType);
                 header('Accept-Ranges: bytes');
-                header('Cache-Control: public, max-age=86400');
+                header('Cache-Control: ' . ($isGoodVideo ? 'public, max-age=86400' : 'no-store'));
                 if ($contentLen)   header('Content-Length: ' . $contentLen);
                 if ($contentRange) header('Content-Range: ' . $contentRange);
             }
