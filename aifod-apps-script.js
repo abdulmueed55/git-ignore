@@ -229,6 +229,8 @@ var SPEAKER_VIDEO_FOLDERS = {
   'Kiyoshi Adachi': '1x0_ABknGtz-WIqMndhHhbcG6B7JRf_Pb',
   'Kenechi Okeleke': '1EOKYjtyV1FSzmo2rHrDM8YputSiu-mdi',
   'Kashif Ul Haq': '15H7cKiug8kVLXAfqEti25V9a0aOWqSAZ',
+  'Andrei Dumitrica': '1f-2RiakHHq-dQCw6N2VR9rQEbMwUlPYX',
+  'Vuk Vegezzi': '1ezIKk1XOYL0Y-QDxhByeWArsBNFf6RpO',
 };
 
 /* ── PACKAGE ENTITLEMENTS (single source of truth, mirrors the spec) ─────────
