@@ -157,7 +157,77 @@
 #apSuccBox .apGalleryLink:hover{background:#1a2c54;}
 #apSuccBox .apSuccNote{margin-top:14px;font-size:11px;color:#9ca3af;line-height:1.6;}
 #afpp .apSoldBanner{display:none;background:rgba(226,30,81,.07);border:1px solid rgba(226,30,81,.25);border-radius:6px;padding:9px 13px;font-size:13px;color:#E21E51;margin-top:10px;font-weight:500;}
+
+/* ── PASSWORD GATE ── */
+html.af-locked #afpp{filter:blur(18px);pointer-events:none;user-select:none;-webkit-user-select:none;}
+#afPwGate{display:none;position:fixed;inset:0;z-index:1000000;background:rgba(4,9,18,.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;font-family:Lexend,sans-serif;}
+#afPwBox{background:#fff;border-radius:16px;max-width:400px;width:100%;padding:36px 32px 30px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.45);}
+#afPwBox h3{font-size:19px;font-weight:700;color:#0d1b3a;margin-bottom:8px;}
+#afPwBox p{font-size:13px;color:#6b7280;line-height:1.6;margin-bottom:22px;}
+#afPwInput{width:100%;padding:12px 14px;font-size:15px;font-family:Lexend,sans-serif;border:1.5px solid rgba(13,27,58,.18);border-radius:8px;color:#0d1b3a;text-align:center;letter-spacing:.02em;outline:none;box-sizing:border-box;background:#fff;}
+#afPwInput:focus{border-color:rgba(226,30,81,.55);box-shadow:0 0 0 3px rgba(226,30,81,.10);}
+#afPwErr{display:none;color:#E21E51;font-size:12.5px;margin-top:10px;}
+#afPwBtn{width:100%;margin-top:18px;padding:13px;background:#E21E51;color:#fff;border:0;border-radius:8px;font-family:Lexend,sans-serif;font-size:14.5px;font-weight:600;cursor:pointer;transition:background .2s;}
+#afPwBtn:hover{background:#ff2f6b;}
+@keyframes afPwShake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-8px);}40%,80%{transform:translateX(8px);}}
+.afPwShake{animation:afPwShake .4s;}
 </style>
+
+<div id="afPwGate">
+  <div id="afPwBox">
+    <h3>Speaker Media — Password Required</h3>
+    <p>This page is private. Please enter the password sent to you by email to continue.</p>
+    <input type="password" id="afPwInput" placeholder="Enter password" autocomplete="off">
+    <div id="afPwErr">Incorrect password. Please try again.</div>
+    <button id="afPwBtn" type="button">Unlock</button>
+  </div>
+</div>
+<script>
+(function(){
+  var PW = "GENEVA_2026_MEDIA";
+  var LSKEY = "afGenevaMediaUnlocked";
+  function isUnlocked(){ try{ return localStorage.getItem(LSKEY) === "1"; }catch(e){ return false; } }
+  function markUnlocked(){ try{ localStorage.setItem(LSKEY, "1"); }catch(e){} }
+  function lock(){
+    document.documentElement.classList.add("af-locked");
+    document.body.style.overflow = "hidden";
+    var gate = document.getElementById("afPwGate");
+    if(gate) gate.style.display = "flex";
+  }
+  function unlock(){
+    document.documentElement.classList.remove("af-locked");
+    document.body.style.overflow = "";
+    var gate = document.getElementById("afPwGate");
+    if(gate) gate.style.display = "none";
+  }
+  function attempt(){
+    var inp = document.getElementById("afPwInput");
+    var err = document.getElementById("afPwErr");
+    if(!inp) return;
+    if(inp.value === PW){
+      markUnlocked();
+      unlock();
+    } else {
+      if(err) err.style.display = "block";
+      inp.value = "";
+      inp.classList.add("afPwShake");
+      setTimeout(function(){ inp.classList.remove("afPwShake"); }, 400);
+      inp.focus();
+    }
+  }
+  function init(){
+    if(isUnlocked()) return;
+    lock();
+    var btn = document.getElementById("afPwBtn");
+    var inp = document.getElementById("afPwInput");
+    if(btn) btn.addEventListener("click", attempt);
+    if(inp) inp.addEventListener("keydown", function(e){ if(e.key === "Enter") attempt(); });
+    setTimeout(function(){ if(inp) inp.focus(); }, 150);
+  }
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
 
 <div id="afpp">
 
