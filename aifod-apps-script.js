@@ -158,9 +158,6 @@ var SPEAKER_FOLDERS = {
   'Wilhelm Loderer': '1l87jGNOE5Og-3xgiPFqTOi8vVLcu8Cwe',
   'Velynne Ji': '1muQe6IY-vTQzgjT0sdhxqBD7NYHHRShO',
   'Carmen Lamagna': '13CohitmG4xU0pC_rrec65UAgCfhFc80Q',
-  'Cyrille C. Catel': '1Kh5oTsUpMykqoQuhbxbsUuJK1IYIDyhe',
-  'Manohar Kosuru': '1xm8fnSmHiY4H9tkIQ5ygafupQB-YFKt1',
-  'Oliver Ropke': '1sEYWDQOUlwiTqIoBsvi37OzDwIyqTwEj',
 };
 
 /* ── SPEAKER → VIDEO DRIVE FOLDER ─────────────────────────────────────────────
