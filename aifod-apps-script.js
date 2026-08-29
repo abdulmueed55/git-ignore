@@ -954,3 +954,43 @@ function testDelivery() {
   });
   Logger.log(JSON.stringify(out, null, 2));
 }
+
+function fixJeremySteinOrder() {
+  var f = DriveApp.getFolderById('17KAD5AYwxAKv1woU4ujujwDYyOwETRoW');
+  f.setDescription(f.getDescription().replace(/pending=.*$/, 'pending=video'));
+  Logger.log(f.getDescription());
+  retryPendingDeliveries();
+}
+function fixFredricEmaneOrder() {
+  fixPendingBySpeaker_('Frederic Emane', 'video');
+}
+function fixJoanneSweeneyOrder() {
+  fixPendingBySpeaker_('Joanne Sweeney', 'video');
+}
+
+/**
+ * Delivery parent ke andar us speaker ke order folder(s) dhoondh kar
+ * pending flag dobara set karta hai, phir retry chala deta hai.
+ */
+function fixPendingBySpeaker_(speaker, pendingValue) {
+  var parent = DriveApp.getFolderById(CONFIG.DELIVERY_PARENT_ID);
+  var it = parent.getFolders();
+  var hit = 0;
+  while (it.hasNext()) {
+    var f = it.next();
+    var desc = f.getDescription();          // master folders par null hota hai
+    if (!desc || desc.indexOf('speaker=' + speaker) === -1) continue;
+
+    var meta = parseOrderDesc_(desc);
+    meta.pending = pendingValue;
+    f.setDescription(buildOrderDesc_(meta));
+    Logger.log('Fixed: ' + f.getName() + '  ->  ' + f.getDescription());
+    hit++;
+  }
+  if (!hit) {
+    Logger.log('Koi order folder nahi mila speaker="' + speaker + '" ke liye. ' +
+               'Naam bilkul waisa hi hona chahiye jaisa Sheet/maps mein hai.');
+    return;
+  }
+  retryPendingDeliveries();
+}
