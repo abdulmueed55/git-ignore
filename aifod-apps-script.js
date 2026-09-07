@@ -967,6 +967,9 @@ function fixFredricEmaneOrder() {
 function fixJoanneSweeneyOrder() {
   fixPendingBySpeaker_('Joanne Sweeney', 'video');
 }
+function fixFredrikKoconOrder() {
+  fixPendingBySpeaker_('Fredrik Kocon', 'video');
+}
 
 /**
  * Delivery parent ke andar us speaker ke order folder(s) dhoondh kar
