@@ -1,58 +1,81 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FG Liaquat Ali Degree College — College ERP
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A complete college management system for **FG Liaquat Ali Degree College, Rawalpindi**:
 
-## About Laravel
+| Module | What it does |
+|---|---|
+| **Command centre** | Role-aware home: today's attendance, registers still to mark, admission funnel, AI-flagged applications, students below 75 %, what is live on the website, audit trail. |
+| **Admissions + AI verification** | Online applications with document upload. Claude reads CNIC/B-Form, Matric/Inter result cards and domicile, **auto-fills the form**, and **cross-checks every document against the others and the form** (name, father name, CNIC, date of birth, roll numbers, marks). Mismatches and duplicate CNICs are flagged; merit is calculated; merit lists generated and published; admitted applicants become students with roll numbers. |
+| **Attendance** | 4-state register (Present / Absent / Late / Leave) marked by teachers in seconds, lock window, leave requests, guardian SMS alerts (absent today, below threshold, consecutive absences), analytics, defaulters list, per-student profile, printable monthly register. |
+| **Academics** | Programs, sections, subjects, clash-free timetable, students, staff & roles, activity log. |
+| **Website studio** | A separate dashboard for the college website: announcements, news, events, notices, pages, hero slides, gallery, downloads, faculty directory, contact inbox, site settings — all exposed through a public JSON API (`/api/v1/…`) for the new website. |
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requirements
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP 8.3+ with `pdo_mysql`, `gd`, `intl`, `mbstring`, `fileinfo`, `zip`
+- Composer 2, Node 20+ (only to build assets)
+- MySQL 8 / MariaDB 10.6+ in production (SQLite works for local use)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Install
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Set the database in `.env`:
 
-## Contributing
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=fgla_erp
+DB_USERNAME=fgla
+DB_PASSWORD=change-me
+APP_TIMEZONE=Asia/Karachi
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Then:
 
-## Code of Conduct
+```bash
+php artisan migrate --seed
+php artisan storage:link
+npm ci && npm run build
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+`--seed` loads a complete demo college (staff, ~450 students, timetable, ten weeks of attendance, two admission cycles, website content). For a clean production install run `php artisan migrate` only and create the first admin with `php artisan tinker`.
 
-## Security Vulnerabilities
+Demo logins (password `password`): `admin@`, `principal@`, `admissions@`, `teacher@`, `editor@` + `fglacollege.edu.pk`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## AI document reading (admissions)
 
-## License
+Add an Anthropic API key to `.env`:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```dotenv
+ANTHROPIC_API_KEY=sk-ant-...
+AI_EXTRACTION_MODEL=claude-opus-5-5
+```
+
+Each uploaded document is sent once to Claude, which returns structured fields (name, father name, CNIC, DOB, board, roll no, marks…) plus a confidence score and any visible problems (blurred, cropped, looks edited). The verifier then compares every field across all documents and the form. Without a key the system still works: documents are marked "enter manually" and staff verify by eye — nothing is ever guessed.
+
+Document reading runs right after the upload request finishes, so no queue worker is required. On a VPS you may run `php artisan queue:work` under Supervisor for other background jobs.
+
+## SMS alerts to guardians
+
+Alerts are queued in **Attendance → Guardian alerts**. The default gateway writes to the log; plug in a Pakistani SMS provider by implementing `App\Services\Attendance\SmsGateway` and setting it in `config/attendance.php`.
+
+## Deploying
+
+- **VPS (recommended):** Nginx + PHP-FPM 8.3, document root `public/`, MySQL, `php artisan config:cache route:cache view:cache`, and a cron entry `* * * * * php /path/artisan schedule:run`.
+- **Shared hosting (cPanel):** upload the project above `public_html`, point `public_html` to `public/`, import the database, set `.env`. Works without SSH queue workers.
+
+## Tests
+
+```bash
+php artisan test
+```
+
+## Project layout
+
+See `CLAUDE.md` for module boundaries, route files, roles and the design-system rules every screen follows.
