@@ -24,7 +24,7 @@
                 <x-crest class="h-10 w-10 shrink-0" />
                 <div class="min-w-0 leading-tight">
                     <div class="display truncate text-[15px] font-semibold text-ink">{{ $s['college_name'] ?? 'F.G. Liaquat Ali Degree College' }}</div>
-                    <div class="truncate text-[11px] text-muted">Rawalpindi Cantt</div>
+                    <div class="truncate text-[11px] text-muted">Peshawar Road, Rawalpindi</div>
                 </div>
             </a>
             <nav class="ml-auto hidden items-center gap-1 text-[13px] lg:flex">

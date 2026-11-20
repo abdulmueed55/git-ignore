@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }} — FG Liaquat Ali Degree College Admissions</title>
-    <meta name="description" content="Apply online for admission to F.G. Liaquat Ali Degree College, Rawalpindi Cantt. Upload your documents and track your application.">
+    <meta name="description" content="Apply online for admission to FG Liaquat Ali Degree College, Peshawar Road, Rawalpindi. Upload your documents and track your application.">
     <script>
         (() => { let t = null; try { t = localStorage.getItem('theme'); } catch (e) {}
           document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); })();
@@ -21,7 +21,7 @@
                 <x-crest class="h-9 w-9" />
                 <div class="leading-tight">
                     <div class="display text-[15px] font-semibold text-ink">FG Liaquat Ali Degree College</div>
-                    <div class="text-[11px] text-muted">Online admissions · Rawalpindi Cantt</div>
+                    <div class="text-[11px] text-muted">Online admissions · Peshawar Road, Rawalpindi</div>
                 </div>
             </a>
             <nav class="ml-auto flex items-center gap-1 text-[13px]">
@@ -63,7 +63,7 @@
 
     <footer class="border-t border-line">
         <div class="mx-auto flex max-w-[1120px] flex-wrap items-center justify-between gap-2 px-4 py-5 text-[12px] text-muted sm:px-6">
-            <span>F.G. Liaquat Ali Degree College, Rawalpindi Cantt · Admission office 051-9270614</span>
+            <span>FG Liaquat Ali Degree College, Peshawar Road, Rawalpindi · Admission office 051-5492888</span>
             <span>Your documents are stored privately and seen only by the admission office.</span>
         </div>
     </footer>

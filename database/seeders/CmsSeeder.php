@@ -221,7 +221,7 @@ class CmsSeeder extends Seeder
     private function pages(User $editor): void
     {
         $pages = [
-            ['About the college', 'about', 'A federal government degree college in Rawalpindi Cantt offering intermediate, associate degree and BS programmes.',
+            ['About the college', 'about', 'A public-sector college on Peshawar Road, Rawalpindi, offering intermediate and four-year BS programmes.',
                 '<p>FG Liaquat Ali Degree College is a public-sector college on Peshawar Road, Rawalpindi, run under the Directorate of Federal Government Educational Institutions (Cantonments/Garrisons), Ministry of Defence. It offers intermediate and degree-level education at nominal fees.</p><h3>Campus</h3><ul><li>Spacious classrooms, science and computer laboratories</li><li>A well-stocked library and a digital library</li><li>An auditorium, a sports ground, a cafeteria and a mosque</li></ul>'],
             ["Principal's message", 'principals-message', 'A message from the Principal to students and parents.', null],
             ['History', 'history', 'From an intermediate college for boys in 2007 to a degree college with four-year BS programmes.',

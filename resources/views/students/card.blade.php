@@ -24,7 +24,7 @@
                 <x-crest class="h-7 w-7" />
                 <div class="leading-tight">
                     <div class="display text-[11px]">FG Liaquat Ali Degree College</div>
-                    <div class="text-[7.5px] text-rail-muted">Rawalpindi Cantt · Student identity card</div>
+                    <div class="text-[7.5px] text-rail-muted">Peshawar Road, Rawalpindi · Student identity card</div>
                 </div>
             </div>
             <div class="flex gap-3 px-3 pt-2.5">
@@ -47,7 +47,7 @@
         {{-- Back --}}
         <div class="card relative overflow-hidden rounded-[10px] border border-line-strong bg-surface p-3 text-[8px] leading-relaxed text-ink-2 shadow-lg">
             <div class="eyebrow !text-[7px]">If found, please return to</div>
-            <div class="mt-0.5 font-semibold text-ink">FG Liaquat Ali Degree College, Rawalpindi Cantt</div>
+            <div class="mt-0.5 font-semibold text-ink">FG Liaquat Ali Degree College, Peshawar Road, Rawalpindi</div>
             <div class="mt-2 grid grid-cols-[52px_1fr] gap-y-0.5">
                 <span class="text-muted">CNIC/B-Form</span><span class="mono">{{ $student->cnic }}</span>
                 <span class="text-muted">Guardian</span><span class="mono">{{ $student->guardian_phone }}</span>

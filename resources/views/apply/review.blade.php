@@ -43,8 +43,8 @@
         <section class="panel p-6">
             <h2 class="panel-title mb-4 flex items-center gap-2"><span class="mono grid h-6 w-6 place-items-center rounded-md bg-sunken text-[11px]">1</span> Programme</h2>
             <div class="grid gap-4 sm:grid-cols-2">
-                <x-ui.field name="program_id" label="Programme" type="select" required :value="$app->program_id" :options="$programs->pluck('name', 'id')->all()" :empty="false" />
-                <x-ui.field name="second_program_id" label="Second preference" type="select" :value="$app->second_program_id" :options="$programs->pluck('name', 'id')->all()" empty="None" />
+                <x-admissions.program-select name="program_id" label="Programme" :programs="$programs" :value="$app->program_id" required />
+                <x-admissions.program-select name="second_program_id" label="Second preference" :programs="$programs" :value="$app->second_program_id" empty="None" />
                 <x-ui.field name="quota" label="Quota" type="select" required :value="$app->quota" :options="\App\Models\AdmissionApplication::QUOTAS" :empty="false" />
                 <label class="flex items-center gap-2 self-end rounded-lg border border-line px-3 py-2.5 text-[13px] text-ink-2">
                     <input type="hidden" name="is_hafiz" value="0">

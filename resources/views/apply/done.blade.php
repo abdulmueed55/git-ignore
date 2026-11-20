@@ -5,7 +5,7 @@
             <div class="relative">
                 <div class="mx-auto grid h-14 w-14 place-items-center rounded-full bg-ok text-white"><x-icon name="check" :size="26" /></div>
                 <h1 class="display mt-5 text-[34px] text-ink">Application submitted</h1>
-                <p class="mt-2 text-[14px] text-muted">{{ $app->name }} · {{ $app->program?->name }} · {{ $app->submitted_at?->format('j M Y, g:i a') }}</p>
+                <p class="mt-2 text-[14px] text-muted">{{ $app->name }} · {{ $app->program?->name }} ({{ $app->program?->admissionClass() }}) · {{ $app->submitted_at?->format('j M Y, g:i a') }}</p>
 
                 <div class="mt-7 grid gap-3 sm:grid-cols-2">
                     <div class="rounded-xl border border-line bg-paper p-4">

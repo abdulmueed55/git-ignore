@@ -12,7 +12,7 @@
         <div class="flex items-center gap-4 border-b-2 border-ink pb-4">
             <x-crest class="h-14 w-14" />
             <div class="flex-1">
-                <div class="display text-[22px]">F.G. Liaquat Ali Degree College, Rawalpindi Cantt</div>
+                <div class="display text-[22px]">FG Liaquat Ali Degree College, Peshawar Road, Rawalpindi</div>
                 <div class="text-[13px] text-muted">{{ $list->cycle->title }} · Session {{ $list->cycle->academicSession?->name }}</div>
             </div>
             <div class="text-right">
@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="mt-5 flex justify-between text-[13px]">
-            <div><b>{{ $list->program->name }}</b> ({{ $list->program->code }})</div>
+            <div><b>{{ $list->program->name }}</b> ({{ $list->program->code }}) · {{ $list->program->admissionClass() }}</div>
             <div>Closing merit: <b class="mono">{{ $list->closing_merit ? number_format($list->closing_merit, 3) : '—' }}</b></div>
         </div>
         <table class="mt-4 w-full border-collapse text-[12.5px]">

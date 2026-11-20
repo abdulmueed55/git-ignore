@@ -128,12 +128,14 @@ class AcademicSeeder extends Seeder
         $programs = [
             'FSC-PM' => Program::create(['code' => 'FSC-PM', 'name' => 'F.Sc. Pre-Medical', 'level' => 'intermediate', 'department_id' => $depts['BIO']->id, 'seats' => 120, 'min_percentage' => 60, 'annual_fee' => 18500, 'eligibility' => 'Matric (Science) with Biology, minimum 60% marks', 'merit_weights' => $inter]),
             'FSC-PE' => Program::create(['code' => 'FSC-PE', 'name' => 'F.Sc. Pre-Engineering', 'level' => 'intermediate', 'department_id' => $depts['PHY']->id, 'seats' => 80, 'min_percentage' => 60, 'annual_fee' => 18500, 'eligibility' => 'Matric (Science), minimum 60% marks', 'merit_weights' => $inter]),
-            'ICS' => Program::create(['code' => 'ICS', 'name' => 'I.C.S. (Physics / Computer Science)', 'level' => 'intermediate', 'department_id' => $depts['CS']->id, 'seats' => 80, 'min_percentage' => 55, 'annual_fee' => 19500, 'eligibility' => 'Matric (Science or Computer), minimum 55% marks', 'merit_weights' => $inter]),
+            'ICS' => Program::create(['code' => 'ICS', 'name' => 'I.C.S. (Computer Science)', 'level' => 'intermediate', 'department_id' => $depts['CS']->id, 'seats' => 80, 'min_percentage' => 55, 'annual_fee' => 19500, 'eligibility' => 'Matric (Science or Computer), minimum 55% marks', 'merit_weights' => $inter]),
             'ICOM' => Program::create(['code' => 'ICOM', 'name' => 'I.Com.', 'level' => 'intermediate', 'department_id' => $depts['COM']->id, 'seats' => 60, 'min_percentage' => 45, 'annual_fee' => 15500, 'eligibility' => 'Matric (any group), minimum 45% marks', 'merit_weights' => $inter]),
             'FA' => Program::create(['code' => 'FA', 'name' => 'F.A. (Humanities)', 'level' => 'intermediate', 'department_id' => $depts['ENG']->id, 'seats' => 60, 'min_percentage' => 45, 'annual_fee' => 14000, 'eligibility' => 'Matric (any group), minimum 45% marks', 'merit_weights' => $inter]),
             'BSCS' => Program::create(['code' => 'BSCS', 'name' => 'BS Computer Science', 'level' => 'bs', 'duration_years' => 4, 'department_id' => $depts['CS']->id, 'seats' => 50, 'min_percentage' => 50, 'annual_fee' => 42000, 'eligibility' => 'Intermediate (Pre-Engineering / ICS / Pre-Medical with Maths), minimum 50%', 'merit_weights' => ['academic' => 0.7, 'matric' => 0.3, 'hafiz_bonus' => 20]]),
-            'BSENG' => Program::create(['code' => 'BSENG', 'name' => 'BS English', 'level' => 'bs', 'duration_years' => 4, 'department_id' => $depts['ENG']->id, 'seats' => 50, 'min_percentage' => 45, 'annual_fee' => 36000, 'eligibility' => 'Intermediate (any group), minimum 45%', 'merit_weights' => ['academic' => 0.7, 'matric' => 0.3, 'hafiz_bonus' => 20]]),
-            'ADP-SC' => Program::create(['code' => 'ADP-SC', 'name' => 'Associate Degree in Science', 'level' => 'adp', 'duration_years' => 2, 'department_id' => $depts['PHY']->id, 'seats' => 40, 'min_percentage' => 45, 'annual_fee' => 28000, 'eligibility' => 'Intermediate (Science), minimum 45%', 'merit_weights' => ['academic' => 0.7, 'matric' => 0.3, 'hafiz_bonus' => 20], 'is_active' => true]),
+            'BSENG' => Program::create(['code' => 'BSENG', 'name' => 'BS English (Linguistics)', 'level' => 'bs', 'duration_years' => 4, 'department_id' => $depts['ENG']->id, 'seats' => 50, 'min_percentage' => 45, 'annual_fee' => 36000, 'eligibility' => 'Intermediate (any group), minimum 45%', 'merit_weights' => ['academic' => 0.7, 'matric' => 0.3, 'hafiz_bonus' => 20]]),
+            'FSC-GS' => Program::create(['code' => 'FSC-GS', 'name' => 'General Science', 'level' => 'intermediate', 'department_id' => $depts['MTH']->id, 'seats' => 60, 'min_percentage' => 60, 'annual_fee' => 18500, 'eligibility' => 'Matric (Science), minimum 60% marks; not open to SSC Humanities', 'merit_weights' => $inter]),
+            'BSIT' => Program::create(['code' => 'BSIT', 'name' => 'BS Information Technology', 'level' => 'bs', 'duration_years' => 4, 'department_id' => $depts['CS']->id, 'seats' => 50, 'min_percentage' => 50, 'annual_fee' => 42000, 'eligibility' => 'Intermediate (Pre-Engineering / ICS / General Science / Pre-Medical with Maths), minimum 50%', 'merit_weights' => ['academic' => 0.7, 'matric' => 0.3, 'hafiz_bonus' => 20]]),
+            'ADP-SC' => Program::create(['code' => 'ADP-SC', 'name' => 'Associate Degree in Science', 'level' => 'adp', 'duration_years' => 2, 'department_id' => $depts['PHY']->id, 'seats' => 40, 'min_percentage' => 45, 'annual_fee' => 28000, 'eligibility' => 'Intermediate (Science), minimum 45%', 'merit_weights' => ['academic' => 0.7, 'matric' => 0.3, 'hafiz_bonus' => 20], 'is_active' => false]),
         ];
 
         $curriculum = [
@@ -142,6 +144,9 @@ class AcademicSeeder extends Seeder
             'ICS' => ['ENG-I', 'URD-I', 'PST-I', 'PHY-I', 'MTH-I', 'CS-I'],
             'ICOM' => ['ENG-I', 'URD-I', 'ISL-I', 'ACC-I', 'COM-I', 'ECO-I'],
             'FA' => ['ENG-I', 'URD-I', 'ISL-I', 'ECO-I', 'POL-I', 'STA-I'],
+            'FSC-GS' => ['ENG-I', 'URD-I', 'ISL-I', 'MTH-I', 'PHY-I', 'STA-I'],
+            'BSIT-1' => ['CS-101', 'CS-102', 'MTH-101', 'ENG-101', 'ISL-I'],
+            'BSIT-5' => ['CS-301', 'CS-302', 'CS-202', 'MTH-201', 'STA-I'],
             'BSCS-1' => ['CS-101', 'CS-102', 'MTH-101', 'ENG-101', 'ISL-I', 'PST-I'],
             'BSCS-3' => ['CS-201', 'CS-202', 'MTH-201', 'STA-I', 'ENG-101'],
             'BSCS-5' => ['CS-301', 'CS-302', 'CS-303', 'MTH-201', 'ECO-I'],
@@ -158,12 +163,18 @@ class AcademicSeeder extends Seeder
             ['FSC-PE', '2025–2027', 'Part-II · A', 2, 'FSC-PE', [32, 38], 'A-203'],
             ['ICS', '2026–2028', 'Part-I · A', 1, 'ICS', [34, 40], 'C-Lab 1'],
             ['ICS', '2025–2027', 'Part-II · A', 2, 'ICS', [30, 36], 'C-Lab 2'],
+            ['FSC-GS', '2026–2028', 'Part-I · A', 1, 'FSC-GS', [28, 34], 'A-104'],
+            ['FSC-GS', '2025–2027', 'Part-II · A', 2, 'FSC-GS', [24, 30], 'A-204'],
             ['ICOM', '2026–2028', 'Part-I · A', 1, 'ICOM', [30, 36], 'D-104'],
+            ['ICOM', '2025–2027', 'Part-II · A', 2, 'ICOM', [26, 32], 'D-204'],
             ['FA', '2026–2028', 'Part-I · A', 1, 'FA', [26, 32], 'D-105'],
+            ['FA', '2025–2027', 'Part-II · A', 2, 'FA', [22, 28], 'D-205'],
             ['BSCS', '2026–2030', 'Semester 1', 1, 'BSCS-1', [34, 40], 'CS-Hall 1'],
             ['BSCS', '2024–2028', 'Semester 5', 3, 'BSCS-5', [26, 32], 'CS-Hall 2'],
             ['BSENG', '2026–2030', 'Semester 1', 1, 'BSENG-1', [30, 36], 'E-201'],
             ['BSENG', '2024–2028', 'Semester 5', 3, 'BSENG-3', [22, 28], 'E-202'],
+            ['BSIT', '2026–2030', 'Semester 1', 1, 'BSIT-1', [30, 36], 'CS-Lab 3'],
+            ['BSIT', '2024–2028', 'Semester 5', 3, 'BSIT-5', [22, 28], 'CS-Lab 4'],
         ];
 
         // Give each course to the least-loaded teacher of the subject's department
@@ -226,7 +237,7 @@ class AcademicSeeder extends Seeder
             $n = mt_rand($range[0], $range[1]);
             $yearCode = substr($sessions[$sess]->name, 2, 2);
             for ($i = 1; $i <= $n; $i++) {
-                $female = in_array($pcode, ['BSENG', 'BSCS'], true) && mt_rand(1, 100) <= 40;
+                $female = in_array($pcode, ['BSENG', 'BSCS', 'BSIT'], true) && mt_rand(1, 100) <= 40;
                 $first = $female ? self::FEMALE[mt_rand(0, count(self::FEMALE) - 1)] : self::MALE[($nameIdx++ * 7 + $si) % count(self::MALE)];
                 $father = self::FATHERS[mt_rand(0, count(self::FATHERS) - 1)];
                 $key = $pcode.$yearCode;

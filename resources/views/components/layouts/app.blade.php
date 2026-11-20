@@ -130,7 +130,7 @@
         </main>
 
         <footer class="flex flex-wrap items-center justify-between gap-2 border-t border-line px-4 py-4 text-[11.5px] text-muted sm:px-6 lg:px-8">
-            <span>Federal Government Liaquat Ali Degree College, Rawalpindi Cantt.</span>
+            <span>FG Liaquat Ali Degree College, Peshawar Road, Rawalpindi</span>
             <span class="mono">v1.0 · {{ app()->environment() }}</span>
         </footer>
     </div>

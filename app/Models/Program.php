@@ -46,6 +46,12 @@ class Program extends Model
         return $this->level !== 'intermediate';
     }
 
+    /** The only class this programme admits into: 1st year for intermediate, the first semester for degrees. */
+    public function admissionClass(): string
+    {
+        return $this->level === 'intermediate' ? '1st Year (HSSC Part-I)' : '1st Semester';
+    }
+
     public function weights(): array
     {
         return array_merge(['academic' => 1.0, 'hafiz_bonus' => 20], $this->merit_weights ?? []);

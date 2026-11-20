@@ -39,20 +39,22 @@
 
                 <div class="prose-ledger mt-6 whitespace-pre-line">{{ $cycle->instructions }}</div>
 
-                <h2 class="eyebrow mt-8 mb-3">Programmes in this intake</h2>
-                <div class="grid gap-3 sm:grid-cols-2">
-                    @foreach ($programs as $p)
-                        <div class="panel p-4">
-                            <div class="flex items-center justify-between">
-                                <span class="mono text-[11.5px] font-semibold text-brass">{{ $p->code }}</span>
-                                <span class="text-[11.5px] text-muted">{{ $p->seats }} seats</span>
+                @foreach ($programs->groupBy(fn ($p) => $p->level === 'intermediate' ? 'Intermediate · admission in 1st Year (HSSC Part-I)' : 'BS · admission in 1st Semester')->sortKeysDesc() as $group => $items)
+                    <h2 class="eyebrow mt-8 mb-3">{{ $group }}</h2>
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        @foreach ($items as $p)
+                            <div class="panel p-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="mono text-[11.5px] font-semibold text-brand">{{ $p->code }}</span>
+                                    <span class="text-[11.5px] text-muted">{{ $p->seats }} seats</span>
+                                </div>
+                                <div class="mt-1 font-semibold text-ink">{{ $p->name }}</div>
+                                <div class="mt-1 text-[12.5px] text-muted">{{ $p->eligibility }}</div>
+                                <div class="mt-2 text-[12px] text-ink-2">{{ $p->admissionClass() }} · {{ $p->duration_years }} years · Rs {{ number_format($p->annual_fee) }} / year</div>
                             </div>
-                            <div class="mt-1 font-semibold text-ink">{{ $p->name }}</div>
-                            <div class="mt-1 text-[12.5px] text-muted">{{ $p->eligibility }}</div>
-                            <div class="mt-2 text-[12px] text-ink-2">{{ $p->duration_years }} years · Rs {{ number_format($p->annual_fee) }} / year</div>
-                        </div>
-                    @endforeach
-                </div>
+                        @endforeach
+                    </div>
+                @endforeach
 
                 <div class="panel mt-6 p-5">
                     <div class="flex items-center gap-2 text-[13.5px] font-semibold text-ink"><x-icon name="sparkles" :size="16" class="text-brass" /> Keep these ready — we read them for you</div>
@@ -60,7 +62,7 @@
                     <ul class="mt-3 grid gap-2 text-[13px] sm:grid-cols-2">
                         @foreach (\App\Models\AdmissionApplication::DOCUMENT_TYPES as $type => $label)
                             <li class="flex items-center gap-2"><x-icon name="check" :size="14" class="text-ok" /> {{ $label }}
-                                @if ($type === 'inter_dmc')<span class="text-[11px] text-muted">(BS / ADP)</span>@endif
+                                @if ($type === 'inter_dmc')<span class="text-[11px] text-muted">(BS only)</span>@endif
                                 @if ($type === 'character_certificate')<span class="text-[11px] text-muted">(optional)</span>@endif
                             </li>
                         @endforeach
@@ -77,8 +79,11 @@
                         <h2 class="display mt-1 text-[24px] text-ink">Start your application</h2>
                         <p class="mt-1 text-[12.5px] text-muted">Takes about 5 minutes. You'll get a tracking number and PIN to come back later.</p>
                     </div>
-                    <x-ui.field name="program_id" label="Programme" type="select" required :options="$programs->mapWithKeys(fn ($p) => [$p->id => $p->name])->all()" empty="Choose a programme…" />
-                    <x-ui.field name="second_program_id" label="Second preference" type="select" :options="$programs->mapWithKeys(fn ($p) => [$p->id => $p->name])->all()" empty="None" hint="Considered if the first choice is full." />
+                    <div class="rounded-md border border-line bg-sunken/60 px-3 py-2.5 text-[12.5px] text-ink-2">
+                        Admission is offered only in <b class="text-ink">1st Year (HSSC Part-I)</b> for intermediate programmes and the <b class="text-ink">1st semester</b> for BS.
+                    </div>
+                    <x-admissions.program-select name="program_id" label="Programme" :programs="$programs" required />
+                    <x-admissions.program-select name="second_program_id" label="Second preference" :programs="$programs" empty="None" hint="Considered if the first choice is full." />
                     <x-ui.field name="name" label="Full name (as on CNIC / B-Form)" required placeholder="e.g. Muhammad Ahmed" autocomplete="name" />
                     <x-ui.field name="cnic" label="CNIC / B-Form number" required placeholder="37405-1234567-1" inputmode="numeric" class="" />
                     <div class="grid gap-4 sm:grid-cols-2">

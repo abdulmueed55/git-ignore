@@ -24,7 +24,8 @@ use Illuminate\Support\Str;
 /**
  * Two admission cycles with genuine, verifier-produced results:
  *  - "Fall 2026 Intake" (closed): built from the year-1 students already enrolled, plus rejected/waitlisted applicants.
- *  - "Spring 2027 Intake — BS & ADP" (open): applications at every stage incl. real document mismatches.
+ *  - "Admissions 2026–27 — 1st Year & BS" (open): every programme, applications at every stage incl. real document mismatches.
+ * Admission is offered only into 1st year (HSSC Part-I) and the first semester of BS.
  */
 class AdmissionSeeder extends Seeder
 {
@@ -75,7 +76,7 @@ class AdmissionSeeder extends Seeder
             'application_fee' => 1500,
             'program_ids' => $programs->except('ADP-SC')->pluck('id')->values()->all(),
             'status' => 'closed',
-            'instructions' => "Online applications for F.Sc., I.C.S., I.Com., F.A., BS Computer Science and BS English.\nUpload clear photos of your CNIC / B-Form, father's CNIC, result cards and domicile. Merit lists are displayed on the notice board and website.",
+            'instructions' => "Online applications for 1st Year F.Sc. (Pre-Medical, Pre-Engineering), General Science, I.C.S., I.Com. and F.A., and the 1st semester of BS English, BS Information Technology and BS Computer Science.\nUpload clear photos of your CNIC / B-Form, father's CNIC, result cards and domicile. Merit lists are displayed on the notice board and website.",
         ]);
 
         $window = [Carbon::parse('2026-06-22'), Carbon::parse('2026-08-08')];
@@ -136,22 +137,23 @@ class AdmissionSeeder extends Seeder
     private function openCycle($programs, User $officer): void
     {
         $session = AcademicSession::where('name', '2026–2030')->first();
-        $offered = $programs->only(['BSCS', 'BSENG', 'ADP-SC']);
+        $offered = $programs->filter(fn ($p) => $p->is_active);
         $cycle = AdmissionCycle::create([
             'academic_session_id' => $session->id,
-            'title' => 'Spring 2027 Intake — BS & ADP',
+            'title' => 'Admissions 2026–27 — Intermediate 1st Year & BS',
             'opens_at' => now()->subDays(18)->setTime(9, 0),
             'closes_at' => now()->addDays(21)->setTime(17, 0),
-            'application_fee' => 2000,
+            'application_fee' => 1500,
             'program_ids' => $offered->pluck('id')->values()->all(),
             'status' => 'open',
-            'instructions' => "Spring intake for BS Computer Science, BS English and the Associate Degree in Science.\nEligibility: Intermediate with the minimum marks shown for each programme. Hafiz-e-Quran applicants receive 20 additional marks.\nKeep your tracking number and PIN to check status and merit lists online.",
+            'instructions' => "Admission is offered in 1st Year (HSSC Part-I) for F.Sc. Pre-Medical, F.Sc. Pre-Engineering, General Science, I.C.S., I.Com. and F.A., and in the 1st semester of BS English, BS Information Technology and BS Computer Science.\nEligibility: more than 60% in SSC for the science groups; intermediate with the minimum marks shown for each BS programme. Hafiz-e-Quran applicants receive 20 additional marks.\nKeep your tracking number and PIN to check status and merit lists online.",
         ]);
         $from = $cycle->opens_at->copy();
 
         // [program, count, scenario list]
         $plan = [
-            ['BSCS', 26], ['BSENG', 20], ['ADP-SC', 14],
+            ['FSC-PM', 12], ['FSC-PE', 9], ['FSC-GS', 6], ['ICS', 9], ['ICOM', 6], ['FA', 6],
+            ['BSCS', 14], ['BSENG', 10], ['BSIT', 9],
         ];
         $variants = ['name_partial', 'dob', 'marks', 'father', 'wrong_doc', 'inter_roll', 'blurry', 'duplicate'];
         $k = 0;
@@ -202,6 +204,9 @@ class AdmissionSeeder extends Seeder
         $list->entries()->count() && $service->publish($list, now()->addDays(6)->toDateString());
         $list?->update(['published_at' => now()->subDays(2)]);
         $service->generate($cycle, $offered['BSENG'], 8);
+        $pm = $service->generate($cycle, $offered['FSC-PM'], 6);
+        $pm->entries()->count() && $service->publish($pm, now()->addDays(5)->toDateString());
+        $pm->update(['published_at' => now()->subDay()]);
     }
 
     // ------------------------------------------------------------------ helpers
@@ -214,7 +219,7 @@ class AdmissionSeeder extends Seeder
     /** A plausible applicant (identity + academic record). */
     private function person(Program $program, array $over, bool $strong): array
     {
-        $female = ($over['gender'] ?? null) === 'female' || (! isset($over['gender']) && in_array($program->code, ['BSENG', 'BSCS', 'ADP-SC'], true) && mt_rand(1, 100) <= 40);
+        $female = ($over['gender'] ?? null) === 'female' || (! isset($over['gender']) && in_array($program->code, ['BSENG', 'BSCS', 'BSIT'], true) && mt_rand(1, 100) <= 40);
         $name = $over['name'] ?? ($female ? AcademicSeeder::FEMALE[mt_rand(0, count(AcademicSeeder::FEMALE) - 1)] : AcademicSeeder::MALE[mt_rand(0, count(AcademicSeeder::MALE) - 1)]);
         $inter = $program->basedOnInter();
         $age = $inter ? mt_rand(18, 20) : mt_rand(15, 17);

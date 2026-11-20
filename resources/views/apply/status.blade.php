@@ -26,7 +26,7 @@
                 <div>
                     <div class="eyebrow">{{ $app->cycle->title }}</div>
                     <h1 class="display mt-1 text-[32px] text-ink">{{ $app->name }}</h1>
-                    <div class="mt-1 text-[13px] text-muted">{{ $app->program?->name }} · <span class="mono">{{ $app->tracking_no }}</span></div>
+                    <div class="mt-1 text-[13px] text-muted">{{ $app->program?->name }} · {{ $app->program?->admissionClass() }} · <span class="mono">{{ $app->tracking_no }}</span></div>
                 </div>
                 <x-ui.status :value="$app->status" :label="$app->statusLabel()" class="!h-7 !px-3 !text-[12.5px]" />
             </div>

@@ -90,6 +90,7 @@
                             </td>
                             <td>
                                 <div class="mono text-[12px] font-semibold text-ink">{{ $a->program?->code }}</div>
+                                <div class="text-[11px] text-muted">{{ $a->program?->level === 'intermediate' ? '1st Year' : 'BS · Sem 1' }}</div>
                                 <div class="text-[11px] text-muted">{{ \App\Models\AdmissionApplication::QUOTAS[$a->quota] ?? $a->quota }}@if($a->is_hafiz) · Hafiz @endif</div>
                             </td>
                             <td><span class="mono text-[12px]">{{ $a->cnic ?? '—' }}</span></td>

@@ -28,7 +28,7 @@
                     <span class="mono rounded-md border border-line bg-surface px-2 py-0.5 text-ink">{{ $app->tracking_no }}</span>
                     <x-ui.status :value="$app->status" :label="$app->statusLabel()" />
                     <x-admissions.vstatus :value="$busy ? 'processing' : $app->verification_status" />
-                    <span>{{ $app->program?->name }}</span>
+                    <span>{{ $app->program?->name }} · {{ $app->program?->admissionClass() }}</span>
                     @if ($app->submitted_at)<span>· submitted {{ $app->submitted_at->format('j M Y, g:i a') }}</span>@endif
                 </div>
             </div>
