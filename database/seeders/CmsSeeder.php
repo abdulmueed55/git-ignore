@@ -62,22 +62,22 @@ class CmsSeeder extends Seeder
     private function settings(?User $principal): void
     {
         $values = [
-            'college_name' => 'F.G. Liaquat Ali Degree College',
+            'college_name' => 'FG Liaquat Ali Degree College',
             'college_tagline' => 'Federal Government Educational Institutions (Cantts/Garrisons) · Rawalpindi',
-            'established_year' => '1978',
-            'address' => 'Liaquat Ali Road, Rawalpindi Cantt, Punjab, Pakistan',
-            'phone' => '051-0000000',
-            'phone_admissions' => '051-0000001',
-            'email' => 'info@fglacollege.edu.pk',
-            'office_hours' => 'Monday – Friday, 8:00 AM – 2:00 PM',
-            'map_url' => 'https://maps.google.com/?q=Rawalpindi+Cantt',
+            'established_year' => '2007',
+            'address' => 'FG Liaquat Ali Degree College for Boys, Peshawar Road, Rawalpindi',
+            'phone' => '+92 51 5492888',
+            'phone_admissions' => '+92 51 5492888',
+            'email' => 'fgladc@yahoo.com',
+            'office_hours' => 'Monday – Friday, 8:00 AM – 3:00 PM',
+            'map_url' => 'https://maps.google.com/?q=FG+Liaquat+Ali+Degree+College+Peshawar+Road+Rawalpindi',
             'facebook_url' => 'https://facebook.com/',
             'youtube_url' => 'https://youtube.com/',
             'instagram_url' => '',
             'x_url' => '',
             'principal_name' => $principal?->name ?? 'The Principal',
-            'principal_title' => 'Principal, F.G. Liaquat Ali Degree College',
-            'principal_message' => "Assalam-o-Alaikum and welcome. For more than four decades this college has served the families of Rawalpindi Cantt with an education that is disciplined, affordable and ambitious. Our faculty know every student by name, our laboratories and library are open to every learner, and our classrooms value character as much as marks.\n\nThis year we have moved admissions online, introduced daily attendance updates for parents and opened a new computer lab for our BS programmes. I invite you to visit the campus, meet our teachers and become part of a community that has produced doctors, engineers, officers and teachers serving across Pakistan.",
+            'principal_title' => 'Principal, FGLADC Rawalpindi',
+            'principal_message' => "Welcome to FG Liaquat Ali Degree College. Education is not merely the acquisition of knowledge; it is the process of developing responsible, confident, creative and compassionate individuals who can contribute meaningfully to society.\n\nAs a public-sector college, FGLADC is committed to serving the youth by providing quality education at nominal fees in a conducive and supportive learning environment. I invite students, parents, alumni and all stakeholders to become active partners in our journey towards excellence.",
             'principal_message_updated_at' => now()->subDays(118)->toDateTimeString(),
             'admission_banner_enabled' => '1',
             'admission_banner_text' => 'Admissions open for BS & ADP (Spring 2027) — apply online before 15 January',
@@ -222,10 +222,10 @@ class CmsSeeder extends Seeder
     {
         $pages = [
             ['About the college', 'about', 'A federal government degree college in Rawalpindi Cantt offering intermediate, associate degree and BS programmes.',
-                '<p>F.G. Liaquat Ali Degree College is one of the Federal Government Educational Institutions (Cantts/Garrisons) serving Rawalpindi. The college offers intermediate programmes in science, computer science, commerce and humanities, an Associate Degree in Science, and four-year BS programmes in Computer Science and English.</p><h3>At a glance</h3><ul><li>Affiliated with BISE Rawalpindi for intermediate programmes</li><li>Degree programmes affiliated with a public-sector university</li><li>Science laboratories, two computer labs and a library of over 20,000 volumes</li><li>Sports ground, auditorium and active student societies</li></ul>'],
+                '<p>FG Liaquat Ali Degree College is a public-sector college on Peshawar Road, Rawalpindi, run under the Directorate of Federal Government Educational Institutions (Cantonments/Garrisons), Ministry of Defence. It offers intermediate and degree-level education at nominal fees.</p><h3>Campus</h3><ul><li>Spacious classrooms, science and computer laboratories</li><li>A well-stocked library and a digital library</li><li>An auditorium, a sports ground, a cafeteria and a mosque</li></ul>'],
             ["Principal's message", 'principals-message', 'A message from the Principal to students and parents.', null],
-            ['History', 'history', 'From an intermediate college to a degree college serving thousands of families in Rawalpindi Cantt.',
-                '<p>The institution began as an intermediate college for the children of personnel serving in the Cantonment and has grown steadily, adding degree classes and, more recently, four-year BS programmes.</p><p>Generations of graduates now serve the country as doctors, engineers, armed forces officers, civil servants and teachers.</p>'],
+            ['History', 'history', 'From an intermediate college for boys in 2007 to a degree college with four-year BS programmes.',
+                '<p>The college was established in 2007 as an intermediate college for boys. B.Sc. classes were introduced in 2010.</p><p>In 2019 the Department of English began a four-year BS programme in English Linguistics in affiliation with the University of the Punjab, followed a year later by a BS in Information Technology from the Department of Computer Science. Since 2021 the undergraduate programmes have admitted female students, with equal seats for boys and girls on general merit.</p>'],
             ['Vision & mission', 'vision-mission', 'Why we exist and what we promise to every student who joins us.',
                 '<h3>Vision</h3><p>To be a model public college where every student, regardless of background, receives an education of quality, character and purpose.</p><h3>Mission</h3><ul><li>Teach with care, rigour and integrity</li><li>Build discipline, tolerance and civic responsibility</li><li>Use technology to serve students and parents transparently</li></ul>'],
             ['Rules & discipline', 'rules-discipline', 'Attendance, uniform, conduct and examination rules every student must follow.',
@@ -251,7 +251,7 @@ class CmsSeeder extends Seeder
     {
         $slides = [
             ['Admissions open for BS & ADP — Spring 2027', 'Apply online in minutes. Your documents are read and verified automatically.', 'Apply now', '/apply'],
-            ['Four decades of learning in Rawalpindi Cantt', 'Intermediate, associate degree and BS programmes taught by dedicated faculty.', 'About the college', '/pages/about'],
+            ['Commitment · Devotion · Progress — since 2007', 'Intermediate, associate degree and BS programmes taught by dedicated faculty.', 'About the college', '/pages/about'],
             ['Science & IT exhibition 2026', 'Sixty student projects — robotics, apps and working models. Visitors welcome.', 'See the event', '/pages/about'],
         ];
         foreach ($slides as $i => [$h, $s, $l, $u]) {
@@ -346,7 +346,7 @@ class CmsSeeder extends Seeder
             ['Imtiaz Hussain', 'imtiaz.hussain@outlook.com', null, 'Attendance SMS not received', 'I have not been receiving attendance SMS for my son in ICS Part-I A for the last week. Please update my number to 0345-5551820.', 2, false],
             ['Shahid Nawaz', 'shahidnawaz77@yahoo.com', '0312-5554421', 'Hostel availability', 'Does the college provide hostel facility for students coming from Attock?', 3, true],
             ['Mehwish Akram', 'mehwish.akram@gmail.com', null, 'Fee concession', 'My brother is in F.A. Part-I. Our father passed away last year. Kindly guide about the fee concession procedure.', 5, false],
-            ['Col (R) Tariq Javed', 'tjaved@gmail.com', '0300-5550776', 'Alumni association', 'I graduated from this college in 1986 and would like to contribute to the alumni association and the new computer lab.', 8, true],
+            ['Col (R) Tariq Javed', 'tjaved@gmail.com', '0300-5550776', 'Alumni association', 'I graduated from this college in 2012 and would like to contribute to the alumni association and the new computer lab.', 8, true],
             ['Hira Batool', 'hira.batool@gmail.com', null, 'Transcript for university admission', 'Please let me know how long it takes to issue a transcript for BS English Semester 1–4.', 12, true],
             ['Zubair Khan', null, '0315-5553311', 'Sports trials', 'When will the cricket trials be held for the inter-college tournament?', 18, true],
         ];

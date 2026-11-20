@@ -38,7 +38,8 @@ class StudioPostsTest extends TestCase
         $this->post('/login', ['email' => $editor->email, 'password' => 'password'])
             ->assertRedirect(route('studio.dashboard'));
         $this->get(route('studio.dashboard'))->assertOk()->assertSee('What visitors see today');
-        $this->get(route('dashboard'))->assertForbidden();
+        $this->get(route('dashboard'))->assertRedirect(route('studio.dashboard'));
+        $this->get(route('students.index'))->assertForbidden();
     }
 
     public function test_teacher_cannot_use_studio(): void

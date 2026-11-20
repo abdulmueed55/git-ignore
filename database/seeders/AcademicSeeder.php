@@ -52,7 +52,7 @@ class AcademicSeeder extends Seeder
         $mk = fn (array $a) => User::create($a + ['password' => $pw, 'email_verified_at' => now(), 'is_active' => true]);
 
         $mk(['name' => 'System Administrator', 'email' => 'admin@fglacollege.edu.pk', 'role' => 'admin', 'designation' => 'IT Administrator', 'employee_no' => 'FGLA-0001', 'phone' => '0300-5551001']);
-        $principal = $mk(['name' => 'Prof. Dr. Khalid Mahmood Awan', 'email' => 'principal@fglacollege.edu.pk', 'role' => 'principal', 'designation' => 'Principal', 'employee_no' => 'FGLA-0002', 'phone' => '051-9270614', 'department_id' => $depts['PHY']->id]);
+        $principal = $mk(['name' => 'Prof. Dr. Bilal Sohail', 'email' => 'principal@fglacollege.edu.pk', 'role' => 'principal', 'designation' => 'Principal', 'employee_no' => 'FGLA-0002', 'phone' => '051-5492888', 'department_id' => $depts['PHY']->id]);
         $mk(['name' => 'Mr. Tahir Nawaz Abbasi', 'email' => 'admissions@fglacollege.edu.pk', 'role' => 'admission_officer', 'designation' => 'Admission Officer', 'employee_no' => 'FGLA-0003', 'phone' => '0333-5124410']);
         $mk(['name' => 'Ms. Sadia Rehman', 'email' => 'editor@fglacollege.edu.pk', 'role' => 'editor', 'designation' => 'Media & Website Coordinator', 'employee_no' => 'FGLA-0004', 'phone' => '0321-5009812']);
 
