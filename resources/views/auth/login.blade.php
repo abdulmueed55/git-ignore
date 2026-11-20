@@ -9,25 +9,29 @@
 </head>
 <body class="min-h-screen">
 <div class="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
-    <section class="relative hidden overflow-hidden bg-rail text-white lg:flex lg:flex-col lg:justify-between lg:p-12">
-        <img src="{{ asset('images/campus-students.jpg') }}" alt="" class="absolute inset-0 h-full w-full object-cover object-[50%_30%]">
-        <div class="absolute inset-0 bg-[linear-gradient(0deg,rgba(6,32,19,0.92)_0%,rgba(6,32,19,0.55)_55%,rgba(6,32,19,0.35)_100%)]"></div>
-        <div class="relative flex items-center gap-3">
-            <x-crest class="h-14 w-12" />
-            <div>
-                <div class="text-[19px] font-extrabold tracking-tight">FG Liaquat Ali Degree College</div>
-                <div class="text-[13px] text-white/80">Peshawar Road, Rawalpindi · FGEIs (Cantt / Garrisons)</div>
+    <section class="relative hidden flex-col overflow-hidden bg-rail text-white lg:flex">
+        <figure class="relative m-0">
+            <img src="{{ asset('images/college-building@2x.jpg') }}" alt="Front view of the FG Liaquat Ali Degree College building" class="block aspect-[634/240] w-full object-cover">
+            <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0a3d26] to-transparent"></div>
+            <div class="absolute left-10 top-8 flex items-center gap-3 rounded-[4px] bg-[#0a3d26]/85 py-2 pl-2 pr-4 backdrop-blur-sm">
+                <x-crest class="h-12 w-11" />
+                <div>
+                    <div class="text-[17px] font-extrabold tracking-tight">FG Liaquat Ali Degree College</div>
+                    <div class="text-[12.5px] text-white/80">Peshawar Road, Rawalpindi</div>
+                </div>
             </div>
-        </div>
-        <div class="relative max-w-xl">
-            <div class="text-[12px] font-bold uppercase tracking-[0.08em] text-white/80">Commitment · Devotion · Progress</div>
-            <h1 class="mt-3 text-[42px] font-extrabold leading-[1.08] tracking-tight">College ERP for admissions, attendance and the website.</h1>
-            <p class="mt-4 text-[15.5px] leading-relaxed text-white/85">Documents are read and cross-checked automatically, registers are marked in seconds, and every notice on the college website is published from here.</p>
-        </div>
-        <div class="relative grid grid-cols-3 gap-6 border-t border-white/20 pt-6 text-[13px] text-white/80">
-            <div><div class="text-[26px] font-extrabold text-white">Admissions</div>AI document checks</div>
-            <div><div class="text-[26px] font-extrabold text-white">Attendance</div>P · A · L · Leave</div>
-            <div><div class="text-[26px] font-extrabold text-white">Website</div>notices &amp; merit lists</div>
+        </figure>
+        <div class="flex flex-1 flex-col justify-between px-10 pb-10 pt-6">
+            <div class="max-w-xl">
+                <div class="text-[12px] font-bold uppercase tracking-[0.08em] text-white/75">Commitment · Devotion · Progress</div>
+                <h1 class="mt-3 text-[38px] font-extrabold leading-[1.1] tracking-tight">College ERP for admissions, attendance and the website.</h1>
+                <p class="mt-4 text-[15px] leading-relaxed text-white/80">Documents are read and cross-checked automatically, registers are marked in seconds, and every notice on the college website is published from here.</p>
+            </div>
+            <div class="mt-8 grid grid-cols-3 gap-6 border-t border-white/20 pt-6 text-[13px] text-white/75">
+                <div><div class="text-[22px] font-extrabold text-white">Admissions</div>AI document checks</div>
+                <div><div class="text-[22px] font-extrabold text-white">Attendance</div>P · A · L · Leave</div>
+                <div><div class="text-[22px] font-extrabold text-white">Website</div>notices &amp; merit lists</div>
+            </div>
         </div>
     </section>
 

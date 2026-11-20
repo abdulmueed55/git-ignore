@@ -9,6 +9,14 @@
 
     {{-- ================= Hero ================= --}}
     <section class="panel rise relative mb-6 overflow-hidden">
+        {{-- College building banner --}}
+        <figure class="relative m-0 h-[150px] overflow-hidden sm:h-[190px]">
+            <img src="{{ asset('images/college-building@2x.jpg') }}" alt="Front view of the FG Liaquat Ali Degree College building" class="h-full w-full object-cover object-[50%_42%]">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+            <figcaption class="absolute bottom-3 left-6 flex items-center gap-2 text-[12.5px] font-semibold text-white lg:left-8">
+                <x-crest class="h-7 w-6" /> FG Liaquat Ali Degree College · Peshawar Road, Rawalpindi
+            </figcaption>
+        </figure>
         <div class="relative grid gap-6 p-6 lg:grid-cols-[1.4fr_1fr] lg:p-8">
             <div>
                 <div class="eyebrow flex flex-wrap items-center gap-2">
@@ -31,7 +39,7 @@
             </div>
 
             @if (! $isAdmissions)
-                <div class="flex items-center justify-around gap-4 rounded-xl border border-line bg-paper/60 p-4 sm:justify-between sm:p-5">
+                <div class="flex items-center justify-around gap-4 rounded-md border border-line bg-paper/60 p-4 sm:justify-between sm:p-5">
                     @if ($todayRate !== null)
                         <x-ui.ring :value="$todayRate" :size="128" :stroke="11" :tone="$toneFor($todayRate)" label="Present today" />
                     @else
@@ -52,11 +60,11 @@
                 </div>
             @else
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="rounded-xl border border-line bg-paper/60 p-4">
+                    <div class="rounded-md border border-line bg-paper/60 p-4">
                         <div class="eyebrow">Awaiting review</div>
                         <div class="numeral mt-2 text-[34px]">{{ $awaitingReview ?? 0 }}</div>
                     </div>
-                    <div class="rounded-xl border border-line bg-paper/60 p-4">
+                    <div class="rounded-md border border-line bg-paper/60 p-4">
                         <div class="eyebrow">AI auto-cleared</div>
                         <div class="numeral mt-2 text-[34px]">{{ $autoClear ?? '—' }}<span class="text-[15px] text-muted">%</span></div>
                     </div>
