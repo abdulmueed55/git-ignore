@@ -27,9 +27,9 @@
     <aside class="fixed inset-y-0 left-0 z-40 flex w-[256px] -translate-x-full flex-col bg-rail text-rail-ink transition-transform lg:translate-x-0"
            :class="nav ? 'translate-x-0!' : ''">
         <a href="{{ $area === 'studio' ? route('studio.dashboard') : route('dashboard') }}" class="flex items-center gap-3 px-5 pt-5 pb-4">
-            <x-crest class="h-10 w-10" />
+            <x-crest class="h-12 w-11" />
             <div class="leading-tight">
-                <div class="display text-[15px] font-semibold">FG Liaquat Ali</div>
+                <div class="text-[15.5px] font-extrabold tracking-tight">FG Liaquat Ali</div>
                 <div class="text-[11px] tracking-wide text-rail-muted">Degree College · Rawalpindi</div>
             </div>
         </a>
@@ -57,7 +57,7 @@
         </nav>
         <div class="border-t border-rail-line p-4">
             <div class="flex items-center gap-3">
-                <div class="grid h-9 w-9 place-items-center rounded-full bg-brass/90 text-[12px] font-bold text-[#1b1405]">{{ $user->initials() }}</div>
+                <div class="grid h-9 w-9 place-items-center rounded-full bg-white text-[12px] font-extrabold text-[#0a3d26]">{{ $user->initials() }}</div>
                 <div class="min-w-0 flex-1 leading-tight">
                     <div class="truncate text-[13px] font-semibold">{{ $user->name }}</div>
                     <div class="truncate text-[11px] text-rail-muted">{{ $user->roleLabel() }}</div>

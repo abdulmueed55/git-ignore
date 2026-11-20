@@ -22,14 +22,17 @@ Route names are fixed by `app/Support/Navigation.php` (sidebar + Ctrl+K palette)
 Guard routes with `->middleware(['auth', 'role:principal,teacher'])` — admin always passes.
 Teachers only see their own courses/sections unless leadership (`$user->isLeadership()`).
 
-## UI rules (design system "Registrar's Ledger")
+## UI rules (same look as the college website)
+
+- One typeface everywhere: Libre Franklin (no serif display or code fonts). Crest green `#0b6b3f`, dark rail `#0a3d26`,
+  crest blue rail in the website studio, white panels on `#f4f5f4`, 3–6px corners. Official crest: `public/images/crest.jpg` via `<x-crest>`.
 
 - Every staff page uses `<x-layouts.app title="…">` (ERP) or `<x-layouts.app title="…" area="studio">` (website studio).
 - Start pages with `<x-ui.page-header eyebrow="…" title="…" description="…">` + optional `<x-slot:actions>`.
 - Components: `x-ui.stat`, `x-ui.status`, `x-ui.field` (label + required marker + validation error), `x-ui.empty`
   (empty state **must** say what to do next and offer an action), `x-ui.ring`, `x-ui.sparkline`, `x-ui.avatar`,
   `x-ui.confirm`, `x-icon name="…"`. CSS classes: `panel`, `panel-head`, `panel-title`, `btn btn-primary|btn-ghost|btn-brass|btn-danger`,
-  `input`, `table`, `badge badge-ok|warn|bad|info|brand|brass`, `eyebrow`, `numeral` (serif figures), `mono` (IDs, roll numbers).
+  `input`, `table`, `badge badge-ok|warn|bad|info|brand|brass`, `eyebrow`, `numeral` (big bold figures), `mono` (IDs, roll numbers — tabular figures, same typeface).
 - Charts: `<div class="h-64"><canvas x-data="chart({type:'line', labels:[…], series:[{label:'…', data:[…], tone:'brand'}]})"></canvas></div>`.
 - Colors only via tokens (`text-ink`, `text-muted`, `bg-surface`, `border-line`, `text-brand`, `text-brass`, `bg-ok-soft` …) so dark mode works.
 - **Nothing is left blank**: every form field validated server-side, required fields marked; every list has a helpful empty state;

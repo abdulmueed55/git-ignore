@@ -1,7 +1,9 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/fraunces';
-@import '@fontsource-variable/inter-tight';
-@import '@fontsource-variable/jetbrains-mono';
+@import '@fontsource/libre-franklin/400.css';
+@import '@fontsource/libre-franklin/500.css';
+@import '@fontsource/libre-franklin/600.css';
+@import '@fontsource/libre-franklin/700.css';
+@import '@fontsource/libre-franklin/800.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -11,13 +13,14 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /* ------------------------------------------------------------------
-   Design tokens — "Registrar's Ledger"
-   Ivory paper, FG green ink, brass accent. Serif numerals, mono IDs.
+   Design tokens — matches the college website
+   One institutional typeface (Libre Franklin), crest green, crest gold,
+   white panels on a light grey ground, square-ish corners.
 ------------------------------------------------------------------- */
 @theme {
-    --font-sans: 'Inter Tight Variable', ui-sans-serif, system-ui, sans-serif;
-    --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
-    --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, monospace;
+    --font-sans: 'Libre Franklin', 'Franklin Gothic Medium', Arial, sans-serif;
+    --font-display: 'Libre Franklin', 'Franklin Gothic Medium', Arial, sans-serif;
+    --font-mono: 'Libre Franklin', 'Franklin Gothic Medium', Arial, sans-serif;
 
     --color-paper: var(--paper);
     --color-surface: var(--surface);
@@ -47,19 +50,19 @@
 }
 
 :root {
-    --paper: #f4f1e9;
-    --surface: #fffdf8;
-    --sunken: #ece8dd;
-    --ink: #13201a;
-    --ink-2: #2c3a33;
-    --muted: #66726b;
-    --line: #e2ddcf;
-    --line-strong: #cfc8b6;
-    --brand: #0f5a3a;
+    --paper: #f4f5f4;
+    --surface: #ffffff;
+    --sunken: #eef0ee;
+    --ink: #1a1a1a;
+    --ink-2: #333333;
+    --muted: #5f6661;
+    --line: #e3e3e3;
+    --line-strong: #cfd3d0;
+    --brand: #0b6b3f;
     --brand-ink: #ffffff;
-    --brand-soft: #dcebe1;
-    --brass: #a8761f;
-    --brass-soft: #f3e6c8;
+    --brand-soft: #e6f0ea;
+    --brass: #9a6e0c;
+    --brass-soft: #f6ecd2;
     --ok: #237a4b;
     --ok-soft: #dcefe3;
     --warn: #a86608;
@@ -68,26 +71,26 @@
     --bad-soft: #f8dcd8;
     --info: #285a8a;
     --info-soft: #dde8f3;
-    --rail: #0b2a1f;
-    --rail-ink: #eef3ec;
-    --rail-muted: #8fa89a;
-    --rail-line: #1a3d2f;
+    --rail: #0a3d26;
+    --rail-ink: #ffffff;
+    --rail-muted: #a9c2b4;
+    --rail-line: #175237;
     color-scheme: light;
 }
 
 [data-theme='dark'] {
-    --paper: #0c1310;
-    --surface: #121b17;
-    --sunken: #0f1714;
-    --ink: #e8ede5;
-    --ink-2: #c5cfc7;
-    --muted: #8a978f;
-    --line: #22302a;
-    --line-strong: #31423a;
-    --brand: #4cc08a;
-    --brand-ink: #062015;
-    --brand-soft: #173628;
-    --brass: #e1b65e;
+    --paper: #0f1311;
+    --surface: #171c19;
+    --sunken: #121614;
+    --ink: #eceeed;
+    --ink-2: #cdd2cf;
+    --muted: #949b97;
+    --line: #262d29;
+    --line-strong: #35403a;
+    --brand: #4fbf86;
+    --brand-ink: #06200f;
+    --brand-soft: #18372a;
+    --brass: #d9ab4a;
     --brass-soft: #3a2f17;
     --ok: #5ccf8f;
     --ok-soft: #173628;
@@ -97,22 +100,22 @@
     --bad-soft: #3d1a17;
     --info: #79b0e6;
     --info-soft: #172b3f;
-    --rail: #08100d;
-    --rail-ink: #e8ede5;
-    --rail-muted: #7f978a;
-    --rail-line: #17251f;
+    --rail: #07130d;
+    --rail-ink: #eceeed;
+    --rail-muted: #86a294;
+    --rail-line: #15261d;
     color-scheme: dark;
 }
 
-/* Website studio: same system, ink-blue rail so editors always know where they are */
+/* Website studio: crest-blue rail so editors always know where they are */
 [data-area='studio'] {
-    --rail: #16213a;
-    --rail-line: #24324f;
-    --rail-muted: #93a1bf;
+    --rail: #123a63;
+    --rail-line: #1d4b7a;
+    --rail-muted: #a9bfd6;
 }
 [data-theme='dark'][data-area='studio'] {
-    --rail: #0b1120;
-    --rail-line: #1a2540;
+    --rail: #0a1a2c;
+    --rail-line: #16304b;
 }
 
 @layer base {
@@ -124,10 +127,10 @@
         background: var(--paper);
         color: var(--ink);
         font-family: var(--font-sans);
-        font-feature-settings: 'ss01', 'cv11';
+        line-height: 1.5;
     }
     ::selection {
-        background: var(--brass-soft);
+        background: var(--brand-soft);
         color: var(--ink);
     }
     [x-cloak] {
@@ -142,28 +145,30 @@
 @layer components {
     /* Typography */
     .eyebrow {
-        font-size: 10.5px;
-        font-weight: 600;
-        letter-spacing: 0.14em;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
         color: var(--muted);
     }
     .numeral {
-        font-family: var(--font-display);
-        font-variation-settings: 'opsz' 96, 'SOFT' 30;
-        font-feature-settings: 'lnum', 'tnum';
+        font-family: var(--font-sans);
+        font-weight: 800;
+        font-variant-numeric: lining-nums tabular-nums;
         letter-spacing: -0.02em;
         line-height: 1;
     }
     .display {
-        font-family: var(--font-display);
-        font-variation-settings: 'opsz' 72, 'SOFT' 50;
-        letter-spacing: -0.015em;
+        font-family: var(--font-sans);
+        font-weight: 800 !important;
+        letter-spacing: -0.02em;
     }
+    /* IDs, roll numbers, tracking numbers: same typeface, fixed-width figures */
     .mono {
-        font-family: var(--font-mono);
-        font-feature-settings: 'zero';
-        letter-spacing: -0.01em;
+        font-family: var(--font-sans);
+        font-variant-numeric: tabular-nums slashed-zero;
+        letter-spacing: 0.01em;
+        font-weight: 500;
     }
     .tabular {
         font-variant-numeric: tabular-nums;
@@ -173,7 +178,7 @@
     .panel {
         background: var(--surface);
         border: 1px solid var(--line);
-        border-radius: 14px;
+        border-radius: 6px;
     }
     .panel-head {
         display: flex;
@@ -184,8 +189,8 @@
         border-bottom: 1px solid var(--line);
     }
     .panel-title {
-        font-size: 13.5px;
-        font-weight: 600;
+        font-size: 15px;
+        font-weight: 800;
         color: var(--ink);
         letter-spacing: -0.005em;
     }
@@ -207,9 +212,9 @@
         gap: 8px;
         height: 36px;
         padding: 0 14px;
-        border-radius: 9px;
-        font-size: 13px;
-        font-weight: 600;
+        border-radius: 4px;
+        font-size: 13.5px;
+        font-weight: 700;
         white-space: nowrap;
         transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.05s;
         border: 1px solid transparent;
@@ -256,8 +261,8 @@
     .btn-sm {
         height: 30px;
         padding: 0 10px;
-        font-size: 12px;
-        border-radius: 8px;
+        font-size: 12.5px;
+        border-radius: 4px;
     }
     .btn-icon {
         width: 36px;
@@ -279,9 +284,9 @@
     }
     .input {
         width: 100%;
-        height: 38px;
+        height: 40px;
         padding: 0 12px;
-        border-radius: 9px;
+        border-radius: 4px;
         background: var(--surface);
         border: 1px solid var(--line-strong);
         color: var(--ink);
@@ -341,9 +346,9 @@
         gap: 6px;
         height: 22px;
         padding: 0 8px;
-        border-radius: 999px;
+        border-radius: 3px;
         font-size: 11.5px;
-        font-weight: 600;
+        font-weight: 700;
         white-space: nowrap;
         background: var(--sunken);
         color: var(--ink-2);
@@ -379,9 +384,9 @@
         z-index: 1;
         background: var(--surface);
         text-align: left;
-        font-size: 10.5px;
-        font-weight: 600;
-        letter-spacing: 0.12em;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
         color: var(--muted);
         padding: 10px 14px;
@@ -416,9 +421,9 @@
         gap: 11px;
         height: 36px;
         padding: 0 12px;
-        border-radius: 9px;
-        font-size: 13.5px;
-        font-weight: 500;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 600;
         color: var(--rail-muted);
         transition: color 0.15s, background 0.15s;
     }
@@ -442,12 +447,12 @@
     }
     .rail-count {
         margin-left: auto;
-        font-family: var(--font-mono);
-        font-size: 10.5px;
-        padding: 1px 6px;
-        border-radius: 6px;
-        background: color-mix(in oklab, var(--brass) 22%, transparent);
-        color: var(--brass);
+        font-size: 11px;
+        font-weight: 800;
+        padding: 1px 7px;
+        border-radius: 3px;
+        background: #b3261e;
+        color: #ffffff;
     }
 
     /* Tabs */
@@ -455,7 +460,7 @@
         display: flex;
         gap: 2px;
         padding: 3px;
-        border-radius: 10px;
+        border-radius: 4px;
         background: var(--sunken);
         border: 1px solid var(--line);
         width: max-content;
@@ -465,9 +470,9 @@
     .tab {
         height: 30px;
         padding: 0 12px;
-        border-radius: 7px;
-        font-size: 12.5px;
-        font-weight: 600;
+        border-radius: 3px;
+        font-size: 13px;
+        font-weight: 700;
         color: var(--muted);
         display: inline-flex;
         align-items: center;
@@ -484,10 +489,10 @@
     .att-chip {
         width: 34px;
         height: 34px;
-        border-radius: 9px;
+        border-radius: 4px;
         display: inline-grid;
         place-items: center;
-        font-family: var(--font-mono);
+        font-family: var(--font-sans);
         font-size: 12px;
         font-weight: 700;
         border: 1px solid var(--line-strong);
@@ -518,7 +523,7 @@
         line-height: 1.7;
         color: var(--ink-2);
     }
-    .prose-ledger h2 { font-family: var(--font-display); font-size: 22px; color: var(--ink); margin: 1.4em 0 0.5em; }
+    .prose-ledger h2 { font-weight: 800; font-size: 22px; color: var(--ink); margin: 1.4em 0 0.5em; }
     .prose-ledger h3 { font-weight: 700; font-size: 16px; color: var(--ink); margin: 1.2em 0 0.4em; }
     .prose-ledger p { margin: 0 0 1em; }
     .prose-ledger ul { list-style: disc; padding-left: 1.3em; margin: 0 0 1em; }

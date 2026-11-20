@@ -9,11 +9,10 @@
 
     {{-- ================= Hero ================= --}}
     <section class="panel rise relative mb-6 overflow-hidden">
-        <div class="ruled pointer-events-none absolute inset-0 opacity-50 [mask-image:linear-gradient(90deg,transparent,black_60%)]"></div>
         <div class="relative grid gap-6 p-6 lg:grid-cols-[1.4fr_1fr] lg:p-8">
             <div>
                 <div class="eyebrow flex flex-wrap items-center gap-2">
-                    <span class="inline-block h-px w-5 bg-brass"></span>
+                    <span class="inline-block h-[3px] w-5 bg-brand"></span>
                     {{ now()->format('l') }} · {{ Dates::hijri(now()) }}
                 </div>
                 <h1 class="display mt-3 text-[30px] leading-tight sm:text-[38px]">{{ Dates::greeting() }}, {{ $first }}.</h1>
@@ -348,7 +347,7 @@
                         @foreach ($cms['events'] as $event)
                             <li class="flex gap-3 px-5 py-3">
                                 <div class="w-11 shrink-0 overflow-hidden rounded-lg border border-line text-center">
-                                    <div class="bg-brass py-0.5 text-[9.5px] font-bold uppercase tracking-wider text-[#1b1405]">{{ $event->event_starts_at->format('M') }}</div>
+                                    <div class="bg-rail py-0.5 text-[9.5px] font-bold uppercase tracking-wider text-white">{{ $event->event_starts_at->format('M') }}</div>
                                     <div class="numeral py-1 text-[18px]">{{ $event->event_starts_at->format('j') }}</div>
                                 </div>
                                 <div class="min-w-0">

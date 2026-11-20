@@ -9,24 +9,25 @@
 </head>
 <body class="min-h-screen">
 <div class="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
-    <section class="relative hidden overflow-hidden bg-rail text-rail-ink lg:flex lg:flex-col lg:justify-between lg:p-12">
-        <div class="pointer-events-none absolute inset-0 opacity-[0.07]" style="background-image: repeating-linear-gradient(to bottom, transparent 0 31px, #fff 31px 32px), linear-gradient(90deg, transparent 0 72px, #d4a64a 72px 73px, transparent 73px);"></div>
+    <section class="relative hidden overflow-hidden bg-rail text-white lg:flex lg:flex-col lg:justify-between lg:p-12">
+        <img src="{{ asset('images/campus-students.jpg') }}" alt="" class="absolute inset-0 h-full w-full object-cover object-[50%_30%]">
+        <div class="absolute inset-0 bg-[linear-gradient(0deg,rgba(6,32,19,0.92)_0%,rgba(6,32,19,0.55)_55%,rgba(6,32,19,0.35)_100%)]"></div>
         <div class="relative flex items-center gap-3">
-            <x-crest class="h-12 w-12" />
+            <x-crest class="h-14 w-12" />
             <div>
-                <div class="display text-[18px]">FG Liaquat Ali Degree College</div>
-                <div class="text-[12px] text-rail-muted">Rawalpindi Cantt · Federal Government Educational Institutions</div>
+                <div class="text-[19px] font-extrabold tracking-tight">FG Liaquat Ali Degree College</div>
+                <div class="text-[13px] text-white/80">Peshawar Road, Rawalpindi · FGEIs (Cantt / Garrisons)</div>
             </div>
         </div>
-        <div class="relative max-w-lg">
-            <div class="eyebrow !text-brass">College ERP</div>
-            <h1 class="display mt-3 text-[46px] leading-[1.05]">Admissions, attendance and the website — <em class="text-brass">in one ledger.</em></h1>
-            <p class="mt-5 text-[14.5px] leading-relaxed text-rail-muted">Documents are read and cross-checked automatically, registers are marked in seconds, and every notice on the public site is published from here.</p>
+        <div class="relative max-w-xl">
+            <div class="text-[12px] font-bold uppercase tracking-[0.08em] text-white/80">Commitment · Devotion · Progress</div>
+            <h1 class="mt-3 text-[42px] font-extrabold leading-[1.08] tracking-tight">College ERP for admissions, attendance and the website.</h1>
+            <p class="mt-4 text-[15.5px] leading-relaxed text-white/85">Documents are read and cross-checked automatically, registers are marked in seconds, and every notice on the college website is published from here.</p>
         </div>
-        <div class="relative grid grid-cols-3 gap-6 border-t border-rail-line pt-6 text-[12px] text-rail-muted">
-            <div><div class="numeral text-[26px] text-rail-ink">AI</div>document reading</div>
-            <div><div class="numeral text-[26px] text-rail-ink">4-tap</div>attendance marking</div>
-            <div><div class="numeral text-[26px] text-rail-ink">1</div>place to publish</div>
+        <div class="relative grid grid-cols-3 gap-6 border-t border-white/20 pt-6 text-[13px] text-white/80">
+            <div><div class="text-[26px] font-extrabold text-white">Admissions</div>AI document checks</div>
+            <div><div class="text-[26px] font-extrabold text-white">Attendance</div>P · A · L · Leave</div>
+            <div><div class="text-[26px] font-extrabold text-white">Website</div>notices &amp; merit lists</div>
         </div>
     </section>
 
@@ -37,7 +38,7 @@
                 <div class="display text-[17px]">FG Liaquat Ali Degree College</div>
             </div>
             <div class="eyebrow">Staff sign-in</div>
-            <h2 class="display mt-2 text-[30px]">Welcome back</h2>
+            <h2 class="display mt-2 text-[30px] font-extrabold">Welcome back</h2>
             <p class="mt-1 text-[13.5px] text-muted">Use the email issued by the college office.</p>
 
             <form method="POST" action="{{ route('login') }}" class="mt-8 space-y-4">
