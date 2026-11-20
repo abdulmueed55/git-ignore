@@ -56,7 +56,7 @@
                 <button class="btn btn-primary h-11 w-full text-[14px]">Sign in <x-icon name="arrow-right" :size="16" /></button>
             </form>
 
-            @if (app()->environment('local'))
+            @if (app()->environment('local') || config('app.demo'))
                 <div class="mt-8 rounded-xl border border-dashed border-line-strong p-4 text-[12px]">
                     <div class="eyebrow mb-2">Demo accounts · password <span class="mono normal-case tracking-normal text-ink">password</span></div>
                     <ul class="mono space-y-1 text-ink-2">

@@ -1,0 +1,12 @@
+# One-click demo on Render (render.com → New → Blueprint → pick this repository).
+# The free plan sleeps when idle; the first visit after that takes about a minute
+# while the demo college is rebuilt.
+services:
+  - type: web
+    name: fgla-erp-demo
+    runtime: docker
+    plan: free
+    healthCheckPath: /up
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false

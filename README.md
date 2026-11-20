@@ -21,6 +21,8 @@ A complete college management system for **FG Liaquat Ali Degree College, Rawalp
 Windows: double-click `demo.bat` (needs PHP 8.3, Composer and Node — Laragon has all three). macOS/Linux: `./demo.sh`.
 Then open http://localhost:8000. Step-by-step testing checklist (Roman Urdu): `docs/TESTING-GUIDE.md`.
 
+Online demo link in ~10 minutes: deploy `render.yaml` as a Render Blueprint (free plan) or run the `Dockerfile` anywhere — see `docs/LIVE-DEMO.md`.
+
 ## Install
 
 ```bash

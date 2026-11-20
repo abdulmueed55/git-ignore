@@ -42,6 +42,11 @@ return [
     'debug' => (bool) env('APP_DEBUG', false),
 
     /*
+    | Demo mode shows the demo accounts on the sign-in page (used by the Docker demo).
+    */
+    'demo' => (bool) env('APP_DEMO', false),
+
+    /*
     |--------------------------------------------------------------------------
     | Application URL
     |--------------------------------------------------------------------------
