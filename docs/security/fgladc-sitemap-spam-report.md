@@ -10,8 +10,15 @@ When checked, all 35 URLs returned **404 Not Found**. The spam pages have been d
 
 This is a classic **SEO spam injection**. Someone had write access to the hosting account (`/home/fgladcedu/public_html`), uploaded the pages and planted the sitemap so that Google would index them under the college's `.edu.pk` domain.
 
-Also visible to every visitor: the Downloads page prints PHP errors that reveal the server path:
+Also: the Downloads page's HTML source contains PHP error messages that reveal the server path (visible with View Source, not on screen):
 `Notice: Undefined variable: title in /home/fgladcedu/public_html/showpage.php on line 216`
+
+## Screenshots
+
+- `screenshots/01-sitemap-spam-links.png` — the live sitemap listing all 35 spam URLs (captured 20 Nov 2026)
+- `screenshots/02-roulette-link-404.png`, `screenshots/03-viagra-link-404.png` — two of the spam URLs, now returning 404
+
+No archived copy of the spam pages exists on the Internet Archive, so their original content cannot be shown.
 
 ## The 35 URLs
 
