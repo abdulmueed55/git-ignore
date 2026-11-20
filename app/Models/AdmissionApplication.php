@@ -22,13 +22,14 @@ class AdmissionApplication extends Model
         'rejected' => 'Rejected',
     ];
 
+    /** Seat categories notified by the FGEI Directorate (Cantt & Garrisons). Hafiz-e-Quran is a merit bonus, not a quota. */
     public const QUOTAS = [
-        'open' => 'Open merit',
-        'sports' => 'Sports',
-        'hafiz' => 'Hafiz-e-Quran',
-        'disabled' => 'Special persons',
-        'fg_employee' => 'FG employee child',
-        'army' => 'Armed forces',
+        'open' => 'Open merit (53%)',
+        'serving_forces' => 'Serving Armed Forces personnel (25%)',
+        'retired_forces' => 'Retired Armed Forces personnel (10%)',
+        'defence_employee' => 'Defence paid employees (10%)',
+        'disabled' => 'Disability quota (2%)',
+        'fg_employee' => 'Serving FGEI (C/G) employee child (over and above)',
     ];
 
     public const DOCUMENT_TYPES = [

@@ -244,7 +244,14 @@ class AdmissionSeeder extends Seeder
             'address' => 'House '.mt_rand(1, 900).', Street '.mt_rand(1, 40).', '.AcademicSeeder::AREAS[mt_rand(0, count(AcademicSeeder::AREAS) - 1)],
             'city' => AcademicSeeder::CITIES[mt_rand(0, count(AcademicSeeder::CITIES) - 1)],
             'domicile' => mt_rand(1, 10) > 2 ? 'Rawalpindi' : ['Attock', 'Chakwal', 'Jhelum', 'Islamabad'][mt_rand(0, 3)],
-            'quota' => mt_rand(1, 12) === 1 ? 'sports' : (mt_rand(1, 14) === 1 ? 'fg_employee' : 'open'),
+            'quota' => (function () {
+                $r = mt_rand(1, 100);
+
+                return match (true) {
+                    $r <= 53 => 'open', $r <= 78 => 'serving_forces', $r <= 88 => 'retired_forces',
+                    $r <= 97 => 'defence_employee', $r <= 98 => 'disabled', default => 'fg_employee',
+                };
+            })(),
             'is_hafiz' => mt_rand(1, 18) === 1,
             'matric_board' => $boards[mt_rand(0, count($boards) - 1)],
             'matric_roll_no' => (string) mt_rand(100000, 699999),
@@ -262,9 +269,6 @@ class AdmissionSeeder extends Seeder
                 'inter_total' => $it,
                 'inter_obtained' => (int) round($it * mt_rand((int) ($band[0] * 1000), (int) ($band[1] * 1000)) / 1000),
             ];
-        }
-        if ($p['quota'] === 'open' && $p['is_hafiz']) {
-            $p['quota'] = 'hafiz';
         }
 
         return array_merge($p, $over);

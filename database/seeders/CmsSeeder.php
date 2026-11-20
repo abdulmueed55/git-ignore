@@ -80,7 +80,7 @@ class CmsSeeder extends Seeder
             'principal_message' => "Welcome to FG Liaquat Ali Degree College. Education is not merely the acquisition of knowledge; it is the process of developing responsible, confident, creative and compassionate individuals who can contribute meaningfully to society.\n\nAs a public-sector college, FGLADC is committed to serving the youth by providing quality education at nominal fees in a conducive and supportive learning environment. I invite students, parents, alumni and all stakeholders to become active partners in our journey towards excellence.",
             'principal_message_updated_at' => now()->subDays(118)->toDateTimeString(),
             'admission_banner_enabled' => '1',
-            'admission_banner_text' => 'Admissions open for BS & ADP (Spring 2027) — apply online before 15 January',
+            'admission_banner_text' => 'Admissions open — Intermediate 1st Year & BS 1st semester. Apply online.',
             'ticker_enabled' => '1',
             'brand_primary' => '#0f5a3a',
             'brand_accent' => '#a8761f',
@@ -96,9 +96,9 @@ class CmsSeeder extends Seeder
         $p = fn (string $html) => $html;
         // [type, title, category, published offset (days, negative = past), status, extra]
         $rows = [
-            ['announcement', 'Admissions open: BS & ADP Spring 2027', 'Admissions', -6, 'published', ['pinned' => true, 'ticker' => true, 'cover' => true, 'expires' => 56,
-                'excerpt' => 'Online applications are now open for BS Computer Science, BS English and the Associate Degree in Science. Apply before 15 January 2027.',
-                'body' => '<p>The college invites applications for the Spring 2027 intake of its four-year BS and two-year Associate Degree programmes.</p><h3>Programmes offered</h3><ul><li>BS Computer Science — 50 seats</li><li>BS English — 50 seats</li><li>Associate Degree in Science — 40 seats</li></ul><h3>How to apply</h3><p>Apply online through the admissions portal. Upload your CNIC/B-Form, your father\'s CNIC, Matric and Intermediate result cards, a photograph and your domicile. Our system reads your documents automatically and fills your form — check the details and submit.</p><p>Merit lists will be displayed on this website and on the college notice board.</p>']],
+            ['announcement', 'Admissions open: Intermediate 1st Year & BS', 'Admissions', -6, 'published', ['pinned' => true, 'ticker' => true, 'cover' => true, 'expires' => 56,
+                'excerpt' => 'Online applications are open for 1st Year F.Sc., General Science, I.C.S., I.Com. and F.A., and the 1st semester of BS English, BS IT and BS Computer Science.',
+                'body' => '<p>The college invites applications for 1st Year (HSSC Part-I) and the 1st semester of its four-year BS programmes.</p><h3>Intermediate — 1st Year</h3><ul><li>F.Sc. Pre-Medical</li><li>F.Sc. Pre-Engineering</li><li>General Science</li><li>I.C.S. (Computer Science)</li><li>I.Com.</li><li>F.A. (Humanities)</li></ul><h3>BS — 1st Semester</h3><ul><li>BS English (Linguistics)</li><li>BS Information Technology</li><li>BS Computer Science</li></ul><h3>How to apply</h3><p>Apply online through the admissions portal. Upload your CNIC/B-Form, your father\'s CNIC, Matric (and for BS, Intermediate) result cards, a photograph and your domicile. Our system reads your documents automatically and fills your form — check the details and submit.</p><p>Merit lists will be displayed on this website and on the college notice board.</p>']],
             ['notice', 'Date sheet — December class tests (Part-I & Part-II)', 'Examinations', -3, 'published', ['pinned' => true, 'ticker' => true, 'pdf' => 'December class tests date sheet', 'expires' => 25,
                 'excerpt' => 'Class tests for all intermediate sections begin on Monday 7 December. Download the date sheet and seating plan.',
                 'body' => '<p>Monthly class tests for F.Sc., I.C.S., I.Com. and F.A. (Part-I and Part-II) will be held from <strong>7 to 12 December</strong> in the first two periods.</p><ul><li>Students must bring their college ID card.</li><li>Students with less than 75% attendance will not be allowed to sit the tests.</li><li>Results will be shared with parents through the attendance SMS service.</li></ul>']],
@@ -163,8 +163,8 @@ class CmsSeeder extends Seeder
                 'excerpt' => 'The college remained closed on account of Eid Milad-un-Nabi (PBUH).',
                 'body' => '<p>Classes resumed on the following working day.</p>']],
             // Scheduled
-            ['announcement', 'Merit lists for BS & ADP Spring 2027', 'Admissions', 58, 'scheduled', [
-                'excerpt' => 'First merit lists for BS Computer Science, BS English and ADP Science will be displayed here.',
+            ['announcement', 'Merit lists — 1st Year and BS 1st semester', 'Admissions', 58, 'scheduled', [
+                'excerpt' => 'First merit lists for every 1st Year group and the BS programmes will be displayed here.',
                 'body' => '<p>Selected candidates must deposit the fee within three working days of the list. The second list will follow one week later.</p>']],
             ['notice', 'Classes resume after winter vacations', 'Holidays', 40, 'scheduled', ['ticker' => true,
                 'excerpt' => 'Classes for all programmes resume on Monday 4 January 2027 according to the regular timetable.',
@@ -231,9 +231,9 @@ class CmsSeeder extends Seeder
             ['Rules & discipline', 'rules-discipline', 'Attendance, uniform, conduct and examination rules every student must follow.',
                 '<h3>Attendance</h3><p>A minimum of 75% attendance in each subject is required to sit class tests and to be sent up for board examinations. Parents are notified by SMS when a student is absent.</p><h3>Uniform & ID</h3><p>The prescribed uniform and the college ID card are compulsory on campus.</p><h3>Conduct</h3><p>Use of mobile phones in classrooms, smoking, and political activity are prohibited.</p>'],
             ['Admission policy', 'admission-policy', 'Eligibility, merit calculation, quotas and the online admission process.',
-                '<h3>Merit</h3><p>Intermediate admissions are based on Matric marks. BS and ADP admissions use 70% Intermediate and 30% Matric marks. Hafiz-e-Quran candidates receive 20 additional marks on verification.</p><h3>Quotas</h3><ul><li>Sports</li><li>Hafiz-e-Quran</li><li>Special persons</li><li>Children of FG employees</li><li>Armed forces</li></ul><h3>Documents</h3><p>CNIC/B-Form, father\'s CNIC, result cards, photograph and domicile are uploaded online and verified automatically before merit lists are prepared.</p>'],
+                '<h3>Merit</h3><p>Admission is offered in 1st Year (HSSC Part-I) and the 1st semester of BS only. Intermediate admissions are based on Matric marks (more than 60% for the science groups). BS admissions use 70% Intermediate and 30% Matric marks. Hafiz-e-Quran candidates receive 20 additional marks on verification.</p><h3>Seat allocation (FGEI Directorate)</h3><ul><li>Open merit — 53%</li><li>Serving Armed Forces personnel — 25%</li><li>Retired Armed Forces personnel — 10%</li><li>Defence paid employees — 10%</li><li>Disability quota — 2%</li><li>Children of serving FGEI (C/G) employees — over and above</li></ul><h3>Documents</h3><p>CNIC/B-Form, father\'s CNIC, result cards, photograph and domicile are uploaded online and verified automatically before merit lists are prepared.</p>'],
             ['Fee structure', 'fee-structure', 'Annual tuition and other charges for each programme, session 2026–2028.',
-                '<table><thead><tr><th>Programme</th><th>Annual fee (Rs.)</th></tr></thead><tbody><tr><td>F.Sc. Pre-Medical / Pre-Engineering</td><td>18,500</td></tr><tr><td>I.C.S.</td><td>19,500</td></tr><tr><td>I.Com.</td><td>15,500</td></tr><tr><td>F.A.</td><td>14,000</td></tr><tr><td>BS Computer Science</td><td>42,000</td></tr><tr><td>BS English</td><td>36,000</td></tr><tr><td>ADP Science</td><td>28,000</td></tr></tbody></table><p>Fee concessions are available for deserving students on the recommendation of the scholarship committee.</p>'],
+                '<table><thead><tr><th>Programme</th><th>Annual fee (Rs.)</th></tr></thead><tbody><tr><td>F.Sc. Pre-Medical / Pre-Engineering / General Science</td><td>18,500</td></tr><tr><td>I.C.S.</td><td>19,500</td></tr><tr><td>I.Com.</td><td>15,500</td></tr><tr><td>F.A.</td><td>14,000</td></tr><tr><td>BS Computer Science</td><td>42,000</td></tr><tr><td>BS English</td><td>36,000</td></tr><tr><td>BS Information Technology</td><td>42,000</td></tr></tbody></table><p>Fee concessions are available for deserving students on the recommendation of the scholarship committee.</p>'],
             ['Contact', 'contact', 'Address, phone numbers, office hours and directions to the college.',
                 '<p>Visit the admissions office between 8:00 AM and 2:00 PM, Monday to Friday. You can also send a message through the contact form and the office will reply within two working days.</p>'],
         ];
@@ -250,7 +250,7 @@ class CmsSeeder extends Seeder
     private function slides(): void
     {
         $slides = [
-            ['Admissions open for BS & ADP — Spring 2027', 'Apply online in minutes. Your documents are read and verified automatically.', 'Apply now', '/apply'],
+            ['Admissions open — 1st Year & BS', 'Apply online in minutes. Your documents are read and verified automatically.', 'Apply now', '/apply'],
             ['Commitment · Devotion · Progress — since 2007', 'Intermediate, associate degree and BS programmes taught by dedicated faculty.', 'About the college', '/pages/about'],
             ['Science & IT exhibition 2026', 'Sixty student projects — robotics, apps and working models. Visitors welcome.', 'See the event', '/pages/about'],
         ];
