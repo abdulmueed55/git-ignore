@@ -24,8 +24,8 @@
 <div class="flex min-h-screen">
     {{-- ============ Rail ============ --}}
     <div x-show="nav" x-cloak x-transition.opacity class="fixed inset-0 z-30 bg-black/40 lg:hidden" @click="nav=false"></div>
-    <aside class="fixed inset-y-0 left-0 z-40 flex w-[256px] flex-col bg-rail text-rail-ink transition-transform lg:translate-x-0"
-           :class="nav ? 'translate-x-0' : '-translate-x-full'">
+    <aside class="fixed inset-y-0 left-0 z-40 flex w-[256px] -translate-x-full flex-col bg-rail text-rail-ink transition-transform lg:translate-x-0"
+           :class="nav ? 'translate-x-0!' : ''">
         <a href="{{ $area === 'studio' ? route('studio.dashboard') : route('dashboard') }}" class="flex items-center gap-3 px-5 pt-5 pb-4">
             <x-crest class="h-10 w-10" />
             <div class="leading-tight">

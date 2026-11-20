@@ -166,11 +166,21 @@ class AcademicSeeder extends Seeder
             ['BSENG', '2024–2028', 'Semester 5', 3, 'BSENG-3', [22, 28], 'E-202'],
         ];
 
-        $subjectTeacher = function (Subject $s) use ($teachers, $depts) {
+        // Give each course to the least-loaded teacher of the subject's department
+        // (falls back to the whole faculty when a department is stretched).
+        $load = [];
+        $subjectTeacher = function (Subject $s) use ($teachers, $depts, &$load) {
             $code = array_search($s->department_id, array_map(fn ($d) => $d->id, $depts));
             $pool = $teachers[$code] ?? $teachers['ENG'];
+            usort($pool, fn ($a, $b) => ($load[$a->id] ?? 0) <=> ($load[$b->id] ?? 0));
+            if (($load[$pool[0]->id] ?? 0) >= 25) {
+                $all = array_merge(...array_values($teachers));
+                usort($all, fn ($a, $b) => ($load[$a->id] ?? 0) <=> ($load[$b->id] ?? 0));
+                $pool = $all;
+            }
+            $load[$pool[0]->id] = ($load[$pool[0]->id] ?? 0) + 5;
 
-            return $pool[mt_rand(0, count($pool) - 1)];
+            return $pool[0];
         };
 
         $periods = [['08:00', '08:45'], ['08:45', '09:30'], ['09:30', '10:15'], ['10:30', '11:15'], ['11:15', '12:00'], ['12:00', '12:45'], ['12:45', '13:30']];
