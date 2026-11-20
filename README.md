@@ -16,6 +16,11 @@ A complete college management system for **FG Liaquat Ali Degree College, Rawalp
 - Composer 2, Node 20+ (only to build assets)
 - MySQL 8 / MariaDB 10.6+ in production (SQLite works for local use)
 
+## Quick demo (test the whole system)
+
+Windows: double-click `demo.bat` (needs PHP 8.3, Composer and Node — Laragon has all three). macOS/Linux: `./demo.sh`.
+Then open http://localhost:8000. Step-by-step testing checklist (Roman Urdu): `docs/TESTING-GUIDE.md`.
+
 ## Install
 
 ```bash
