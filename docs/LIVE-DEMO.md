@@ -45,4 +45,5 @@ docker run -p 8080:8080 -e APP_URL=http://SERVER-IP:8080 fgla-erp-demo
 | `DEMO_RESET=true` | har start par demo college naya banta hai (default) |
 | `DEMO_RESET=false` + `DB_CONNECTION=mysql`, `DB_HOST`… | asal data, sirf migrations chalti hain |
 | `ANTHROPIC_API_KEY` | AI document reading on |
+| `OPENAI_API_KEY` / `GEMINI_API_KEY` | Speak attendance AI se (Urdu bhi) — bina key ke built-in matcher |
 | `APP_DEMO=false` | login page par demo accounts chhupa dein |

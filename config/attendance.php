@@ -36,6 +36,6 @@ return [
             'log' => LogSmsGateway::class,
         ],
         'sender' => env('ATTENDANCE_SMS_SENDER', 'FGLA-College'),
-        'college_phone' => env('COLLEGE_PHONE', '051-9270614'),
+        'college_phone' => env('COLLEGE_PHONE', '051-5492888'),
     ],
 ];

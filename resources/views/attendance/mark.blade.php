@@ -2,6 +2,7 @@
     @php
         $threshold = config('attendance.threshold');
         $margin = config('attendance.warning_margin');
+        $aiName = ['openai' => 'OpenAI', 'gemini' => 'Gemini', 'anthropic' => 'Claude'][\App\Services\Ai\Ai::provider()] ?? null;
         $chip = [
             'P' => 'peer-checked:!border-ok peer-checked:!bg-ok peer-checked:!text-paper',
             'A' => 'peer-checked:!border-bad peer-checked:!bg-bad peer-checked:!text-paper',
@@ -33,7 +34,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('attendance.save', $course) }}" x-data="register(@js($rows->map(fn ($r) => ['s' => $r['s'], 'name' => strtolower($r['name'].' '.$r['roll'])])))"
+    <form method="POST" action="{{ route('attendance.save', $course) }}" x-data="register(@js($rows->map(fn ($r) => ['id' => $r['id'], 's' => $r['s'], 'leave' => $r['leave'], 'full' => $r['name'], 'name' => strtolower($r['name'].' '.$r['roll'])])), @js(route('attendance.voice', $course)))"
           @keydown.window="key($event)" class="grid gap-6 pb-20 lg:grid-cols-[1fr_320px] lg:pb-0">
         @csrf
         <input type="hidden" name="date" value="{{ $date->toDateString() }}">
@@ -60,6 +61,67 @@
                 <span class="badge {{ $lecture ? 'badge-ok' : 'badge-warn' }}">{{ $lecture ? 'Marked by '.($lecture->marker?->name ?? 'staff').' · '.$lecture->updated_at->diffForHumans() : 'Not marked yet' }}</span>
             </div>
 
+            {{-- Speak attendance --}}
+            @unless ($readonly || $rows->isEmpty())
+                <div class="panel mb-4 overflow-hidden" x-show="voice.open" x-cloak>
+                    <div class="panel-head">
+                        <div>
+                            <div class="panel-title flex items-center gap-2"><x-icon name="sparkles" :size="15" class="text-brand" /> Speak attendance</div>
+                            <p class="mt-0.5 text-[12px] text-muted">Say who is absent, late or on leave — everyone else is marked present. Check the list, then save.</p>
+                        </div>
+                        <button type="button" class="grid h-8 w-8 place-items-center rounded-md text-muted hover:bg-sunken hover:text-ink" @click="voice.open = false" aria-label="Close"><x-icon name="x" :size="15" /></button>
+                    </div>
+                    <div class="grid gap-3 p-4">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" class="btn h-11 px-5 text-[14px]" :class="voice.listening ? 'btn-danger' : 'btn-primary'" @click="listen()" x-show="voice.canListen">
+                                <x-icon name="mic" :size="16" />
+                                <span x-text="voice.listening ? 'Stop — I’m done' : 'Tap and speak'"></span>
+                            </button>
+                            <select x-model="voice.lang" class="input !h-11 !w-auto text-[13px]" x-show="voice.canListen" aria-label="Speaking language">
+                                <option value="en-PK">English / Roman Urdu</option>
+                                <option value="ur-PK">اردو (Urdu)</option>
+                            </select>
+                            <span class="flex items-center gap-2 text-[12.5px] text-bad" x-show="voice.listening"><span class="h-2 w-2 animate-pulse rounded-full bg-bad"></span> Listening…</span>
+                            <span class="text-[12.5px] text-muted" x-show="!voice.canListen">This browser can’t take voice — type the sentence below (Chrome or Edge supports the mic).</span>
+                        </div>
+                        <textarea x-model="voice.text" rows="2" class="input !h-auto py-2 text-[14px]" placeholder="e.g. Ahmed Raza aur roll 7 absent hain, Hamza ki leave hai, Ali late hai, baqi sab present"
+                                  @keydown.ctrl.enter.prevent="apply()" @keydown.meta.enter.prevent="apply()" aria-label="What you said"></textarea>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" class="btn btn-brass" @click="apply()" :disabled="voice.busy || voice.text.trim().length < 2">
+                                <x-icon name="sparkles" :size="15" /> <span x-text="voice.busy ? 'Reading…' : 'Mark the register'"></span>
+                            </button>
+                            <span class="text-[11.5px] text-muted">
+                                @if ($aiName) Understood by {{ $aiName }} AI · Urdu, English and Roman Urdu @else Built-in matcher · add an OpenAI or Gemini key for Urdu and looser phrasing @endif
+                            </span>
+                        </div>
+                        <div x-show="voice.error" class="rounded-md border border-bad/30 bg-bad-soft px-3 py-2 text-[12.5px] text-bad" x-text="voice.error"></div>
+                        <template x-if="voice.result">
+                            <div class="rounded-md border border-line bg-sunken/50 p-3 text-[12.5px]">
+                                <div class="mb-2 flex flex-wrap items-center gap-2">
+                                    <span class="badge badge-ok">Applied</span>
+                                    <span class="text-ink-2" x-text="voice.result.summary"></span>
+                                    <button type="button" class="ml-auto text-[12px] font-semibold text-brand hover:underline" @click="undo()" x-show="voice.before">Undo</button>
+                                </div>
+                                <ul class="flex flex-wrap gap-1.5" x-show="voice.result.marks.length">
+                                    <template x-for="m in voice.result.marks" :key="m.id">
+                                        <li class="badge" :class="{P: 'badge-ok', A: 'badge-bad', L: 'badge-warn', E: 'badge-info'}[m.status]">
+                                            <span x-text="m.status"></span>&nbsp;<span x-text="m.name"></span>
+                                        </li>
+                                    </template>
+                                </ul>
+                                <template x-if="voice.result.unclear.length">
+                                    <div class="mt-2 rounded-md border border-warn/40 bg-warn-soft px-3 py-2 text-warn">
+                                        <div class="font-semibold">Not marked — please check by hand:</div>
+                                        <ul class="mt-1 list-disc pl-5"><template x-for="u in voice.result.unclear"><li x-text="u"></li></template></ul>
+                                    </div>
+                                </template>
+                                <div class="mt-2 text-[11px] text-muted" x-text="voice.result.engine + (voice.result.warning ? ' · ' + voice.result.warning : '')"></div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            @endunless
+
             <div class="panel overflow-hidden">
                 <div class="panel-head flex-wrap">
                     <div class="relative min-w-[200px] flex-1">
@@ -67,6 +129,9 @@
                         <input type="search" x-model="q" placeholder="Find by name or roll no…" class="input !h-9 pl-9" aria-label="Search students">
                     </div>
                     <div class="flex items-center gap-1.5">
+                        @unless ($readonly || $rows->isEmpty())
+                            <button type="button" class="btn btn-primary btn-sm" @click="voice.open = !voice.open; $nextTick(() => voice.open && $root.querySelector('textarea')?.focus())"><x-icon name="mic" :size="14" /> Speak attendance</button>
+                        @endunless
                         <button type="button" class="btn btn-ghost btn-sm" @click="all('P')"><span class="h-2 w-2 rounded-full bg-ok"></span> All present</button>
                         <button type="button" class="btn btn-ghost btn-sm" @click="all('A')"><span class="h-2 w-2 rounded-full bg-bad"></span> All absent</button>
                     </div>
@@ -205,8 +270,45 @@
     @push('scripts')
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('register', (rows) => ({
+            Alpine.data('register', (rows, voiceUrl) => ({
                 rows, q: '', cur: 0,
+                voice: { open: false, text: '', lang: 'en-PK', listening: false, busy: false, error: '', result: null, before: null, rec: null,
+                         canListen: !!(window.SpeechRecognition || window.webkitSpeechRecognition) },
+                listen() {
+                    const v = this.voice;
+                    if (v.listening) { v.rec?.stop(); return; }
+                    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    const rec = new SR();
+                    rec.lang = v.lang; rec.continuous = true; rec.interimResults = true;
+                    const start = v.text.trim() ? v.text.trim() + ' ' : '';
+                    rec.onresult = (e) => { v.text = start + Array.from(e.results).map((r) => r[0].transcript).join(' ').trim(); };
+                    rec.onerror = (e) => { v.error = e.error === 'not-allowed' ? 'Microphone permission was blocked — allow the mic for this site, or type instead.' : (e.error === 'no-speech' ? 'Didn’t hear anything — try again a little closer to the mic.' : 'Voice input stopped (' + e.error + '). You can type instead.'); };
+                    rec.onend = () => { v.listening = false; if (v.text.trim().length > 1 && !v.error) this.apply(); };
+                    v.error = ''; v.rec = rec; v.listening = true; rec.start();
+                },
+                async apply() {
+                    const v = this.voice;
+                    if (v.busy || v.text.trim().length < 2) return;
+                    v.busy = true; v.error = '';
+                    try {
+                        const res = await fetch(voiceUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }, body: JSON.stringify({ transcript: v.text }) });
+                        const data = await res.json().catch(() => ({}));
+                        if (!res.ok) { v.error = data.message || (res.status === 429 ? 'Too many tries — wait a minute.' : 'Could not read that (' + res.status + ').'); return; }
+                        v.before = this.rows.map((r) => r.s);
+                        const byId = Object.fromEntries(data.marks.map((m) => [m.id, m.status]));
+                        this.rows.forEach((r) => { r.s = byId[r.id] ?? (r.leave ? 'E' : data.everyone_else); });
+                        const c = this.counts;
+                        v.result = {
+                            ...data,
+                            marks: data.marks.map((m) => ({ ...m, name: this.rows.find((r) => r.id === m.id)?.full ?? '' })),
+                            summary: `${c.P} present, ${c.A} absent, ${c.L} late, ${c.E} on leave — ` + (data.everyone_else === 'A' ? 'everyone not named marked absent.' : 'everyone not named marked present.'),
+                        };
+                    } catch (e) {
+                        v.error = 'No connection — check the internet and try again.';
+                    } finally { v.busy = false; }
+                },
+                undo() { if (this.voice.before) { this.rows.forEach((r, i) => { r.s = this.voice.before[i]; }); this.voice.before = null; this.voice.result = null; } },
                 get counts() {
                     const c = { P: 0, A: 0, L: 0, E: 0 };
                     this.rows.forEach((r) => c[r.s]++);

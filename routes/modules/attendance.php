@@ -8,6 +8,7 @@ use App\Http\Controllers\Attendance\MarkController;
 use App\Http\Controllers\Attendance\RegisterController;
 use App\Http\Controllers\Attendance\StudentAttendanceController;
 use App\Http\Controllers\Attendance\TodayController;
+use App\Http\Controllers\Attendance\VoiceController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'role:principal,teacher'])->prefix('attendance')->name('attendance.')->group(function () {
@@ -15,6 +16,7 @@ Route::middleware(['auth', 'role:principal,teacher'])->prefix('attendance')->nam
 
     Route::get('/courses/{course}/mark', [MarkController::class, 'show'])->name('mark');
     Route::post('/courses/{course}/mark', [MarkController::class, 'store'])->name('save');
+    Route::post('/courses/{course}/voice', VoiceController::class)->middleware('throttle:30,1')->name('voice');
 
     Route::get('/analytics', AnalyticsController::class)->name('analytics');
 

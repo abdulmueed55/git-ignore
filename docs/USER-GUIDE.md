@@ -57,6 +57,15 @@ AI ke liye `.env` mein `ANTHROPIC_API_KEY` chahiye. Key na ho to documents "manu
 3. Topic likhein → **Save register**. 48 ghante baad register lock ho jata hai (Principal phir bhi badal sakte hain).
 4. Approved leave wale students khud "E" (leave) par hote hain.
 
+**AI se bol kar attendance (Speak attendance):**
+1. Register par **Speak attendance** (mic wala hara button) dabayein → **Tap and speak**.
+2. Bolein, maslan: *"Ahmed Raza aur roll 7 absent hain, Hamza ki chutti hai, Ali late hai, baqi sab present"* → **Stop**.
+3. Register khud bhar jata hai: jin ke naam liye unka status, baqi sab Present (approved leave wale Leave hi rehte hain). Upar list aati hai ke kis ko kya lagaya.
+4. Agar koi naam saaf na ho (do "Usman" hon) to woh peela box mein likha aata hai — us ko haath se theek karein. **Undo** se pehle wali halat wapas.
+5. Topic likh kar **Save register** — bina save ke kuch record nahi hota.
+
+Mic ke baghair sentence type bhi kar sakte hain. Bina AI key ke bhi English/Roman Urdu naam aur roll number samajh leta hai; **OpenAI ya Gemini key** lagane se Urdu, ghalat spelling aur dheela jumla bhi samajh aata hai (`.env` mein `OPENAI_API_KEY` ya `GEMINI_API_KEY`).
+
 **Khud-ba-khud hone wale kaam:** absent student ke walid ko SMS queue (English + Roman Urdu); 75% se neeche girne ya 3 din lagatar ghair-hazir hone par alert.
 
 **Principal:** Analytics (program/section/din ke hisaab se), Defaulters (75% se kam — CSV aur ek click mein sab guardians ko SMS), Leave requests (approve/reject), Guardian alerts (SMS outbox), monthly register print.

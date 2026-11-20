@@ -62,6 +62,8 @@ Har line ke saamne ✓ ya ✗ lagayein. ✗ ho to screen ka screenshot aur 1 lin
 - [ ] Topic khaali chhor kar save → rokta hai (topic zaroori)
 - [ ] Topic likh kar **Save register** → hara message "Register saved … guardian alert queued"
 - [ ] Keyboard: ↓ se agla student, **A** dabane se absent
+- [ ] **Speak attendance** → type/bolein "roll 2 aur roll 5 absent, roll 3 ki chutti, baqi sab present" → **Mark the register** → 2 A, 1 E, baqi P; **Undo** se wapas
+- [ ] "Usman absent" jab do Usman hon → peele box mein "matches 2 students" (koi ghalat mark nahi)
 - [ ] **Analytics**, **Defaulters** (CSV download), kisi student ka naam → attendance profile
 - [ ] Teacher kisi doosre teacher ki class nahi khol sakta (403)
 

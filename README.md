@@ -6,7 +6,7 @@ A complete college management system for **FG Liaquat Ali Degree College, Rawalp
 |---|---|
 | **Command centre** | Role-aware home: today's attendance, registers still to mark, admission funnel, AI-flagged applications, students below 75 %, what is live on the website, audit trail. |
 | **Admissions + AI verification** | Online applications with document upload. Claude reads CNIC/B-Form, Matric/Inter result cards and domicile, **auto-fills the form**, and **cross-checks every document against the others and the form** (name, father name, CNIC, date of birth, roll numbers, marks). Mismatches and duplicate CNICs are flagged; merit is calculated; merit lists generated and published; admitted applicants become students with roll numbers. |
-| **Attendance** | 4-state register (Present / Absent / Late / Leave) marked by teachers in seconds, lock window, leave requests, guardian SMS alerts (absent today, below threshold, consecutive absences), analytics, defaulters list, per-student profile, printable monthly register. |
+| **Attendance** | 4-state register (Present / Absent / Late / Leave) marked by teachers in seconds — or by voice: **Speak attendance** (“Ahmed aur roll 7 absent, Hamza ki chutti, baqi sab present”) fills the register using OpenAI, Gemini or Claude, lock window, leave requests, guardian SMS alerts (absent today, below threshold, consecutive absences), analytics, defaulters list, per-student profile, printable monthly register. |
 | **Academics** | Programs, sections, subjects, clash-free timetable, students, staff & roles, activity log. |
 | **Website studio** | A separate dashboard for the college website: announcements, news, events, notices, pages, hero slides, gallery, downloads, faculty directory, contact inbox, site settings — all exposed through a public JSON API (`/api/v1/…`) for the new website. |
 
@@ -67,6 +67,20 @@ AI_EXTRACTION_MODEL=claude-opus-5-5
 Each uploaded document is sent once to Claude, which returns structured fields (name, father name, CNIC, DOB, board, roll no, marks…) plus a confidence score and any visible problems (blurred, cropped, looks edited). The verifier then compares every field across all documents and the form. Without a key the system still works: documents are marked "enter manually" and staff verify by eye — nothing is ever guessed.
 
 Document reading runs right after the upload request finishes, so no queue worker is required. On a VPS you may run `php artisan queue:work` under Supervisor for other background jobs.
+
+## Speak attendance (AI)
+
+On every register a teacher can press **Speak attendance**, say (or type) who is absent, late or on leave — in English, Urdu or Roman Urdu — and the register is filled: named students get their status, everyone else is marked present (approved leave stays leave). The teacher checks it and presses **Save register** as usual; nothing is saved without that.
+
+Add **one** key to `.env`:
+
+```dotenv
+OPENAI_API_KEY=sk-...        # or
+GEMINI_API_KEY=AIza...       # or ANTHROPIC_API_KEY (already used for admissions)
+AI_PROVIDER=auto             # openai | gemini | anthropic | auto (first key found)
+```
+
+Only the class list (names, roll numbers, father names) and the sentence are sent. Voice is turned into text by the browser (Chrome / Edge / Android Chrome; Safari on iPhone too), so no audio leaves the device. Without a key a built-in matcher handles English / Roman Urdu names and roll numbers; anything it is unsure of (e.g. two students called Usman) is listed for the teacher instead of being guessed.
 
 ## SMS alerts to guardians
 
