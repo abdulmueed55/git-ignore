@@ -96,7 +96,12 @@ class Navigation
 
     public static function isActive(array $item): bool
     {
-        if (! request()->routeIs($item['route'], $item['route'].'.*', preg_replace('/\.index$/', '', $item['route']).'.*')) {
+        $patterns = [$item['route'], $item['route'].'.*'];
+        $base = preg_replace('/\.index$/', '', $item['route']);
+        if ($base !== $item['route'] && str_contains($base, '.')) {
+            $patterns[] = $base.'.*'; // e.g. academics.programs.edit, but never a bare module prefix
+        }
+        if (! request()->routeIs(...$patterns)) {
             return false;
         }
         foreach ($item['params'] as $k => $v) {

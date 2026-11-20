@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
             try {
                 $badges = array_filter([
                     'admissions.verification' => Schema::hasTable('admission_applications')
-                        ? \App\Models\AdmissionApplication::whereIn('verification_status', ['review', 'mismatch'])->whereNotIn('status', ['admitted', 'rejected'])->count() : 0,
+                        ? \App\Models\AdmissionApplication::whereIn('verification_status', ['review', 'mismatch'])->whereNotIn('status', ['admitted', 'rejected', 'draft'])->count() : 0,
                     'attendance.leaves.index' => Schema::hasTable('leave_requests')
                         ? \App\Models\LeaveRequest::where('status', 'pending')->count() : 0,
                     'studio.messages.index' => Schema::hasTable('contact_messages')

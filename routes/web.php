@@ -26,7 +26,7 @@ Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')-
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', DashboardController::class)
-        ->middleware('role:principal,admission_officer,teacher')
+        ->middleware('role:principal,admission_officer,teacher,editor') // editors are redirected to the studio
         ->name('dashboard');
 });
 

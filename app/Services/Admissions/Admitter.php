@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Services\Admissions;
+
+use App\Models\ActivityLog;
+use App\Models\AdmissionApplication;
+use App\Models\Section;
+use App\Models\Student;
+use Illuminate\Support\Facades\DB;
+use RuntimeException;
+
+/** Turns a selected applicant into an enrolled student. */
+class Admitter
+{
+    public function admit(AdmissionApplication $app): Student
+    {
+        if ($app->student) {
+            return $app->student;
+        }
+        if (! in_array($app->status, ['selected', 'verified', 'waitlisted'], true)) {
+            throw new RuntimeException('Only selected or verified applicants can be admitted.');
+        }
+
+        return DB::transaction(function () use ($app) {
+            $app->loadMissing(['program', 'cycle.academicSession']);
+            $sessionId = $app->cycle->academic_session_id;
+
+            $section = Section::where('program_id', $app->program_id)
+                ->withCount('students')
+                ->orderByRaw('CASE WHEN academic_session_id = ? THEN 0 ELSE 1 END', [$sessionId])
+                ->orderBy('year')
+                ->orderBy('students_count')
+                ->first();
+
+            $session = $section?->academicSession ?? $app->cycle->academicSession;
+            $yy = substr($session->name, 2, 2);
+            $prefix = sprintf('%s-%s-', $app->program->code, $yy);
+            $last = Student::where('roll_no', 'like', $prefix.'%')->pluck('roll_no')
+                ->map(fn ($r) => (int) substr($r, strlen($prefix)))->max() ?? 0;
+
+            $student = Student::create([
+                'program_id' => $app->program_id,
+                'section_id' => $section?->id,
+                'academic_session_id' => $session->id,
+                'admission_application_id' => $app->id,
+                'roll_no' => $prefix.str_pad((string) ($last + 1), 3, '0', STR_PAD_LEFT),
+                'name' => $app->name,
+                'father_name' => $app->father_name,
+                'cnic' => $app->cnic,
+                'father_cnic' => $app->father_cnic,
+                'date_of_birth' => $app->date_of_birth,
+                'gender' => $app->gender ?? 'male',
+                'phone' => $app->phone,
+                'guardian_phone' => $app->guardian_phone,
+                'email' => $app->email,
+                'address' => $app->address,
+                'city' => $app->city,
+                'domicile' => $app->domicile,
+                'status' => 'active',
+            ]);
+
+            $app->update(['status' => 'admitted', 'reviewed_by' => auth()->id(), 'reviewed_at' => now()]);
+            ActivityLog::record('admissions.admitted', "Admitted {$app->name} as {$student->roll_no}", $app);
+
+            return $student;
+        });
+    }
+}
