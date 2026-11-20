@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class GalleryImage extends Model
 {
@@ -12,5 +13,10 @@ class GalleryImage extends Model
     public function album(): BelongsTo
     {
         return $this->belongsTo(GalleryAlbum::class, 'gallery_album_id');
+    }
+
+    public function url(): string
+    {
+        return Storage::disk('public')->url($this->path);
     }
 }

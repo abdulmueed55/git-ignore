@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Post extends Model
@@ -80,5 +81,30 @@ class Post extends Model
         }
 
         return 'live';
+    }
+
+    public function coverUrl(): ?string
+    {
+        return $this->cover_path ? Storage::disk('public')->url($this->cover_path) : null;
+    }
+
+    public function attachmentUrl(): ?string
+    {
+        return $this->attachment_path ? Storage::disk('public')->url($this->attachment_path) : null;
+    }
+
+    public function typeLabel(): string
+    {
+        return self::TYPES[$this->type] ?? ucfirst($this->type);
+    }
+
+    public function scopeOfType(Builder $q, ?string $type): Builder
+    {
+        return $type ? $q->where('type', $type) : $q;
+    }
+
+    public function readingMinutes(): int
+    {
+        return max(1, (int) ceil(str_word_count(strip_tags($this->body)) / 200));
     }
 }
