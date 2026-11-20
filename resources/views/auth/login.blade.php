@@ -8,14 +8,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen">
-<div class="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
+<div class="grid min-h-screen lg:grid-cols-[1.55fr_1fr]">
     <section class="relative hidden overflow-hidden bg-rail text-white lg:flex lg:flex-col lg:justify-between lg:p-10">
-        {{-- College building fills the whole panel: blurred copy as backdrop, sharp full building on top --}}
-        <img src="{{ asset('images/college-building@2x.jpg') }}" alt="" aria-hidden="true" class="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl brightness-75 saturate-125">
-        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,32,19,0.10)_0%,rgba(6,32,19,0.45)_45%,rgba(6,32,19,0.92)_100%)]"></div>
-        <figure class="absolute inset-x-0 top-0 m-0">
-            <img src="{{ asset('images/college-building@2x.jpg') }}" alt="Front view of the FG Liaquat Ali Degree College building" class="block aspect-[634/240] w-full object-cover [mask-image:linear-gradient(to_bottom,black_62%,transparent_100%)]">
-        </figure>
+        {{-- College building covers the whole panel --}}
+        <img src="{{ asset('images/college-building@2x.jpg') }}" alt="Front view of the FG Liaquat Ali Degree College building" class="absolute inset-0 h-full w-full object-cover object-[50%_40%]">
+        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,32,19,0.30)_0%,rgba(6,32,19,0)_22%,rgba(6,32,19,0.15)_45%,rgba(6,32,19,0.82)_72%,rgba(6,32,19,0.95)_100%)]"></div>
         <div class="relative flex items-center gap-3 self-start rounded-[4px] bg-[#0a3d26]/85 py-2 pl-2 pr-4 backdrop-blur-sm">
             <x-crest class="h-12 w-11" />
             <div>
