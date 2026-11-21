@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Academics\ActivityController;
+use App\Http\Controllers\Academics\ExtraClassController;
 use App\Http\Controllers\Academics\ProgramController;
 use App\Http\Controllers\Academics\SectionController;
 use App\Http\Controllers\Academics\StaffController;
@@ -37,6 +38,11 @@ Route::middleware('auth')->group(function () {
             Route::delete('/timetable/slots/{slot}', [TimetableController::class, 'destroySlot'])->name('timetable.slots.destroy');
             Route::post('/timetable/courses', [TimetableController::class, 'storeCourse'])->name('timetable.courses.store');
             Route::put('/timetable/courses/{course}/teacher', [TimetableController::class, 'assignTeacher'])->name('timetable.courses.teacher');
+        });
+        Route::middleware('role:principal,teacher')->group(function () {
+            Route::get('/extra-classes', [ExtraClassController::class, 'index'])->name('extra.index');
+            Route::post('/extra-classes', [ExtraClassController::class, 'store'])->middleware('throttle:30,1')->name('extra.store');
+            Route::patch('/extra-classes/{extra}/cancel', [ExtraClassController::class, 'cancel'])->name('extra.cancel');
         });
         Route::get('/timetable', [TimetableController::class, 'index'])
             ->middleware('role:principal,teacher')->name('timetable');

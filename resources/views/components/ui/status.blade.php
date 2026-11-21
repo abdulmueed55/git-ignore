@@ -2,10 +2,10 @@
 @props(['value', 'label' => null])
 @php
     $tone = match ($value) {
-        'admitted', 'verified', 'clear', 'match', 'live', 'published', 'approved', 'sent', 'done', 'active', 'P', 'open' => 'ok',
+        'admitted', 'verified', 'clear', 'match', 'live', 'published', 'approved', 'sent', 'done', 'active', 'P', 'open', 'completed' => 'ok',
         'selected', 'scheduled', 'processing', 'under_review', 'partial', 'L', 'review' => 'info',
         'flagged', 'waitlisted', 'pending', 'queued', 'draft', 'E', 'missing' => 'warn',
-        'rejected', 'mismatch', 'failed', 'expired', 'A', 'struck_off', 'closed' => 'bad',
+        'rejected', 'mismatch', 'failed', 'expired', 'A', 'struck_off', 'closed', 'cancelled' => 'bad',
         'submitted' => 'brass',
         default => '',
     };

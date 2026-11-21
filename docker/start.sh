@@ -25,5 +25,8 @@ fi
 
 php artisan optimize:clear >/dev/null 2>&1 || true
 
+# Scheduler in the background: class reminders for teachers (classes:remind, every minute).
+php artisan schedule:work --no-interaction >/dev/null 2>&1 &
+
 echo "Serving on port ${PORT} — ${APP_URL}"
 exec php artisan serve --host=0.0.0.0 --port="${PORT}" --no-reload

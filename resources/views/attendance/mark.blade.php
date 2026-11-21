@@ -43,7 +43,11 @@
         <fieldset @disabled($readonly) class="min-w-0">
             {{-- Period switcher --}}
             <div class="mb-4 flex flex-wrap items-center gap-2">
-                @if ($slots->count() > 1)
+                @if ($extra)
+                    <input type="hidden" name="time" value="{{ $time }}">
+                    <span class="badge badge-brass">{{ $extra->kindLabel() }}</span>
+                    <span class="badge badge-plain mono">{{ substr($extra->starts_at, 0, 5) }}–{{ substr($extra->ends_at, 0, 5) }} · {{ $extra->room }}</span>
+                @elseif ($slots->count() > 1)
                     <div class="tabs" role="tablist">
                         @foreach ($slots as $s)
                             <a role="tab" aria-selected="{{ $slot?->id === $s->id ? 'true' : 'false' }}" class="tab mono" href="{{ route('attendance.mark', ['course' => $course->id, 'date' => $date->toDateString(), 'slot' => $s->id]) }}">{{ substr($s->starts_at, 0, 5) }}</a>

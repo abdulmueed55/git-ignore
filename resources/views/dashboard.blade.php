@@ -151,7 +151,7 @@
                 @else
                     <ol class="scrollbar-thin max-h-[300px] flex-1 overflow-y-auto px-4 py-3">
                         @foreach ($list as $row)
-                            @php $c = $row['slot']->course; @endphp
+                            @php $c = $row['course']; @endphp
                             <li class="relative flex gap-3 pb-3 pl-5 last:pb-0">
                                 <span class="absolute left-[5px] top-2 h-full w-px bg-line"></span>
                                 <span class="absolute left-0 top-[7px] h-[11px] w-[11px] rounded-full border-2 {{ $row['state'] === 'done' ? 'border-ok bg-ok' : ($row['state'] === 'due' ? 'border-warn bg-warn-soft' : 'border-line-strong bg-surface') }}"></span>
@@ -163,13 +163,13 @@
                                             <span class="mono text-[11.5px] font-semibold text-ok">{{ $tot ? round(($l->present_count + $l->late_count) / $tot * 100) : 0 }}%</span>
                                         @elseif ($row['state'] === 'due')
                                             @if (Route::has('attendance.mark') && ($isTeacher || $leadership))
-                                                <a href="{{ route('attendance.mark', ['course' => $c->id, 'date' => today()->toDateString(), 'slot' => $row['slot']->id]) }}" class="text-[11.5px] font-semibold text-warn hover:underline">Mark now →</a>
+                                                <a href="{{ $row['markUrl'] }}" class="text-[11.5px] font-semibold text-warn hover:underline">Mark now →</a>
                                             @else
                                                 <span class="badge badge-warn">Due</span>
                                             @endif
                                         @endif
                                     </div>
-                                    <div class="truncate text-[13px] font-semibold text-ink">{{ $c->subject->name }}</div>
+                                    <div class="truncate text-[13px] font-semibold text-ink">{{ $c->subject->name }} @if ($row['extra'])<span class="badge badge-brass !h-[17px] !text-[10px]">{{ $row['extra'] }}</span>@endif</div>
                                     <div class="truncate text-[12px] text-muted">{{ $c->section->program->code }} · {{ $c->section->name }} @unless($isTeacher) · {{ $c->teacher?->name }} @endunless</div>
                                 </div>
                             </li>

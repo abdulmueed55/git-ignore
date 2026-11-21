@@ -5,12 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\ActivityLog;
 use App\Models\AdmissionApplication;
 use App\Models\AdmissionCycle;
-use App\Models\Course;
 use App\Models\Lecture;
 use App\Models\Post;
 use App\Models\Program;
 use App\Models\Student;
-use App\Models\TimetableSlot;
+use App\Services\Timetable\TeacherSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -134,33 +133,28 @@ class DashboardController extends Controller
         ];
     }
 
-    /** Today's timetable with marking state: done / due (start time passed) / upcoming. */
+    /** Today's classes (timetable + extra classes) with marking state: done / due (start time passed) / upcoming. */
     private function todaysSchedule(Carbon $today, ?Collection $courseIds): Collection
     {
-        $weekday = $today->dayOfWeekIso;
-        if ($weekday > 6) {
-            return collect();
-        }
+        $entries = TeacherSchedule::day($today, $courseIds?->all());
 
-        $slots = TimetableSlot::with(['course.subject:id,name,code', 'course.section.program:id,code', 'course.teacher:id,name'])
-            ->where('weekday', $weekday)
-            ->when($courseIds, fn ($q) => $q->whereIn('course_id', $courseIds))
-            ->orderBy('starts_at')->get();
-
-        $marked = Lecture::whereDate('held_on', $today)->whereIn('course_id', $slots->pluck('course_id'))
+        $marked = Lecture::whereDate('held_on', $today)->whereIn('course_id', $entries->pluck('course.id')->unique())
             ->get(['id', 'course_id', 'starts_at', 'present_count', 'absent_count', 'late_count', 'leave_count'])
             ->keyBy(fn ($l) => $l->course_id.'@'.substr((string) $l->starts_at, 0, 5));
 
         $now = now()->format('H:i');
 
-        return $slots->map(function ($slot) use ($marked, $now) {
-            $start = substr($slot->starts_at, 0, 5);
-            $lecture = $marked->get($slot->course_id.'@'.$start);
+        return $entries->map(function ($e) use ($marked, $now) {
+            $start = $e->start->format('H:i');
+            $lecture = $marked->get($e->course->id.'@'.$start);
 
             return [
-                'slot' => $slot,
+                'course' => $e->course,
+                'extra' => $e->type === 'extra' ? $e->label : null,
                 'start' => $start,
-                'end' => substr($slot->ends_at, 0, 5),
+                'end' => $e->end->format('H:i'),
+                'room' => $e->room,
+                'markUrl' => $e->markUrl,
                 'lecture' => $lecture,
                 'state' => $lecture ? 'done' : ($start <= $now ? 'due' : 'upcoming'),
             ];

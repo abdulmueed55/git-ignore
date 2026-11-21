@@ -86,6 +86,53 @@
                         <span class="hidden sm:inline">Jump to…</span>
                         <kbd class="mono ml-auto hidden rounded border border-line px-1.5 text-[10.5px] sm:inline">Ctrl K</kbd>
                     </button>
+                    {{-- Alerts: class reminders, extra classes, other staff notifications --}}
+                    <div class="relative" x-data="bell(@js(route('notifications.feed')), @js(route('notifications.read')))" @keydown.escape.window="open = false" @click.outside="open = false">
+                        <button type="button" class="btn btn-ghost btn-icon relative" @click="toggle()" :aria-expanded="open" aria-label="Alerts">
+                            <x-icon name="bell" :size="16" />
+                            <span x-show="unread" x-cloak x-text="unread > 9 ? '9+' : unread" class="mono absolute -right-1 -top-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-bad px-1 text-[10px] font-bold text-paper"></span>
+                        </button>
+                        <div x-show="open" x-cloak x-transition.opacity class="panel absolute right-0 top-11 z-40 w-[min(370px,calc(100vw-24px))] overflow-hidden shadow-2xl">
+                            <div class="panel-head">
+                                <div class="panel-title">Alerts</div>
+                                <button type="button" x-show="unread" @click="readAll()" class="text-[12px] font-semibold text-brand hover:underline">Mark all read</button>
+                            </div>
+                            <button type="button" x-show="perm === 'default'" @click="askPermission()" class="flex w-full items-center gap-2 border-b border-line bg-brass-soft/50 px-4 py-2.5 text-left text-[12.5px] text-ink">
+                                <x-icon name="bell" :size="14" class="text-brass" /> Turn on desktop alerts, so class reminders pop up even in another tab
+                            </button>
+                            <ul class="max-h-[380px] divide-y divide-line overflow-y-auto">
+                                <template x-for="n in items" :key="n.id">
+                                    <li>
+                                        <a :href="n.url || '#'" @click.prevent="follow(n)" class="flex gap-3 px-4 py-3 hover:bg-sunken/60" :class="n.read ? '' : 'bg-brand-soft/40'">
+                                            <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full" :class="n.read ? 'bg-line' : 'bg-brand'"></span>
+                                            <span class="min-w-0 flex-1">
+                                                <span class="block text-[13px] font-semibold text-ink" x-text="n.title"></span>
+                                                <span class="block text-[12px] leading-snug text-muted" x-text="n.body"></span>
+                                                <span class="mono mt-0.5 block text-[11px] text-muted" x-text="n.at"></span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                </template>
+                                <li x-show="!items.length" class="px-4 py-8 text-center text-[12.5px] text-muted">No alerts yet. Class reminders appear here {{ config('timetable.reminder_minutes') }} minutes before each class.</li>
+                            </ul>
+                        </div>
+                        <template x-teleport="body">
+                            <div class="fixed bottom-4 right-4 z-[60] grid w-[min(370px,calc(100vw-32px))] gap-2" style="margin-bottom: env(safe-area-inset-bottom, 0px); margin-right: env(safe-area-inset-right, 0px)">
+                                <template x-for="t in toasts" :key="t.id">
+                                    <div class="panel rise flex items-start gap-3 border-l-4 !border-l-brand p-4 shadow-2xl" role="status">
+                                        <x-icon name="bell" :size="18" class="mt-0.5 text-brand" />
+                                        <div class="min-w-0 flex-1">
+                                            <div class="text-[13.5px] font-bold text-ink" x-text="t.title"></div>
+                                            <div class="text-[12.5px] leading-snug text-muted" x-text="t.body"></div>
+                                            <a x-show="t.url" :href="t.url" @click="markRead(t.id)" class="mt-1.5 inline-flex items-center gap-1 text-[12.5px] font-semibold text-brand">Open <x-icon name="arrow-right" :size="13" /></a>
+                                        </div>
+                                        <button type="button" @click="dismiss(t.id)" class="text-muted hover:text-ink" aria-label="Dismiss"><x-icon name="x" :size="14" /></button>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+
                     <button class="btn btn-ghost btn-icon" title="Toggle theme"
                             @click="setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark')">
                         <x-icon name="moon" :size="16" class="dark:hidden" />

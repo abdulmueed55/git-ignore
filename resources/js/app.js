@@ -144,6 +144,49 @@ Alpine.data('palette', (items) => ({
     },
 }));
 
+// Alerts bell: polls the feed every minute; new class reminders pop up as a toast and,
+// when allowed, as a desktop notification (even while another tab is open).
+Alpine.data('bell', (feedUrl, readUrl) => ({
+    open: false, items: [], unread: 0, toasts: [],
+    perm: 'Notification' in window ? Notification.permission : 'unsupported',
+    init() {
+        this.load();
+        setInterval(() => this.load(), 60000);
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) this.load(); });
+    },
+    seen() { try { return new Set(JSON.parse(sessionStorage.getItem('bell-seen') || '[]')); } catch (e) { return new Set(); } },
+    remember(ids) { try { sessionStorage.setItem('bell-seen', JSON.stringify([...ids].slice(-60))); } catch (e) {} },
+    async load() {
+        try {
+            const res = await fetch(feedUrl, { headers: { Accept: 'application/json' } });
+            if (!res.ok) return;
+            const data = await res.json();
+            this.items = data.items; this.unread = data.unread;
+            const seen = this.seen();
+            data.items.filter((n) => !n.read && n.fresh && !seen.has(n.id)).reverse().forEach((n) => {
+                seen.add(n.id);
+                this.toasts.push(n);
+                setTimeout(() => this.dismiss(n.id), 20000);
+                if (this.perm === 'granted' && document.hidden) {
+                    try { const d = new Notification(n.title, { body: n.body, tag: n.id }); d.onclick = () => { window.focus(); if (n.url) location.href = n.url; }; } catch (e) {}
+                }
+            });
+            this.remember(seen);
+        } catch (e) { /* offline: try again next minute */ }
+    },
+    toggle() { this.open = !this.open; if (this.open) this.load(); },
+    dismiss(id) { this.toasts = this.toasts.filter((t) => t.id !== id); },
+    async post(body) {
+        const res = await fetch(readUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }, body: JSON.stringify(body) });
+        if (res.ok) this.unread = (await res.json()).unread;
+    },
+    async markRead(id) { this.items.forEach((n) => { if (n.id === id) n.read = true; }); try { await this.post({ id }); } catch (e) {} },
+    async follow(n) { await this.markRead(n.id); if (n.url) location.href = n.url; },
+    async readAll() { this.items.forEach((n) => { n.read = true; }); try { await this.post({}); } catch (e) {} },
+    askPermission() { Notification.requestPermission().then((p) => { this.perm = p; }); },
+}));
+
 // Whitelist sanitizer for editor previews (x-html would otherwise run pasted <script>,
 // onerror= or Alpine x-init attributes in the editor's session). Mirrors the server-side
 // HtmlSanitizer: only plain formatting tags, links and images survive.

@@ -38,6 +38,7 @@ class Navigation
                 ['Sections', 'academics.sections.index', 'layers', ['principal']],
                 ['Subjects', 'academics.subjects.index', 'bookmark', ['principal']],
                 ['Timetable', 'academics.timetable', 'clock', ['principal', 'teacher']],
+                ['Extra classes', 'academics.extra.index', 'calendar', ['principal', 'teacher']],
             ],
             'Administration' => [
                 ['Staff & roles', 'staff.index', 'id', ['principal']],

@@ -2,6 +2,7 @@
 
 namespace App\Services\Attendance;
 
+use App\Models\ExtraClass;
 use App\Models\GuardianAlert;
 use App\Models\Lecture;
 use App\Models\Student;
@@ -18,6 +19,8 @@ class AlertService
         'absent_today' => 'Absent today',
         'short_attendance' => 'Below threshold',
         'consecutive_absence' => 'Consecutive absence',
+        'extra_class' => 'Extra class',
+        'class_cancelled' => 'Class cancelled',
     ];
 
     public function __construct(private AttendanceStats $stats) {}
@@ -35,6 +38,10 @@ class AlertService
                 ."Aap ke bachay ki haazri {$v['pct']}% hai jo {$threshold}% se kam hai — imtihan mein shirkat ke liye {$threshold}% laazmi hai. Rabta: {$phone}",
             'consecutive_absence' => "FGLA College: {$who} has been absent for {$v['days']} consecutive days. "
                 ."Aap ke bachay musalsal {$v['days']} din se college nahi aa rahe. Barah-e-karam fori rabta karein: {$phone}",
+            'extra_class' => "FGLA College: {$v['what']} for {$s->name} — {$v['subject']}, {$v['when']}, Room {$v['room']}. "
+                ."{$v['subject']} ki {$v['what_ur']} {$v['when']} ko Room {$v['room']} mein hogi. Zaroor tashreef layein.",
+            'class_cancelled' => "FGLA College: the {$v['subject']} class on {$v['when']} is cancelled. "
+                ."{$v['subject']} ki {$v['when']} wali class mansookh kar di gayi hai.",
             default => "FGLA College notice regarding {$who}.",
         };
     }
@@ -116,6 +123,29 @@ class AlertService
         }
 
         return [$sent, $failed];
+    }
+
+    /** Tell the students of a class about an extra class, or that it was cancelled (queued in the SMS outbox). */
+    public function notifyExtraClass(ExtraClass $e, string $kind = 'extra_class'): int
+    {
+        $e->loadMissing('course.subject');
+        $vars = [
+            'subject' => $e->course->subject->name,
+            'when' => $e->start()->format('D j M, g:i A'),
+            'room' => $e->room,
+            'what' => $e->kindLabel(),
+            'what_ur' => ['extra' => 'extra class', 'makeup' => 'make-up class', 'test' => 'class test'][$e->kind] ?? 'extra class',
+        ];
+        $n = 0;
+        Student::where('section_id', $e->course->section_id)->where('status', 'active')->get()
+            ->each(function (Student $s) use ($kind, $vars, &$n) {
+                if ($to = $s->phone ?: $s->guardian_phone) {
+                    $this->queue($s, $kind, $to, $vars);
+                    $n++;
+                }
+            });
+
+        return $n;
     }
 
     private function queue(Student $s, string $kind, string $to, array $vars): GuardianAlert

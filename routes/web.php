@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,6 +29,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', DashboardController::class)
         ->middleware('role:principal,admission_officer,teacher,editor') // editors are redirected to the studio
         ->name('dashboard');
+
+    // The bell: class alerts and other staff notifications.
+    Route::middleware('role:principal,admission_officer,teacher,editor')->group(function () {
+        Route::get('/notifications/feed', [NotificationController::class, 'feed'])->middleware('throttle:120,1')->name('notifications.feed');
+        Route::post('/notifications/read', [NotificationController::class, 'read'])->middleware('throttle:60,1')->name('notifications.read');
+    });
 });
 
 foreach (['portal', 'apply', 'admissions', 'attendance', 'academics', 'studio'] as $module) {

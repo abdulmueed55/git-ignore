@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Attendance;
 use App\Http\Controllers\Controller;
 use App\Models\Lecture;
 use App\Models\Student;
-use App\Models\TimetableSlot;
 use App\Services\Attendance\AttendanceStats;
 use App\Services\Attendance\Scope;
+use App\Services\Timetable\TeacherSchedule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -24,22 +24,17 @@ class TodayController extends Controller
         $holiday = config('attendance.holidays')[$date->toDateString()] ?? null;
         $courseIds = Scope::courseIds($user);
 
-        $slots = TimetableSlot::query()
-            ->where('weekday', $date->dayOfWeekIso)
-            ->when($courseIds !== null, fn ($q) => $q->whereIn('course_id', $courseIds ?: [0]))
-            ->whereHas('course.section.academicSession', fn ($q) => $q->where('starts_on', '<=', $date->toDateString()))
-            ->with(['course.subject', 'course.teacher', 'course.section.program'])
-            ->orderBy('starts_at')
-            ->get();
+        // Timetable periods + extra / make-up classes for the day.
+        $entries = TeacherSchedule::day($date, $courseIds);
 
         $lectures = Lecture::where('held_on', $date->toDateString())
-            ->whereIn('course_id', $slots->pluck('course_id')->unique())
-            ->get()->keyBy(fn ($l) => $l->timetable_slot_id ?: 'c'.$l->course_id.'@'.$l->starts_at);
+            ->whereIn('course_id', $entries->pluck('course.id')->unique())
+            ->get()->keyBy(fn ($l) => $l->timetable_slot_id ?: 'c'.$l->course_id.'@'.substr((string) $l->starts_at, 0, 5));
 
-        $items = $slots->map(function (TimetableSlot $slot) use ($lectures, $date, $now, $isToday, $holiday) {
-            $start = Carbon::parse($date->toDateString().' '.$slot->starts_at);
-            $end = Carbon::parse($date->toDateString().' '.$slot->ends_at);
-            $lecture = $lectures->get($slot->id);
+        $items = $entries->map(function ($e) use ($lectures, $date, $now, $isToday, $holiday) {
+            $start = $e->start;
+            $end = $e->end;
+            $lecture = $e->slot ? $lectures->get($e->slot->id) : $lectures->get('c'.$e->course->id.'@'.$start->format('H:i'));
             $state = match (true) {
                 $lecture !== null => 'marked',
                 $holiday !== null => 'holiday',
@@ -49,7 +44,8 @@ class TodayController extends Controller
                 default => 'overdue',
             };
 
-            return (object) ['slot' => $slot, 'course' => $slot->course, 'lecture' => $lecture, 'state' => $state, 'start' => $start, 'end' => $end];
+            return (object) ['slot' => $e->slot, 'extra' => $e->extra, 'label' => $e->label, 'course' => $e->course, 'room' => $e->room, 'markUrl' => $e->markUrl,
+                'lecture' => $lecture, 'state' => $state, 'start' => $start, 'end' => $end];
         });
 
         $summary = [
@@ -64,11 +60,11 @@ class TodayController extends Controller
         $board = null;
         $byProgram = [];
         if ($user->isLeadership()) {
-            $periods = $items->map(fn ($i) => substr($i->slot->starts_at, 0, 5))->unique()->sort()->values();
+            $periods = $items->map(fn ($i) => $i->start->format('H:i'))->unique()->sort()->values();
             $board = [
                 'periods' => $periods,
                 'rows' => $items->groupBy(fn ($i) => $i->course->section_id)
-                    ->map(fn ($g) => ['section' => $g->first()->course->section, 'cells' => $g->keyBy(fn ($i) => substr($i->slot->starts_at, 0, 5))])
+                    ->map(fn ($g) => ['section' => $g->first()->course->section, 'cells' => $g->keyBy(fn ($i) => $i->start->format('H:i'))])
                     ->sortBy(fn ($r) => $r['section']->program->code.$r['section']->name)->values(),
             ];
             $byProgram = $stats->grouped('program', ['from' => $date->toDateString(), 'to' => $date->toDateString()]);

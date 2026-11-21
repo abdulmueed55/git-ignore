@@ -66,6 +66,16 @@ AI ke liye `.env` mein `ANTHROPIC_API_KEY` chahiye. Key na ho to documents "manu
 
 Mic ke baghair sentence type bhi kar sakte hain. Bina AI key ke bhi English/Roman Urdu naam aur roll number samajh leta hai; **OpenAI ya Gemini key** lagane se Urdu, ghalat spelling aur dheela jumla bhi samajh aata hai (`.env` mein `OPENAI_API_KEY` ya `GEMINI_API_KEY`).
 
+**Timetable, extra classes aur class alerts:**
+1. **Timetable**: har teacher ko apna hafta nazar aata hai, Principal har section ka timetable banata hai.
+2. **Extra classes** (Academics → Extra classes): teacher apne subject ki extra / make-up class ya class test rakh sakta hai, Principal kisi bhi teacher ke liye. System check karta hai ke us waqt teacher ya class ki pehle se koi class to nahi. "Tell the students by SMS" par tick karein to students ko SMS outbox mein chala jata hai.
+3. **Alerts (ghanti 🔔 upar):**
+   - subah 07:30 se teacher ko us din ki saari classes ki list (regular + extra),
+   - har class se **10 minute pehle**: "Physics in 10 min · FSC-PM Part-I A · Room B-2",
+   - Principal ne extra class rakhi ya cancel ki to us teacher ko foran alert.
+   Website khuli ho to neeche kone mein popup aata hai. "Turn on desktop alerts" dabane se doosre tab mein bhi popup aata hai. Chahein to teacher ke phone par SMS bhi (`.env` mein `CLASS_REMINDER_SMS=true`).
+4. Extra class us din ke **Mark attendance** mein bhi nazar aati hai, aur us ka register alag lagta hai.
+
 **Khud-ba-khud hone wale kaam:** absent student ke walid ko SMS queue (English + Roman Urdu); 75% se neeche girne ya 3 din lagatar ghair-hazir hone par alert.
 
 **Principal:** Analytics (program/section/din ke hisaab se), Defaulters (75% se kam — CSV aur ek click mein sab guardians ko SMS), Leave requests (approve/reject), Guardian alerts (SMS outbox), monthly register print.

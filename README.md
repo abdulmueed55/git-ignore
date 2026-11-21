@@ -7,7 +7,7 @@ A complete college management system for **FG Liaquat Ali Degree College, Rawalp
 | **Command centre** | Role-aware home: today's attendance, registers still to mark, admission funnel, AI-flagged applications, students below 75 %, what is live on the website, audit trail. |
 | **Admissions + AI verification** | Online applications with document upload. Claude reads CNIC/B-Form, Matric/Inter result cards and domicile, **auto-fills the form**, and **cross-checks every document against the others and the form** (name, father name, CNIC, date of birth, roll numbers, marks). Mismatches and duplicate CNICs are flagged; merit is calculated; merit lists generated and published; admitted applicants become students with roll numbers. |
 | **Attendance** | 4-state register (Present / Absent / Late / Leave) marked by teachers in seconds — or by voice: **Speak attendance** (“Ahmed aur roll 7 absent, Hamza ki chutti, baqi sab present”) fills the register using OpenAI, Gemini or Claude, lock window, leave requests, guardian SMS alerts (absent today, below threshold, consecutive absences), analytics, defaulters list, per-student profile, printable monthly register. |
-| **Academics** | Programs, sections, subjects, clash-free timetable, students, staff & roles, activity log. |
+| **Academics** | Programs, sections, subjects, clash-free timetable, **extra / make-up / test classes** (clash-checked, students told by SMS), students, staff & roles, activity log. **Class alerts**: each teacher gets the day's list in the morning and a reminder 10 minutes before every class (bell + pop-up + optional SMS). |
 | **Website studio** | A separate dashboard for the college website: announcements, news, events, notices, pages, hero slides, gallery, downloads, faculty directory, contact inbox, site settings — all exposed through a public JSON API (`/api/v1/…`) for the new website. |
 
 ## Requirements
@@ -92,7 +92,7 @@ Reviewed 21 Nov 2026 — every finding, its fix and the regression test: **`docs
 
 ## Deploying
 
-- **VPS (recommended):** Nginx + PHP-FPM 8.3, document root `public/`, MySQL, `php artisan config:cache route:cache view:cache`, and a cron entry `* * * * * php /path/artisan schedule:run`.
+- **VPS (recommended):** Nginx + PHP-FPM 8.3, document root `public/`, MySQL, `php artisan config:cache route:cache view:cache`, and a cron entry `* * * * * php /path/artisan schedule:run` (sends the teacher class reminders every minute; without it reminders are still created when the teacher has the ERP open).
 - **Shared hosting (cPanel):** upload the project above `public_html`, point `public_html` to `public/`, import the database, set `.env`. Works without SSH queue workers.
 
 ## Tests

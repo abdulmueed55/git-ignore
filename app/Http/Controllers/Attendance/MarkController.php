@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\AttendanceRecord;
 use App\Models\Course;
+use App\Models\ExtraClass;
 use App\Models\LeaveRequest;
 use App\Models\Lecture;
 use App\Models\Student;
@@ -29,8 +30,12 @@ class MarkController extends Controller
 
         $date = $this->date($request);
         $slots = $course->slots()->where('weekday', $date->dayOfWeekIso)->orderBy('starts_at')->get();
-        $slot = $request->filled('slot') ? $slots->firstWhere('id', (int) $request->input('slot')) : $this->nearestSlot($slots, $date);
-        $time = $slot ? substr($slot->starts_at, 0, 5) : ($request->input('time') ?: now()->format('H:00'));
+        // An extra / make-up class has no timetable slot: its register is kept by its start time.
+        $extra = $request->filled('extra')
+            ? ExtraClass::active()->where('course_id', $course->id)->whereDate('held_on', $date->toDateString())->find($request->integer('extra'))
+            : null;
+        $slot = $extra ? null : ($request->filled('slot') ? $slots->firstWhere('id', (int) $request->input('slot')) : $this->nearestSlot($slots, $date));
+        $time = $extra ? substr($extra->starts_at, 0, 5) : ($slot ? substr($slot->starts_at, 0, 5) : ($request->input('time') ?: now()->format('H:00')));
 
         $lecture = $this->findLecture($course, $date, $slot, $time);
         $students = $this->roster($course);
@@ -55,7 +60,7 @@ class MarkController extends Controller
 
         $recent = $course->lectures()->latest('held_on')->latest('starts_at')->limit(8)->get();
 
-        return view('attendance.mark', compact('course', 'date', 'slots', 'slot', 'time', 'lecture', 'rows', 'locked', 'readonly', 'recent'));
+        return view('attendance.mark', compact('course', 'date', 'slots', 'slot', 'extra', 'time', 'lecture', 'rows', 'locked', 'readonly', 'recent'));
     }
 
     public function store(Request $request, Course $course, AlertService $alerts): RedirectResponse

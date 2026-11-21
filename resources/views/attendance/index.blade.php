@@ -104,7 +104,7 @@
                                                     };
                                                     $rate = $cell->lecture?->attendanceRate();
                                                 @endphp
-                                                <a href="{{ route('attendance.mark', ['course' => $cell->course->id, 'date' => $date->toDateString(), 'slot' => $cell->slot->id]) }}"
+                                                <a href="{{ $cell->markUrl }}"
                                                    class="block rounded-md border px-2 py-1.5 leading-tight transition hover:-translate-y-px hover:shadow-sm {{ $cls }}"
                                                    title="{{ $cell->course->subject->name }} — {{ $cell->course->teacher?->name }}">
                                                     <div class="mono truncate text-[11px] font-semibold">{{ $cell->course->subject->code }}</div>
@@ -142,9 +142,9 @@
                                 <x-ui.avatar :name="$i->course->teacher?->name ?? '?'" :size="28" />
                                 <div class="min-w-0 flex-1 leading-tight">
                                     <div class="truncate text-[12.5px] font-semibold text-ink">{{ $i->course->subject->name }} · {{ $i->course->section->label() }}</div>
-                                    <div class="truncate text-[11.5px] text-muted">{{ $i->course->teacher?->name }} · {{ substr($i->slot->starts_at, 0, 5) }}</div>
+                                    <div class="truncate text-[11.5px] text-muted">{{ $i->course->teacher?->name }} · {{ $i->start->format('H:i') }}</div>
                                 </div>
-                                <a href="{{ route('attendance.mark', ['course' => $i->course->id, 'date' => $date->toDateString(), 'slot' => $i->slot->id]) }}" class="btn btn-ghost btn-sm">Open</a>
+                                <a href="{{ $i->markUrl }}" class="btn btn-ghost btn-sm">Open</a>
                             </li>
                         @empty
                             <li class="flex items-center gap-2 px-4 py-5 text-[12.5px] text-muted"><x-icon name="check" class="text-ok" :size="16" /> Every finished period has been marked.</li>
@@ -165,12 +165,12 @@
                     @php
                         [$tone, $label] = $stateBadge[$i->state];
                         $rate = $i->lecture?->attendanceRate();
-                        $markUrl = route('attendance.mark', ['course' => $i->course->id, 'date' => $date->toDateString(), 'slot' => $i->slot->id]);
+                        $markUrl = $i->markUrl;
                     @endphp
                     <li class="group relative grid grid-cols-[64px_1fr] gap-3 sm:grid-cols-[84px_1fr] sm:gap-5">
                         <div class="pt-4 text-right">
-                            <div class="mono text-[13px] font-semibold text-ink">{{ substr($i->slot->starts_at, 0, 5) }}</div>
-                            <div class="mono text-[11px] text-muted">{{ substr($i->slot->ends_at, 0, 5) }}</div>
+                            <div class="mono text-[13px] font-semibold text-ink">{{ $i->start->format('H:i') }}</div>
+                            <div class="mono text-[11px] text-muted">{{ $i->end->format('H:i') }}</div>
                         </div>
                         <div class="relative border-l border-line pb-3 pl-5 sm:pl-6">
                             <span class="absolute -left-[6px] top-[22px] h-[11px] w-[11px] rounded-full border-2 border-surface
@@ -179,8 +179,8 @@
                                class="block rounded-xl border p-4 transition {{ $i->state === 'now' ? 'border-info/50 bg-info-soft/40' : ($i->state === 'overdue' ? 'border-bad/30 hover:border-bad/60' : 'border-line hover:border-line-strong') }} hover:bg-sunken/40">
                                 <div class="flex flex-wrap items-start justify-between gap-3">
                                     <div class="min-w-0">
-                                        <div class="text-[15px] font-semibold text-ink">{{ $i->course->subject->name }}</div>
-                                        <div class="mt-0.5 text-[12.5px] text-muted">{{ $i->course->section->label() }} · Room {{ $i->slot->room ?? $i->course->section->room }} · {{ $rosterCounts[$i->course->section_id] ?? 0 }} students</div>
+                                        <div class="text-[15px] font-semibold text-ink">{{ $i->course->subject->name }} @if ($i->extra)<span class="badge badge-brass align-middle">{{ $i->label }}</span>@endif</div>
+                                        <div class="mt-0.5 text-[12.5px] text-muted">{{ $i->course->section->label() }} · Room {{ $i->room }} · {{ $rosterCounts[$i->course->section_id] ?? 0 }} students</div>
                                     </div>
                                     <span class="badge {{ $tone ? 'badge-'.$tone : '' }}">{{ $label }}{{ $rate !== null ? ' · '.$rate.'%' : '' }}</span>
                                 </div>

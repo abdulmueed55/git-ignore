@@ -11,7 +11,8 @@ Laravel 13 · PHP 8.3 · MySQL in production (SQLite locally/tests) · Blade + A
 | Applicant portal | `routes/modules/apply.php` | `Apply/` | `apply/` | — |
 | Admissions desk + AI verification | `routes/modules/admissions.php` | `Admissions/` | `admissions/` | `AdmissionSeeder` |
 | Attendance | `routes/modules/attendance.php` | `Attendance/` | `attendance/` | `AttendanceSeeder` |
-| Academics, students, staff, activity log | `routes/modules/academics.php` | `Academics/` | `academics/`, `students/`, `staff/`, `system/` | — |
+| Academics, students, staff, timetable + extra classes, activity log | `routes/modules/academics.php` | `Academics/` | `academics/`, `students/`, `staff/`, `system/` | `ExtraClassSeeder` |
+| Staff alerts (bell, class reminders) | `routes/web.php` | `NotificationController` | `components/layouts/app` (bell) | — |
 | Website studio (CMS) + public JSON API | `routes/modules/studio.php`, `routes/modules/api.php` | `Studio/`, `Api/` | `studio/` | `CmsSeeder` |
 
 Route names are fixed by `app/Support/Navigation.php` (sidebar + Ctrl+K palette). Keep them.
@@ -53,6 +54,7 @@ Full review and fixes: `docs/security/SECURITY-REVIEW.md`. For any new screen or
 
 ## Conventions
 
+- "Today's classes" anywhere = `App\Services\Timetable\TeacherSchedule::day()` (timetable + extra classes). Staff alerts = `App\Notifications\StaffAlert` with a unique `key`.
 - Log important actions with `ActivityLog::record('module.action', 'Human sentence', $model)`.
 - Uploaded applicant documents: private `local` disk under `admissions/{application_id}/`; website media: `public` disk.
 - Timezone `Asia/Karachi`; dates shown as `j M Y`; Hijri via `App\Support\Dates::hijri()`.
