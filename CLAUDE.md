@@ -38,6 +38,19 @@ Teachers only see their own courses/sections unless leadership (`$user->isLeader
 - **Nothing is left blank**: every form field validated server-side, required fields marked; every list has a helpful empty state;
   every seeded screen shows realistic data.
 
+## Security rules (every new module)
+
+Full review and fixes: `docs/security/SECURITY-REVIEW.md`. For any new screen or route:
+- Route group with `auth` + `role:`; object-level checks too (a teacher only touches own courses/sections — `Scope`).
+- Validate every field; never `$request->all()` into `create/fill`; status/role/money fields set server-side only.
+- No inline JS handlers (`onclick=` is blocked by the CSP): use Alpine, or `data-confirm` / `data-autosubmit` / `data-print`.
+  Inline `<script>` must be `<script @nonce>`. Data into JS via `@js()`, never `{{ }}` inside `x-data`.
+- Never `{!! !!}` user content unless it went through `HtmlSanitizer`; previews use `window.safeHtml()`.
+- CSV exports: wrap rows in `App\Support\Csv::row()`; log exports of personal data with `ActivityLog`.
+- Uploads: `mimes`/`image` + `max`, server-chosen names, private disk for personal documents, `throttle` on public POSTs.
+- AI output is untrusted: schema-constrained, filtered to known IDs/values, never sets status or permissions by itself.
+- Add a regression test in `tests/Feature/<Module>/` (and `tests/Feature/Security/` for access rules).
+
 ## Conventions
 
 - Log important actions with `ActivityLog::record('module.action', 'Human sentence', $model)`.
