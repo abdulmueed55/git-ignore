@@ -8,6 +8,7 @@ use App\Models\ActivityLog;
 use App\Models\Program;
 use App\Models\Section;
 use App\Models\Student;
+use App\Support\Csv;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -57,11 +58,11 @@ class StudentController extends Controller
             $out = fopen('php://output', 'w');
             fputcsv($out, ['Roll no', 'Registration no', 'Name', 'Father name', 'CNIC / B-Form', 'Gender', 'Date of birth', 'Program', 'Section', 'Session', 'Phone', 'Guardian phone', 'Email', 'City', 'Domicile', 'Status']);
             foreach ($students as $s) {
-                fputcsv($out, [
+                fputcsv($out, Csv::row([
                     $s->roll_no, $s->registration_no, $s->name, $s->father_name, $s->cnic, ucfirst($s->gender),
                     $s->date_of_birth?->format('Y-m-d'), $s->program?->code, $s->section?->name, $s->academicSession?->name,
                     $s->phone, $s->guardian_phone, $s->email, $s->city, $s->domicile, self::STATUSES[$s->status] ?? $s->status,
-                ]);
+                ]));
             }
             fclose($out);
         }, 'students-'.now()->format('Y-m-d').'.csv', ['Content-Type' => 'text/csv']);

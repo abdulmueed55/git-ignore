@@ -5,7 +5,7 @@
         <x-slot:actions><a href="{{ route('staff.index') }}" class="btn btn-ghost">Cancel</a></x-slot:actions>
     </x-ui.page-header>
 
-    <form method="POST" action="{{ $editing ? route('staff.update', $user) : route('staff.store') }}" class="grid gap-6 xl:grid-cols-[1fr_340px]" x-data="{ role: '{{ old('role', $user->role) }}' }">
+    <form method="POST" action="{{ $editing ? route('staff.update', $user) : route('staff.store') }}" class="grid gap-6 xl:grid-cols-[1fr_340px]" x-data="{ role: @js((string) old('role', $user->role)) }">
         @csrf @if ($editing) @method('PUT') @endif
         <section class="panel">
             <div class="panel-head"><div class="panel-title">Account</div></div>

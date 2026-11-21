@@ -14,7 +14,7 @@
             <div class="flex items-center gap-1">
                 <a href="{{ route('attendance.index', ['date' => $prev->toDateString()]) }}" class="btn btn-ghost btn-icon" title="Previous working day"><x-icon name="arrow-left" :size="16" /></a>
                 <form method="GET" class="flex items-center gap-1">
-                    <input type="date" name="date" value="{{ $date->toDateString() }}" max="{{ today()->addDays(7)->toDateString() }}" class="input !h-9 !w-[150px]" onchange="this.form.submit()" aria-label="Choose date">
+                    <input type="date" name="date" value="{{ $date->toDateString() }}" max="{{ today()->addDays(7)->toDateString() }}" class="input !h-9 !w-[150px]" data-autosubmit aria-label="Choose date">
                 </form>
                 @if (! $isToday)
                     <a href="{{ route('attendance.index', ['date' => $next->toDateString()]) }}" class="btn btn-ghost btn-icon" title="Next working day"><x-icon name="arrow-right" :size="16" /></a>

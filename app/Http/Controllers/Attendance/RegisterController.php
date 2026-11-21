@@ -8,6 +8,7 @@ use App\Models\Section;
 use App\Models\Student;
 use App\Services\Attendance\AttendanceStats;
 use App\Services\Attendance\Scope;
+use App\Support\Csv;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,7 +33,7 @@ class RegisterController extends Controller
             fputcsv($out, array_merge(['Roll no', 'Name'], array_map(fn ($c) => $c['label'], $d['columns']), ['Present', 'Absent', 'Leave', '%']));
             foreach ($d['students'] as $s) {
                 $t = $d['totals'][$s->id];
-                fputcsv($out, array_merge([$s->roll_no, $s->name], array_map(fn ($c) => $d['grid'][$s->id][$c['key']] ?? '', $d['columns']), [$t['p'], $t['a'], $t['e'], $t['rate']]));
+                fputcsv($out, Csv::row(array_merge([$s->roll_no, $s->name], array_map(fn ($c) => $d['grid'][$s->id][$c['key']] ?? '', $d['columns']), [$t['p'], $t['a'], $t['e'], $t['rate']])));
             }
             fclose($out);
         }, $name, ['Content-Type' => 'text/csv']);

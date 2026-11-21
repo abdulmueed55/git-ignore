@@ -18,13 +18,13 @@
         <x-slot:actions>
             <div class="no-print flex gap-2">
                 <a href="{{ route('attendance.register.export', request()->query()) }}" class="btn btn-ghost"><x-icon name="download" :size="15" /> CSV</a>
-                <button type="button" onclick="window.print()" class="btn btn-primary"><x-icon name="printer" :size="15" /> Print</button>
+                <button type="button" data-print class="btn btn-primary"><x-icon name="printer" :size="15" /> Print</button>
             </div>
         </x-slot:actions>
     </x-ui.page-header>
 
     <form method="GET" class="no-print panel mb-5 flex flex-wrap items-end gap-3 p-4">
-        <x-ui.field name="section_id" label="Class" type="select" :options="$sections->mapWithKeys(fn ($s) => [$s->id => $s->label()])" :value="$section->id" :empty="false" class="w-full sm:w-56" onchange="this.form.submit()" />
+        <x-ui.field name="section_id" label="Class" type="select" :options="$sections->mapWithKeys(fn ($s) => [$s->id => $s->label()])" :value="$section->id" :empty="false" class="w-full sm:w-56" data-autosubmit />
         <x-ui.field name="course_id" label="Subject" type="select" :options="$courses->mapWithKeys(fn ($c) => [$c->id => $c->subject->name])" :value="$course?->id"
                     :empty="auth()->user()->isLeadership() ? 'All subjects (day sheet)' : false" class="w-full sm:w-56" />
         <x-ui.field name="month" label="Month" type="month" :value="$month->format('Y-m')" class="w-full sm:w-44" max="{{ today()->format('Y-m') }}" />

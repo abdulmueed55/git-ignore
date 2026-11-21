@@ -66,8 +66,13 @@ class MeritListService
     public function publish(MeritList $list, ?string $feeDeadline = null): MeritList
     {
         return DB::transaction(function () use ($list, $feeDeadline) {
+            $list = MeritList::lockForUpdate()->findOrFail($list->id);
+            if ($list->status === 'published') {
+                return $list;
+            }
             $ids = $list->entries()->pluck('admission_application_id');
-            AdmissionApplication::whereIn('id', $ids)->update(['status' => 'selected', 'reviewed_at' => now()]);
+            // Only applicants still eligible: someone rejected or admitted since the draft keeps that decision.
+            AdmissionApplication::whereIn('id', $ids)->whereIn('status', ['verified', 'waitlisted'])->update(['status' => 'selected', 'reviewed_at' => now()]);
 
             // Everyone else still eligible waits for the next list.
             $this->candidates($list->cycle, $list->program)

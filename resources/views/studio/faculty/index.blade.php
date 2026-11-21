@@ -9,7 +9,7 @@
     </x-ui.page-header>
 
     <form method="GET" class="mb-4 flex items-center gap-2">
-        <select name="department" class="input !h-9 !w-auto !text-[12.5px]" onchange="this.form.submit()">
+        <select name="department" class="input !h-9 !w-auto !text-[12.5px]" data-autosubmit>
             <option value="">All departments</option>
             @foreach ($departments as $d)<option value="{{ $d->id }}" @selected($department == $d->id)>{{ $d->name }}</option>@endforeach
         </select>

@@ -8,6 +8,7 @@ use App\Models\Department;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -81,6 +82,9 @@ class StaffController extends Controller
             return back()->with('error', 'You cannot deactivate your own account.');
         }
         $staff->update(['is_active' => ! $staff->is_active]);
+        if (! $staff->is_active) {
+            $this->endSessions($staff);
+        }
         ActivityLog::record($staff->is_active ? 'staff.activated' : 'staff.deactivated', ($staff->is_active ? 'Re-activated' : 'Deactivated')." the account of {$staff->name}", $staff);
 
         return back()->with('success', $staff->is_active ? "{$staff->name} can sign in again." : "{$staff->name} can no longer sign in.");
@@ -91,6 +95,7 @@ class StaffController extends Controller
         $this->guardTarget($request, $staff);
         $password = Str::password(12, symbols: false);
         $staff->update(['password' => $password]);
+        $this->endSessions($staff);
         ActivityLog::record('staff.password_reset', "Reset the password of {$staff->name}", $staff);
 
         return redirect()->route('staff.index')->with('success', "Password reset for {$staff->name}.")
@@ -100,26 +105,44 @@ class StaffController extends Controller
     // ------------------------------------------------------------------
 
     /** Roles the current user may grant. Only an admin can create or edit admins. */
-    private function assignableRoles(Request $request): array
+    private function assignableRoles(Request $request, ?User $target = null): array
     {
         $roles = User::ROLES;
         if (! $request->user()->isAdmin()) {
-            unset($roles['admin']);
+            unset($roles['admin'], $roles['principal']);
+            if ($target?->exists && $target->id === $request->user()->id) {
+                $roles[$target->role] = User::ROLES[$target->role]; // editing your own profile keeps your role
+            }
         }
 
         return $roles;
     }
 
+    /**
+     * Only an administrator manages administrator and principal accounts, so one principal
+     * cannot reset another principal's password and act in their name.
+     */
     private function guardTarget(Request $request, User $staff): void
     {
-        abort_if($staff->isAdmin() && ! $request->user()->isAdmin(), 403, 'Only an administrator can manage administrator accounts.');
+        $me = $request->user();
+        abort_if($staff->isAdmin() && ! $me->isAdmin(), 403, 'Only an administrator can manage administrator accounts.');
+        abort_if($staff->role === 'principal' && $staff->id !== $me->id && ! $me->isAdmin(), 403, 'Only an administrator can manage another principal’s account.');
+    }
+
+    /** Signs the user out everywhere (after a password reset or deactivation). */
+    private function endSessions(User $user): void
+    {
+        if (config('session.driver') === 'database') {
+            DB::table(config('session.table', 'sessions'))->where('user_id', $user->id)->delete();
+        }
+        $user->forceFill(['remember_token' => Str::random(60)])->saveQuietly();
     }
 
     private function formData(Request $request, User $user): array
     {
         return [
             'user' => $user,
-            'roles' => $this->assignableRoles($request),
+            'roles' => $this->assignableRoles($request, $user),
             'departments' => Department::orderBy('name')->pluck('name', 'id'),
             'designations' => array_combine(self::DESIGNATIONS, self::DESIGNATIONS),
         ];
@@ -130,7 +153,7 @@ class StaffController extends Controller
         return $request->validate([
             'name' => ['required', 'string', 'min:3', 'max:120'],
             'email' => ['required', 'email:rfc', 'max:120', Rule::unique('users', 'email')->ignore($user?->id)],
-            'role' => ['required', Rule::in(array_keys($this->assignableRoles($request)))],
+            'role' => ['required', Rule::in(array_keys($this->assignableRoles($request, $user)))],
             'designation' => ['required', 'string', 'max:80'],
             'department_id' => [Rule::requiredIf($request->input('role') === 'teacher'), 'nullable', 'exists:departments,id'],
             'employee_no' => ['required', 'string', 'max:32', 'regex:/^[A-Z0-9-]+$/', Rule::unique('users', 'employee_no')->ignore($user?->id)],

@@ -18,6 +18,7 @@ use App\Services\Admissions\MeritListService;
 use App\Services\Admissions\SpecimenDocuments;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -191,6 +192,16 @@ class AdmissionSeeder extends Seeder
                 ->each(fn ($a) => $this->verifier->verify($a->load('documents', 'program')));
         }
 
+        // The AI only recommends — the admission officer has verified most AI-clear applications;
+        // a few are left in the queue so "ready to verify" is not empty.
+        AdmissionApplication::where('admission_cycle_id', $cycle->id)->where('status', 'under_review')->where('verification_status', 'clear')
+            ->orderBy('id')->get()
+            ->each(function ($a, $i) use ($officer) {
+                if ($i % 5 !== 4) {
+                    $a->update(['status' => 'verified', 'reviewed_by' => $officer->id, 'reviewed_at' => ($a->submitted_at ?? now())->copy()->addDay()->min(now())]);
+                }
+            });
+
         // A couple of applicants below the minimum: rejected with reason.
         foreach (AdmissionApplication::where('admission_cycle_id', $cycle->id)->where('status', 'verified')->get() as $a) {
             if ($this->merit->eligibilityPercentage($a->load('program')) < $a->program->min_percentage) {
@@ -207,6 +218,14 @@ class AdmissionSeeder extends Seeder
         $pm = $service->generate($cycle, $offered['FSC-PM'], 6);
         $pm->entries()->count() && $service->publish($pm, now()->addDays(5)->toDateString());
         $pm->update(['published_at' => now()->subDay()]);
+    }
+
+    /** Demo applicants get a random, unknown PIN; hashing once keeps seeding fast. */
+    private function pinHash(): string
+    {
+        static $hash;
+
+        return $hash ??= Hash::make((string) random_int(100000, 999999));
     }
 
     // ------------------------------------------------------------------ helpers
@@ -290,7 +309,7 @@ class AdmissionSeeder extends Seeder
             'program_id' => $program->id,
             'second_program_id' => mt_rand(0, 2) ? $second : null,
             'tracking_no' => AdmissionApplication::newTrackingNo(),
-            'access_pin' => (string) mt_rand(100000, 999999),
+            'access_pin' => $this->pinHash(),
             'status' => 'draft',
         ]);
         $app->forceFill(['created_at' => $when, 'updated_at' => $when])->saveQuietly();

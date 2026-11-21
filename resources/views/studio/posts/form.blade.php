@@ -201,7 +201,7 @@
                     <div class="mt-1 flex justify-between"><span>Reads</span><span class="mono text-ink-2">{{ number_format($post->views) }}</span></div>
                     <div class="mt-3 flex flex-wrap gap-2 border-t border-line pt-3">
                         <button form="dup-form" class="btn btn-ghost btn-sm"><x-icon name="files" :size="14" /> Duplicate</button>
-                        <button form="del-form" class="btn btn-danger btn-sm" onclick="return confirm('Delete this permanently? It will disappear from the website.')"><x-icon name="trash" :size="14" /> Delete</button>
+                        <button form="del-form" class="btn btn-danger btn-sm" data-confirm="Delete this permanently? It will disappear from the website."><x-icon name="trash" :size="14" /> Delete</button>
                     </div>
                 </section>
             @endif
@@ -213,7 +213,7 @@
     @endif
 
     @push('scripts')
-        <script>
+        <script @nonce>
             document.addEventListener('alpine:init', () => {
                 Alpine.data('postEditor', (init) => ({
                     ...init,
@@ -227,11 +227,7 @@
                             const esc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                             return b.split(/\n{2,}/).filter((p) => p.trim()).map((p) => '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>').join('') || '<p class="text-muted">Nothing written yet.</p>';
                         }
-                        const tpl = document.createElement('template');
-                        tpl.innerHTML = b;
-                        tpl.content.querySelectorAll('script,style,iframe,object,embed,form').forEach((n) => n.remove());
-                        tpl.content.querySelectorAll('*').forEach((n) => [...n.attributes].forEach((a) => { if (/^on/i.test(a.name) || a.name === 'style' || /^\s*javascript:/i.test(a.value)) n.removeAttribute(a.name); }));
-                        return tpl.innerHTML;
+                        return window.safeHtml(b);
                     },
                     insert(before, after = '') {
                         const t = this.$refs.body, s = t.selectionStart, e = t.selectionEnd;

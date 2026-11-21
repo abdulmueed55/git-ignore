@@ -2,7 +2,9 @@
     <x-ui.page-header eyebrow="Academics" title="Students"
         :description="auth()->user()->role === 'teacher' ? 'Students enrolled in the sections you teach.' : 'Every enrolled student across programs, sections and sessions.'">
         <x-slot:actions>
-            <a href="{{ route('students.export', request()->query()) }}" class="btn btn-ghost"><x-icon name="download" :size="16" /> Export CSV</a>
+            @if (auth()->user()->isAdmin() || auth()->user()->hasRole('principal', 'admission_officer'))
+                <a href="{{ route('students.export', request()->query()) }}" class="btn btn-ghost"><x-icon name="download" :size="16" /> Export CSV</a>
+            @endif
             @if ($canEdit)
                 <a href="{{ route('students.create') }}" class="btn btn-primary"><x-icon name="plus" :size="16" /> Enrol student</a>
             @endif

@@ -15,7 +15,7 @@
     @endif
 
     <form method="POST" action="{{ $editing ? route('students.update', $student) : route('students.store') }}"
-          x-data="{ program: '{{ old('program_id', $student->program_id) }}' }" class="grid gap-6 xl:grid-cols-[1fr_340px]">
+          x-data="{ program: @js((string) old('program_id', $student->program_id)) }" class="grid gap-6 xl:grid-cols-[1fr_340px]">
         @csrf
         @if ($editing) @method('PUT') @endif
 

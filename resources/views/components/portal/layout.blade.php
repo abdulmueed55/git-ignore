@@ -8,7 +8,7 @@
     <meta name="description" content="{{ $description ?? ($s['college_tagline'] ?? '') }}">
     <meta property="og:title" content="{{ $title ?? ($s['college_name'] ?? '') }}">
     <meta property="og:description" content="{{ $description ?? '' }}">
-    <script>(() => { let t=null; try { t = localStorage.getItem('theme'); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); })();</script>
+    <script @nonce>(() => { let t=null; try { t = localStorage.getItem('theme'); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); })();</script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>@keyframes portal-marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }</style>
 </head>

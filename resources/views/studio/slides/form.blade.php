@@ -23,7 +23,7 @@
             <div class="flex flex-wrap gap-2 border-t border-line pt-4">
                 <button class="btn btn-primary">{{ $slide->exists ? 'Save slide' : 'Add slide' }}</button>
                 <a href="{{ route('studio.slides.index') }}" class="btn btn-ghost">Cancel</a>
-                @if ($slide->exists)<button form="del-slide" class="btn btn-danger ml-auto" onclick="return confirm('Remove this slide?')">Remove</button>@endif
+                @if ($slide->exists)<button form="del-slide" class="btn btn-danger ml-auto" data-confirm="Remove this slide?">Remove</button>@endif
             </div>
         </section>
         <section>

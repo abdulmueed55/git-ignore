@@ -12,6 +12,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // The demo college has public logins (password "password"). Never load it into a
+        // real production database by accident.
+        if (app()->isProduction() && ! config('app.demo')) {
+            throw new \RuntimeException('Refusing to seed demo data in production. Set APP_DEMO=true only for a throw-away demo server.');
+        }
+
         $this->call(AcademicSeeder::class);
 
         foreach ([AttendanceSeeder::class, AdmissionSeeder::class, CmsSeeder::class] as $seeder) {

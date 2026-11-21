@@ -23,7 +23,7 @@
                     <div class="tabs !p-0.5"><button type="button" class="tab !h-7" :aria-selected="!preview" @click="preview=false">Write</button><button type="button" class="tab !h-7" :aria-selected="preview" @click="preview=true">Preview</button></div>
                 </div>
                 <textarea x-show="!preview" id="f_body" name="body" x-model="body" rows="18" required class="input mono !text-[12.5px]" @error('body') aria-invalid="true" @enderror placeholder="Plain text or simple HTML (<h3>, <p>, <ul>, <table>)."></textarea>
-                <div x-show="preview" x-cloak class="prose-ledger min-h-[300px] rounded-[9px] border border-line p-5" x-html="body.replace(/<script[\s\S]*?<\/script>/gi,'')"></div>
+                <div x-show="preview" x-cloak class="prose-ledger min-h-[300px] rounded-[9px] border border-line p-5" x-html="window.safeHtml(body)"></div>
                 @error('body')<div class="field-error">{{ $message }}</div>@enderror
             </div>
         </section>
@@ -51,7 +51,7 @@
                 </div>
             </section>
             @if ($page->exists)
-                <button form="del-page" class="btn btn-danger btn-sm w-full" onclick="return confirm('Delete this page? Links to it will stop working.')"><x-icon name="trash" :size="14" /> Delete page</button>
+                <button form="del-page" class="btn btn-danger btn-sm w-full" data-confirm="Delete this page? Links to it will stop working."><x-icon name="trash" :size="14" /> Delete page</button>
             @endif
         </aside>
     </form>

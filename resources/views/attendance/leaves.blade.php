@@ -46,7 +46,9 @@
                                         @if ($l->decider) · {{ ucfirst($l->status) }} by {{ $l->decider->name }} @else · filed {{ $l->created_at->diffForHumans() }} @endif
                                     </div>
                                 </div>
-                                @if ($l->status === 'pending')
+                                @if ($l->status === 'pending' && ! auth()->user()->isLeadership())
+                                    <span class="badge badge-warn">Awaiting principal</span>
+                                @elseif ($l->status === 'pending')
                                     <div class="flex gap-2">
                                         <form method="POST" action="{{ route('attendance.leaves.reject', $l) }}">@csrf @method('PATCH')<button class="btn btn-ghost btn-sm">Reject</button></form>
                                         <form method="POST" action="{{ route('attendance.leaves.approve', $l) }}">@csrf @method('PATCH')<button class="btn btn-primary btn-sm"><x-icon name="check" :size="14" /> Approve</button></form>

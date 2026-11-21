@@ -17,12 +17,12 @@ class VerifierTest extends TestCase
         $this->setUpAdmissions();
     }
 
-    public function test_consistent_documents_clear_and_verify_the_application(): void
+    public function test_consistent_documents_clear_but_wait_for_an_officer(): void
     {
         $app = (new CrossDocumentVerifier)->verify($this->application());
 
         $this->assertSame('clear', $app->verification_status);
-        $this->assertSame('verified', $app->status);
+        $this->assertSame('under_review', $app->status); // never auto-verified on the AI's word
         $this->assertGreaterThanOrEqual(90, $app->verification_score);
         $this->assertSame(0, $app->checks()->whereIn('result', ['mismatch', 'partial'])->count());
         // Board names written differently still match; DOB in d-m-Y on the DMC matches Y-m-d on the form.

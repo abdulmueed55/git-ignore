@@ -21,11 +21,11 @@
                 <x-icon name="search" :size="15" class="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                 <input type="search" name="q" value="{{ $q }}" placeholder="Name or roll no" class="input !h-9 !w-48 pl-9">
             </div>
-            <select name="program_id" class="input !h-9 !w-36" onchange="this.form.submit()">
+            <select name="program_id" class="input !h-9 !w-36" data-autosubmit>
                 <option value="">All programs</option>
                 @foreach ($options['programs'] as $id => $code)<option value="{{ $id }}" @selected(request('program_id') == $id)>{{ $code }}</option>@endforeach
             </select>
-            <select name="section_id" class="input !h-9 !w-48" onchange="this.form.submit()">
+            <select name="section_id" class="input !h-9 !w-48" data-autosubmit>
                 <option value="">All classes</option>
                 @foreach ($options['sections'] as $id => $label)<option value="{{ $id }}" @selected(request('section_id') == $id)>{{ $label }}</option>@endforeach
             </select>

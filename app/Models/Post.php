@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Studio\Concerns\HtmlSanitizer;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
@@ -32,8 +34,19 @@ class Post extends Model
         ];
     }
 
+    /** Sanitised on every write, whatever the source (studio, seeder, importer, tinker). */
+    protected function body(): Attribute
+    {
+        return Attribute::make(set: fn ($v) => $v === null ? null : HtmlSanitizer::clean($v));
+    }
+
     protected static function booted(): void
     {
+        // Files of a deleted post must not stay publicly reachable under /storage.
+        static::deleting(function (Post $post) {
+            Storage::disk('public')->delete(array_filter([$post->cover_path, $post->attachment_path]));
+        });
+
         static::saving(function (Post $post) {
             if (blank($post->slug)) {
                 $base = Str::slug($post->title) ?: 'post';

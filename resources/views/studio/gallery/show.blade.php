@@ -3,7 +3,7 @@
     <x-ui.page-header eyebrow="{{ $album->taken_on?->format('j F Y') }} · {{ $album->images->count() }} photos" :title="$album->title" :description="$album->description">
         <x-slot:actions>
             <a href="{{ route('studio.gallery.edit', $album) }}" class="btn btn-ghost"><x-icon name="edit" :size="16" /> Edit details</a>
-            <button form="del-album" class="btn btn-danger" onclick="return confirm('Delete this album and all its photos?')"><x-icon name="trash" :size="16" /> Delete</button>
+            <button form="del-album" class="btn btn-danger" data-confirm="Delete this album and all its photos?"><x-icon name="trash" :size="16" /> Delete</button>
         </x-slot:actions>
     </x-ui.page-header>
     <form id="del-album" method="POST" action="{{ route('studio.gallery.destroy', $album) }}" class="hidden">@csrf @method('DELETE')</form>
@@ -30,7 +30,7 @@
                     <figure class="panel group overflow-hidden">
                         <div class="relative aspect-[3/2]">
                             <img src="{{ $img->url() }}" alt="{{ $img->caption }}" class="h-full w-full object-cover">
-                            <button type="submit" form="del-img-{{ $img->id }}" class="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-md bg-black/55 text-white opacity-0 transition group-hover:opacity-100" title="Remove photo" onclick="return confirm('Remove this photo?')"><x-icon name="trash" :size="14" /></button>
+                            <button type="submit" form="del-img-{{ $img->id }}" class="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-md bg-black/55 text-white opacity-0 transition group-hover:opacity-100" title="Remove photo" data-confirm="Remove this photo?"><x-icon name="trash" :size="14" /></button>
                         </div>
                         <input name="captions[{{ $img->id }}]" value="{{ $img->caption }}" class="w-full border-0 border-t border-line bg-transparent px-3 py-2 text-[12.5px] text-ink outline-none focus:bg-sunken" placeholder="Add a caption…">
                     </figure>

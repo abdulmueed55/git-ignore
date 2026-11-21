@@ -84,6 +84,15 @@ class MarkController extends Controller
         }
         $time = $slot ? substr($slot->starts_at, 0, 5) : $data['time'];
 
+        // A teacher cannot create a new register for a period whose edit window has already
+        // closed (e.g. a slot-less "09:01" next to a locked 09:00 register, or a date months back).
+        if (! $user->isLeadership()) {
+            $closes = Carbon::parse($date->toDateString().' '.$time)->addHours((int) config('attendance.lock_after_hours'));
+            if ($closes->isPast()) {
+                return back()->withInput()->with('error', 'Registers can be marked or changed only within '.config('attendance.lock_after_hours').' hours of the period. Ask the principal’s office to record older attendance.');
+            }
+        }
+
         $roster = $this->roster($course)->pluck('id')->all();
         $missing = array_diff($roster, array_map('intval', array_keys($data['status'])));
         if ($missing) {

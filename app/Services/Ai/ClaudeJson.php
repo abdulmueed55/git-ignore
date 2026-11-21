@@ -16,7 +16,7 @@ class ClaudeJson implements JsonCompletion
     public function json(string $system, string $prompt, array $schema): array
     {
         try {
-            $message = ($this->client ??= new Client(apiKey: $this->key))->messages->create(
+            $message = ($this->client ??= new Client(apiKey: $this->key, requestOptions: Ai::claudeRequestOptions()))->messages->create(
                 model: $this->model,
                 maxTokens: 4096,
                 system: $system,
@@ -29,7 +29,8 @@ class ClaudeJson implements JsonCompletion
             throw new AiException('Claude is busy right now — try again in a minute.');
         } catch (APIConnectionException) {
             throw new AiException('Could not reach Claude — check the server internet connection.');
-        } catch (AnthropicException) {
+        } catch (AnthropicException|\Throwable $e) {
+            report($e);
             throw new AiException('Claude returned an error.');
         }
 

@@ -8,6 +8,8 @@ services:
     plan: free
     healthCheckPath: /up
     envVars:
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
       - key: ANTHROPIC_API_KEY
         sync: false
       - key: OPENAI_API_KEY

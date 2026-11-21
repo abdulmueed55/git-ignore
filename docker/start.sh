@@ -23,7 +23,6 @@ else
   php artisan migrate --force --no-interaction
 fi
 
-php artisan storage:link --force --no-interaction >/dev/null 2>&1 || true
 php artisan optimize:clear >/dev/null 2>&1 || true
 
 echo "Serving on port ${PORT} — ${APP_URL}"

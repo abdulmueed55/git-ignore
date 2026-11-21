@@ -327,7 +327,7 @@ class CmsSeeder extends Seeder
             FacultyProfile::create([
                 'user_id' => $u->id, 'department_id' => $u->department_id, 'name' => $u->name,
                 'designation' => $u->designation ?? 'Lecturer', 'qualification' => $missing ? null : $q,
-                'specialization' => $missing ? null : $spec, 'email' => $u->email,
+                'specialization' => $missing ? null : $spec, 'email' => null,
                 'bio' => $missing ? null : "{$u->designation} in the Department of ".($u->department?->name ?? 'English').'. Teaches intermediate and degree classes and supervises student societies.',
                 'sort_order' => $u->role === 'principal' ? 0 : $i + 1, 'is_published' => true,
             ]);

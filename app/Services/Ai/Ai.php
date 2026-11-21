@@ -2,6 +2,8 @@
 
 namespace App\Services\Ai;
 
+use GuzzleHttp\Client;
+
 /** Picks the configured AI provider (or none). */
 class Ai
 {
@@ -20,6 +22,21 @@ class Ai
         }
 
         return null;
+    }
+
+    /**
+     * Anthropic SDK options with a real timeout: the SDK leaves enforcement to the HTTP
+     * transport, so a hanging upstream would otherwise hold a PHP worker for minutes.
+     */
+    public static function claudeRequestOptions(?int $seconds = null): array
+    {
+        $timeout = (float) ($seconds ?? config('ai.timeout', 25));
+
+        return [
+            'timeout' => $timeout,
+            'maxRetries' => 1,
+            'transporter' => new Client(['timeout' => $timeout, 'connect_timeout' => 5, 'http_errors' => false]),
+        ];
     }
 
     public static function client(): ?JsonCompletion

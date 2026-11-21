@@ -8,6 +8,7 @@ use Anthropic\Core\Exceptions\APIConnectionException;
 use Anthropic\Core\Exceptions\APIStatusException;
 use Anthropic\Core\Exceptions\AuthenticationException;
 use Anthropic\Core\Exceptions\RateLimitException;
+use App\Services\Ai\Ai;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -24,7 +25,7 @@ class ClaudeDocumentExtractor implements DocumentExtractor
 
     private function client(): Client
     {
-        return $this->client ??= new Client(apiKey: $this->apiKey);
+        return $this->client ??= new Client(apiKey: $this->apiKey, requestOptions: Ai::claudeRequestOptions(60));
     }
 
     public function extract(string $type, string $binary, string $mime): array

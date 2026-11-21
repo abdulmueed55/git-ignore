@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }} — FG Liaquat Ali Degree College Admissions</title>
     <meta name="description" content="Apply online for admission to FG Liaquat Ali Degree College, Peshawar Road, Rawalpindi. Upload your documents and track your application.">
-    <script>
+    <script @nonce>
         (() => { let t = null; try { t = localStorage.getItem('theme'); } catch (e) {}
           document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); })();
     </script>

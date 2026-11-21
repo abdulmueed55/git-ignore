@@ -30,7 +30,7 @@
             <div class="flex gap-2 border-t border-line pt-4">
                 <button class="btn btn-primary">Save profile</button>
                 <a href="{{ route('studio.faculty.index') }}" class="btn btn-ghost">Cancel</a>
-                @if ($profile->exists)<button form="del-fac" class="btn btn-danger ml-auto" onclick="return confirm('Remove this profile from the directory?')">Remove</button>@endif
+                @if ($profile->exists)<button form="del-fac" class="btn btn-danger ml-auto" data-confirm="Remove this profile from the directory?">Remove</button>@endif
             </div>
         </section>
     </form>

@@ -38,6 +38,8 @@ return [
     'anthropic' => [
         'key' => env('ANTHROPIC_API_KEY'),
         'model' => env('AI_EXTRACTION_MODEL', 'claude-opus-5-5'),
+        // Most AI document readings per day (0 = no limit); over the limit, staff check by hand.
+        'daily_limit' => (int) env('AI_DOCUMENT_DAILY_LIMIT', 600),
     ],
 
 ];

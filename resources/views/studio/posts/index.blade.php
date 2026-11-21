@@ -28,7 +28,7 @@
         <form method="GET" class="flex items-center gap-2">
             @if ($type)<input type="hidden" name="type" value="{{ $type }}">@endif
             @if ($state)<input type="hidden" name="state" value="{{ $state }}">@endif
-            <select name="category" class="input !h-9 !w-auto !text-[12.5px]" onchange="this.form.submit()">
+            <select name="category" class="input !h-9 !w-auto !text-[12.5px]" data-autosubmit>
                 <option value="">All categories</option>
                 @foreach ($categories as $c)<option @selected(request('category') === $c)>{{ $c }}</option>@endforeach
             </select>
@@ -47,7 +47,7 @@
             <button name="action" value="publish" class="btn btn-ghost btn-sm"><x-icon name="globe" :size="14" /> Publish</button>
             <button name="action" value="draft" class="btn btn-ghost btn-sm">Move to drafts</button>
             <button name="action" value="archive" class="btn btn-ghost btn-sm">Archive</button>
-            <button name="action" value="delete" class="btn btn-danger btn-sm" onclick="return confirm('Delete the selected items permanently?')"><x-icon name="trash" :size="14" /> Delete</button>
+            <button name="action" value="delete" class="btn btn-danger btn-sm" data-confirm="Delete the selected items permanently?"><x-icon name="trash" :size="14" /> Delete</button>
         </div>
         @error('ids')<div class="field-error px-4 pt-3">{{ $message }}</div>@enderror
 

@@ -86,6 +86,10 @@ Only the class list (names, roll numbers, father names) and the sentence are sen
 
 Alerts are queued in **Attendance → Guardian alerts**. The default gateway writes to the log; plug in a Pakistani SMS provider by implementing `App\Services\Attendance\SmsGateway` and setting it in `config/attendance.php`.
 
+## Security
+
+Reviewed 21 Nov 2026 — every finding, its fix and the regression test: **`docs/security/SECURITY-REVIEW.md`** (CSP with nonces, PIN lockout, role checks, CSV-injection guards, upload limits, production checklist). Run `php artisan test` to verify (incl. `tests/Feature/Security`).
+
 ## Deploying
 
 - **VPS (recommended):** Nginx + PHP-FPM 8.3, document root `public/`, MySQL, `php artisan config:cache route:cache view:cache`, and a cron entry `* * * * * php /path/artisan schedule:run`.

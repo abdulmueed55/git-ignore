@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Services\Attendance\AlertService;
 use App\Services\Attendance\AttendanceStats;
 use App\Services\Attendance\Scope;
+use App\Support\Csv;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -44,7 +45,7 @@ class DefaulterController extends Controller
             fputcsv($out, ['Roll no', 'Name', 'Father name', 'Class', 'Attendance %', 'Present', 'Late', 'Absent', 'Leave', 'Longest absence streak (days)', 'Last present', 'Guardian phone']);
             foreach ($rows as $r) {
                 $s = $r['student'];
-                fputcsv($out, [$s->roll_no, $s->name, $s->father_name, $s->section?->label(), $r['rate'], $r['P'], $r['L'], $r['A'], $r['E'], $r['streak']['longest'], $r['streak']['last_present'], $s->guardian_phone]);
+                fputcsv($out, Csv::row([$s->roll_no, $s->name, $s->father_name, $s->section?->label(), $r['rate'], $r['P'], $r['L'], $r['A'], $r['E'], $r['streak']['longest'], $r['streak']['last_present'], $s->guardian_phone]));
             }
             fclose($out);
         }, 'attendance-defaulters-'.now()->format('Y-m-d').'.csv', ['Content-Type' => 'text/csv']);

@@ -90,7 +90,9 @@ class AlertService
         $n = 0;
         foreach ($students as $s) {
             $to = $s->guardian_phone ?: $s->phone;
-            if (! $to || $this->recent($s->id, 'short_attendance', 1)) {
+            $rate = $rates[$s->id]['rate'] ?? null;
+            // Only students actually below the threshold — never a false "short attendance" SMS.
+            if (! $to || $rate === null || $rate >= (float) config('attendance.threshold') || $this->recent($s->id, 'short_attendance', 1)) {
                 continue;
             }
             $this->queue($s, 'short_attendance', $to, ['pct' => number_format($rates[$s->id]['rate'] ?? 0, 1)]);

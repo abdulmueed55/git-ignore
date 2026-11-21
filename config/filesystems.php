@@ -33,7 +33,9 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // Private files (applicant CNICs, result cards) are only ever streamed by
+            // controllers that check access — no signed-URL route.
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],

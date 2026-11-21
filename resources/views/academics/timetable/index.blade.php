@@ -14,7 +14,7 @@
     <x-ui.page-header eyebrow="Academics" title="Timetable"
         :description="$section ? $section->program->name.' · '.$section->name.' · Session '.$section->academicSession?->name : 'Teaching timetable of '.$teacher?->name">
         <x-slot:actions>
-            <button onclick="window.print()" class="btn btn-ghost"><x-icon name="printer" :size="15" /> Print</button>
+            <button data-print class="btn btn-ghost"><x-icon name="printer" :size="15" /> Print</button>
         </x-slot:actions>
     </x-ui.page-header>
 

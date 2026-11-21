@@ -18,7 +18,7 @@
 @endphp
 <x-admissions.public title="Upload documents" :step="2">
     @push('alpine')
-    <script>
+    <script @nonce>
         document.addEventListener('alpine:init', () => {
             Alpine.data('docsPage', (cfg) => ({
                 docs: cfg.initial,
@@ -78,7 +78,7 @@
             <x-icon name="lock" :size="20" class="text-brass" />
             <div class="flex-1 text-[13.5px] text-ink">Save these to continue later or check your status:</div>
             <div class="mono rounded-lg bg-surface px-3 py-1.5 text-[14px] font-semibold text-ink">{{ $app->tracking_no }}</div>
-            <div class="mono rounded-lg bg-surface px-3 py-1.5 text-[14px] font-semibold text-ink">PIN {{ $app->access_pin }}</div>
+            <div class="mono rounded-lg bg-surface px-3 py-1.5 text-[14px] font-semibold text-ink">PIN {{ \App\Http\Controllers\Apply\ApplyController::knownPin(request(), $app) ?? '••••••' }}</div>
         </div>
     @endif
 

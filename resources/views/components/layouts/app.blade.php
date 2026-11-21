@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ? $title.' · ' : '' }}{{ $area === 'studio' ? 'Website Studio' : 'College ERP' }} — FGLA</title>
-    <script>
+    <script @nonce>
         (() => { let t = null; try { t = localStorage.getItem('theme'); } catch (e) {}
           document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); })();
     </script>

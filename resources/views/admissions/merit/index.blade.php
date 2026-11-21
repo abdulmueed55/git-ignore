@@ -4,7 +4,7 @@
         @if ($cycles->count() > 1)
             <x-slot:actions>
                 <form method="GET">
-                    <select name="cycle" class="input !h-9 !w-auto min-w-[240px]" onchange="this.form.submit()">
+                    <select name="cycle" class="input !h-9 !w-auto min-w-[240px]" data-autosubmit>
                         @foreach ($cycles as $c)
                             <option value="{{ $c->id }}" @selected($c->id === $cycle?->id)>{{ $c->title }}</option>
                         @endforeach

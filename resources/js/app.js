@@ -144,5 +144,56 @@ Alpine.data('palette', (items) => ({
     },
 }));
 
+// Whitelist sanitizer for editor previews (x-html would otherwise run pasted <script>,
+// onerror= or Alpine x-init attributes in the editor's session). Mirrors the server-side
+// HtmlSanitizer: only plain formatting tags, links and images survive.
+const SAFE_TAGS = new Set(['P', 'BR', 'STRONG', 'B', 'EM', 'I', 'U', 'S', 'H2', 'H3', 'H4', 'UL', 'OL', 'LI', 'A', 'BLOCKQUOTE',
+    'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD', 'IMG', 'HR', 'FIGURE', 'FIGCAPTION', 'SPAN', 'CODE', 'PRE', 'SUB', 'SUP']);
+const DROP_TAGS = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'FORM', 'SVG', 'MATH', 'TEMPLATE', 'NOSCRIPT',
+    'TEXTAREA', 'SELECT', 'INPUT', 'BUTTON', 'LINK', 'META', 'BASE', 'FRAME', 'FRAMESET', 'XMP', 'NOEMBED', 'TITLE']);
+const SAFE_ATTRS = { A: ['href', 'title'], IMG: ['src', 'alt', 'title', 'width', 'height'], TD: ['colspan', 'rowspan'], TH: ['colspan', 'rowspan'] };
+const safeUrl = (v, img) => {
+    const u = String(v || '').replace(/[\u0000-\u0020\u007f-\u00a0\u200b-\u200f\u2028\u2029\ufeff]/g, '');
+    return /^(https?:|mailto:|tel:|\/(?!\/)|#)/i.test(u) || (img && /^data:image\/(png|jpe?g|gif|webp);/i.test(u));
+};
+window.safeHtml = (html) => {
+    const doc = new DOMParser().parseFromString(`<body>${html || ''}</body>`, 'text/html');
+    const clean = (node) => {
+        [...node.childNodes].forEach((child) => {
+            if (child.nodeType === Node.COMMENT_NODE) { child.remove(); return; }
+            if (child.nodeType !== Node.ELEMENT_NODE) return;
+            const tag = child.tagName.toUpperCase();
+            if (DROP_TAGS.has(tag)) { child.remove(); return; }
+            clean(child);
+            if (!SAFE_TAGS.has(tag)) { child.replaceWith(...child.childNodes); return; }
+            [...child.attributes].forEach((a) => {
+                const ok = (SAFE_ATTRS[tag] || []).includes(a.name.toLowerCase())
+                    && (!['href', 'src'].includes(a.name.toLowerCase()) || safeUrl(a.value, tag === 'IMG'));
+                if (!ok) child.removeAttribute(a.name);
+            });
+            if (tag === 'A') { child.setAttribute('rel', 'noopener nofollow'); child.setAttribute('target', '_blank'); }
+        });
+    };
+    clean(doc.body);
+    return doc.body.innerHTML;
+};
+
+// CSP-safe replacements for inline handlers (the Content Security Policy blocks onclick= etc.):
+//   data-print            → print the page
+//   data-autosubmit       → submit the form when the field changes
+//   data-confirm="…"      → ask before a click / form submit goes ahead
+document.addEventListener('click', (e) => {
+    const confirmEl = e.target.closest('[data-confirm]:not(form)');
+    if (confirmEl && !window.confirm(confirmEl.dataset.confirm)) { e.preventDefault(); e.stopImmediatePropagation(); return; }
+    if (e.target.closest('[data-print]')) window.print();
+}, true);
+document.addEventListener('submit', (e) => {
+    const form = e.target;
+    if (form.matches('[data-confirm]') && !window.confirm(form.dataset.confirm)) e.preventDefault();
+}, true);
+document.addEventListener('change', (e) => {
+    if (e.target.matches('[data-autosubmit]')) e.target.form?.requestSubmit();
+});
+
 window.Alpine = Alpine;
 Alpine.start();

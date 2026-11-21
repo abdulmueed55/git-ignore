@@ -13,8 +13,9 @@ Route::middleware('auth')->group(function () {
     // ---------- Students ----------
     Route::middleware('role:principal,admission_officer,teacher')->group(function () {
         Route::get('/students', [StudentController::class, 'index'])->name('students.index');
-        Route::get('/students/export', [StudentController::class, 'export'])->name('students.export');
         Route::middleware('role:principal,admission_officer')->group(function () {
+            // Bulk export carries CNICs, dates of birth and phone numbers — office staff only.
+            Route::get('/students/export', [StudentController::class, 'export'])->name('students.export');
             Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
             Route::post('/students', [StudentController::class, 'store'])->name('students.store');
             Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');

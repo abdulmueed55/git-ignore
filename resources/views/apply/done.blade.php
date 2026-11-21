@@ -14,7 +14,7 @@
                     </div>
                     <div class="rounded-xl border border-line bg-paper p-4">
                         <div class="eyebrow">PIN</div>
-                        <div class="mono mt-1 text-[22px] font-semibold tracking-[0.2em] text-ink">{{ $pin }}</div>
+                        <div class="mono mt-1 text-[22px] font-semibold tracking-[0.2em] text-ink">{{ $pin ?? '••••••' }}</div>
                     </div>
                 </div>
                 <p class="mt-3 text-[12.5px] text-muted">Write these down or take a screenshot — you need both to check your status and merit lists.</p>
@@ -39,7 +39,7 @@
 
         <div class="mt-6 flex flex-wrap justify-center gap-2 print:hidden">
             <a href="{{ route('apply.status', ['tracking_no' => $app->tracking_no]) }}" class="btn btn-primary">View status</a>
-            <button onclick="window.print()" class="btn btn-ghost"><x-icon name="printer" :size="15" /> Print acknowledgement</button>
+            <button data-print class="btn btn-ghost"><x-icon name="printer" :size="15" /> Print acknowledgement</button>
         </div>
     </div>
 </x-admissions.public>

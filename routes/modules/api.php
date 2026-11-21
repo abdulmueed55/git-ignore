@@ -22,5 +22,5 @@ Route::prefix('v1')->name('api.')->middleware('throttle:120,1,website-api')->gro
     Route::get('faculty', [ContentController::class, 'faculty'])->name('faculty');
     Route::get('settings', [ContentController::class, 'settings'])->name('settings');
     Route::get('ticker', [ContentController::class, 'ticker'])->name('ticker');
-    Route::post('contact', [ContactController::class, 'store'])->middleware('throttle:5,1,website-contact')->name('contact');
+    Route::post('contact', [ContactController::class, 'store'])->middleware('throttle:website-contact')->name('contact');
 });

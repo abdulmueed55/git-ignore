@@ -30,7 +30,19 @@ class ContentController extends Controller
 
     private function cached(Request $request, string $key, \Closure $build): JsonResponse
     {
-        $payload = Cache::remember('api:'.$key.':'.md5($request->getQueryString() ?? ''), self::TTL, fn () => $build()->response($request)->getData(true));
+        // Only known parameters reach the query, the cache key and the pagination links:
+        // random ?x=1, ?x=2… cannot fill the cache table or leak into cached links.
+        $known = array_filter([
+            'category' => is_string($c = $request->query('category')) && mb_strlen($c) <= 40 ? $c : null,
+            'department' => is_string($d = $request->query('department')) && preg_match('/^[A-Za-z0-9-]{1,16}$/', $d) ? $d : null,
+            'when' => $request->query('when') === 'past' ? 'past' : null,
+            'page' => ($p = (int) $request->query('page', 1)) > 1 ? min($p, 500) : null,
+            'per_page' => $request->has('per_page') ? min(max((int) $request->query('per_page'), 1), 50) : null,
+        ], fn ($v) => $v !== null);
+        $request->query->replace($known);
+        ksort($known);
+
+        $payload = Cache::remember('api:'.$key.':'.md5(http_build_query($known)), self::TTL, fn () => $build()->response($request)->getData(true));
 
         return response()->json($payload)->header('Cache-Control', 'public, max-age='.self::TTL);
     }

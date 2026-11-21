@@ -92,7 +92,6 @@ class PostController extends Controller
     public function destroy(Post $post): RedirectResponse
     {
         $type = $post->type;
-        Storage::disk('public')->delete(array_filter([$post->cover_path, $post->attachment_path]));
         ActivityLog::record('studio.post.deleted', "Deleted {$post->typeLabel()} “{$post->title}”");
         $post->delete();
 
@@ -109,6 +108,14 @@ class PostController extends Controller
         $copy->show_in_ticker = false;
         $copy->views = 0;
         $copy->author_id = auth()->id();
+        // Give the copy its own files, so deleting or replacing them never touches the original.
+        foreach (['cover_path' => 'posts/covers', 'attachment_path' => 'posts/attachments'] as $field => $dir) {
+            $copy->{$field} = null;
+            if ($post->{$field} && Storage::disk('public')->exists($post->{$field})) {
+                $new = $dir.'/'.Str::random(40).'.'.pathinfo($post->{$field}, PATHINFO_EXTENSION);
+                Storage::disk('public')->copy($post->{$field}, $new) && $copy->{$field} = $new;
+            }
+        }
         $copy->save();
 
         return redirect()->route('studio.posts.edit', [$copy, 'type' => $copy->type])->with('success', 'Copy created as a draft.');

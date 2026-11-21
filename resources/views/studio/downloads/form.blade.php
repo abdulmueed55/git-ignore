@@ -15,7 +15,7 @@
         <div class="flex gap-2 border-t border-line pt-4">
             <button class="btn btn-primary">{{ $download->exists ? 'Save' : 'Upload & publish' }}</button>
             <a href="{{ route('studio.downloads.index') }}" class="btn btn-ghost">Cancel</a>
-            @if ($download->exists)<button form="del-dl" class="btn btn-danger ml-auto" onclick="return confirm('Remove this file from the website?')">Remove</button>@endif
+            @if ($download->exists)<button form="del-dl" class="btn btn-danger ml-auto" data-confirm="Remove this file from the website?">Remove</button>@endif
         </div>
     </form>
     @if ($download->exists)<form id="del-dl" method="POST" action="{{ route('studio.downloads.destroy', $download) }}" class="hidden">@csrf @method('DELETE')</form>@endif

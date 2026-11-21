@@ -4,6 +4,7 @@ namespace App\Services\Admissions;
 
 use App\Models\AdmissionApplication;
 use App\Models\ApplicationDocument;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 
@@ -44,6 +45,19 @@ class DocumentProcessor
         return $fresh;
     }
 
+    /** Caps AI document readings per day so a flood of uploads cannot run up the bill. */
+    public static function withinDailyBudget(): bool
+    {
+        $limit = (int) config('services.anthropic.daily_limit', 600);
+        if ($limit <= 0) {
+            return true;
+        }
+        $key = 'ai-doc-reads:'.now()->format('Y-m-d');
+        Cache::add($key, 0, now()->endOfDay());
+
+        return Cache::increment($key) <= $limit;
+    }
+
     public function read(ApplicationDocument $doc, ?DocumentExtractor $extractor = null): ApplicationDocument
     {
         $extractor ??= Extractors::resolve();
@@ -53,10 +67,15 @@ class DocumentProcessor
             if ($binary === null) {
                 throw new \RuntimeException('File is missing from storage.');
             }
-            $r = $extractor->extract($doc->type, $binary, $doc->mime);
+            if (! ($extractor instanceof ManualExtractor) && ! self::withinDailyBudget()) {
+                $r = (new ManualExtractor)->extract($doc->type, $binary, $doc->mime);
+                $r['error'] = 'Automatic reading is paused for today (daily limit reached) — staff will check this document by hand.';
+            } else {
+                $r = $extractor->extract($doc->type, $binary, $doc->mime);
+            }
         } catch (Throwable $e) {
-            report($e);
-            $r = ['status' => 'failed', 'data' => null, 'confidence' => null, 'error' => 'Could not read the file: '.$e->getMessage(), 'by' => 'system'];
+            report($e); // details go to the log only, never to the applicant
+            $r = ['status' => 'failed', 'data' => null, 'confidence' => null, 'error' => 'This file could not be read. Upload a clearer photo or scan.', 'by' => 'system'];
         }
         $doc->update([
             'extraction_status' => $r['status'],

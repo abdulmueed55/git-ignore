@@ -18,7 +18,7 @@
         description="{{ $cycle->opens_at->format('j M Y') }} → {{ $cycle->closes_at->format('j M Y, g:i a') }} · application fee Rs {{ number_format($cycle->application_fee) }}">
         <x-slot:actions>
             <form method="GET" class="flex items-center gap-2">
-                <select name="cycle" class="input !h-9 !w-auto min-w-[220px]" onchange="this.form.submit()">
+                <select name="cycle" class="input !h-9 !w-auto min-w-[220px]" data-autosubmit>
                     @foreach ($cycles as $c)
                         <option value="{{ $c->id }}" @selected($c->id === $cycle->id)>{{ $c->title }}</option>
                     @endforeach

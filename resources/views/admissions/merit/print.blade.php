@@ -7,7 +7,7 @@
     @vite(['resources/css/app.css'])
     <style>@page { size: A4; margin: 14mm; } body { background: white; }</style>
 </head>
-<body class="p-8 text-ink print:p-0" onload="window.print()">
+<body class="p-8 text-ink print:p-0" data-print-on-load>
     <div class="mx-auto max-w-[780px]">
         <div class="flex items-center gap-4 border-b-2 border-ink pb-4">
             <x-crest class="h-14 w-14" />
@@ -50,5 +50,9 @@
         </div>
         <div class="mt-8 text-[10.5px] text-muted">Printed {{ now()->format('j M Y, g:i a') }} · {{ $list->status === 'draft' ? 'DRAFT — not published' : 'Published '.$list->published_at?->format('j M Y') }}</div>
     </div>
+<script @nonce>
+        document.addEventListener('click', (e) => { if (e.target.closest('[data-print]')) window.print(); });
+        if (document.currentScript && document.body?.hasAttribute('data-print-on-load')) addEventListener('load', () => window.print());
+</script>
 </body>
 </html>

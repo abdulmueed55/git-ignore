@@ -15,6 +15,7 @@ use App\Services\Admissions\Admitter;
 use App\Services\Admissions\CrossDocumentVerifier;
 use App\Services\Admissions\FieldMap;
 use App\Services\Admissions\MeritCalculator;
+use App\Support\Csv;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -81,20 +82,21 @@ class ApplicationController extends Controller
     {
         $rows = $this->filtered($request)->get();
         $name = 'applications-'.now()->format('Ymd-His').'.csv';
+        ActivityLog::record('admissions.exported', "Exported {$rows->count()} applications to CSV (includes CNIC and phone numbers)");
 
         return response()->streamDownload(function () use ($rows) {
             $out = fopen('php://output', 'w');
             fwrite($out, "\xEF\xBB\xBF"); // Excel-friendly UTF-8
             fputcsv($out, ['Tracking no', 'Name', 'Father name', 'CNIC/B-Form', 'Program', 'Quota', 'Hafiz', 'Phone', 'Email', 'City', 'Domicile', 'Matric', 'Inter', 'Merit', 'Verification', 'Score', 'Status', 'Submitted', 'Auto-filled fields']);
             foreach ($rows as $a) {
-                fputcsv($out, [
+                fputcsv($out, Csv::row([
                     $a->tracking_no, $a->name, $a->father_name, $a->cnic, $a->program?->code, $a->quota, $a->is_hafiz ? 'Yes' : 'No',
                     $a->phone, $a->email, $a->city, $a->domicile,
                     $a->matric_total ? "{$a->matric_obtained}/{$a->matric_total}" : '',
                     $a->inter_total ? "{$a->inter_obtained}/{$a->inter_total}" : '',
                     $a->merit_score, $a->verification_status, $a->verification_score, $a->statusLabel(),
                     $a->submitted_at?->format('Y-m-d H:i'), implode(' ', $a->autofilled_fields ?? []),
-                ]);
+                ]));
             }
             fclose($out);
         }, $name, ['Content-Type' => 'text/csv; charset=UTF-8']);
@@ -193,6 +195,7 @@ class ApplicationController extends Controller
         ], ['remarks.required' => 'Give a reason — the applicant sees it on their status page.']);
 
         abort_if($application->status === 'admitted', 422, 'Admitted applicants cannot change status here.');
+        abort_if($application->status === 'draft', 422, 'This application has not been submitted yet.');
         $application->update($data + ['reviewed_by' => $request->user()->id, 'reviewed_at' => now()]);
         ActivityLog::record('admissions.status', "Marked {$application->tracking_no} as ".AdmissionApplication::STATUSES[$data['status']].($data['remarks'] ?? null ? " — {$data['remarks']}" : ''), $application);
 

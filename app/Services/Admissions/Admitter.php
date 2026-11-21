@@ -14,15 +14,23 @@ class Admitter
 {
     public function admit(AdmissionApplication $app): Student
     {
-        if ($app->student) {
-            return $app->student;
-        }
-        if (! in_array($app->status, ['selected', 'verified', 'waitlisted'], true)) {
-            throw new RuntimeException('Only selected or verified applicants can be admitted.');
-        }
-
         return DB::transaction(function () use ($app) {
-            $app->loadMissing(['program', 'cycle.academicSession']);
+            // Lock the application so a double click or two officers cannot admit it twice.
+            $app = AdmissionApplication::with(['student', 'program', 'cycle.academicSession'])->lockForUpdate()->findOrFail($app->id);
+            if ($app->student) {
+                return $app->student;
+            }
+            if (! in_array($app->status, ['selected', 'verified', 'waitlisted'], true)) {
+                throw new RuntimeException('Only selected or verified applicants can be admitted.');
+            }
+            $seats = (int) ($app->program->seats ?? 0);
+            if ($seats > 0) {
+                $taken = AdmissionApplication::where('admission_cycle_id', $app->admission_cycle_id)->where('program_id', $app->program_id)->where('status', 'admitted')->count();
+                if ($taken >= $seats) {
+                    throw new RuntimeException("All {$seats} seats for {$app->program->code} are filled.");
+                }
+            }
+
             $sessionId = $app->cycle->academic_session_id;
 
             $section = Section::where('program_id', $app->program_id)
@@ -35,7 +43,7 @@ class Admitter
             $session = $section?->academicSession ?? $app->cycle->academicSession;
             $yy = substr($session->name, 2, 2);
             $prefix = sprintf('%s-%s-', $app->program->code, $yy);
-            $last = Student::where('roll_no', 'like', $prefix.'%')->pluck('roll_no')
+            $last = Student::where('roll_no', 'like', $prefix.'%')->lockForUpdate()->pluck('roll_no')
                 ->map(fn ($r) => (int) substr($r, strlen($prefix)))->max() ?? 0;
 
             $student = Student::create([

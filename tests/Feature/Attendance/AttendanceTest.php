@@ -173,7 +173,11 @@ class AttendanceTest extends TestCase
 
         $leave = LeaveRequest::create(['student_id' => $s->id, 'from_date' => today()->subDays(4)->toDateString(), 'to_date' => $day, 'reason' => 'Fever, medical certificate', 'status' => 'pending']);
 
-        $this->actingAs($this->teacher)->patch(route('attendance.leaves.approve', $leave))->assertSessionHas('success');
+        // A teacher can file leave but not approve it (approval rewrites every subject's register).
+        $this->actingAs($this->teacher)->patch(route('attendance.leaves.approve', $leave))->assertForbidden();
+        $this->assertSame('pending', $leave->fresh()->status);
+
+        $this->actingAs($this->principal)->patch(route('attendance.leaves.approve', $leave))->assertSessionHas('success');
 
         $this->assertSame('approved', $leave->fresh()->status);
         $this->assertSame('E', AttendanceRecord::where('lecture_id', $l1->id)->where('student_id', $s->id)->value('status'));
@@ -182,19 +186,28 @@ class AttendanceTest extends TestCase
         $this->assertSame(0, $l1->fresh()->absent_count);
 
         // already decided → cannot be decided again
-        $this->actingAs($this->teacher)->patch(route('attendance.leaves.reject', $leave))->assertStatus(422);
+        $this->actingAs($this->principal)->patch(route('attendance.leaves.reject', $leave))->assertStatus(422);
     }
 
     public function test_leave_can_be_filed_and_is_validated(): void
     {
         $this->actingAs($this->teacher)
-            ->post(route('attendance.leaves.store'), ['student_id' => $this->students[0]->id, 'from_date' => '2026-11-10', 'to_date' => '2026-11-09', 'reason' => ''])
+            ->post(route('attendance.leaves.store'), ['student_id' => $this->students[0]->id, 'from_date' => today()->subDays(2)->toDateString(), 'to_date' => today()->subDays(3)->toDateString(), 'reason' => ''])
             ->assertSessionHasErrors(['to_date', 'reason']);
 
+        // Teachers cannot backdate leave months or file very long leave.
         $this->actingAs($this->teacher)
-            ->post(route('attendance.leaves.store'), ['student_id' => $this->students[0]->id, 'from_date' => '2026-11-10', 'to_date' => '2026-11-11', 'reason' => 'Sister’s wedding'])
+            ->post(route('attendance.leaves.store'), ['student_id' => $this->students[0]->id, 'from_date' => today()->subDays(90)->toDateString(), 'to_date' => today()->toDateString(), 'reason' => 'Covering the whole term'])
+            ->assertSessionHasErrors('from_date');
+        $this->actingAs($this->teacher)
+            ->post(route('attendance.leaves.store'), ['student_id' => $this->students[0]->id, 'from_date' => today()->subDays(20)->toDateString(), 'to_date' => today()->addDays(20)->toDateString(), 'reason' => 'Long leave request'])
+            ->assertSessionHasErrors('to_date');
+
+        $this->actingAs($this->teacher)
+            ->post(route('attendance.leaves.store'), ['student_id' => $this->students[0]->id, 'from_date' => today()->subDays(2)->toDateString(), 'to_date' => today()->subDay()->toDateString(), 'reason' => 'Sister’s wedding'])
             ->assertRedirect(route('attendance.leaves.index'));
         $this->assertSame('pending', LeaveRequest::sole()->status);
+        $this->assertSame($this->teacher->id, LeaveRequest::sole()->filed_by);
     }
 
     public function test_defaulters_lists_students_below_threshold_with_streaks(): void

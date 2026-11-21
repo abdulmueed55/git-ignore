@@ -5,7 +5,7 @@
     </x-ui.page-header>
 
     <form method="POST" action="{{ $editing ? route('academics.programs.update', $program) : route('academics.programs.store') }}" class="grid gap-6 xl:grid-cols-[1fr_360px]"
-          x-data="{ level: '{{ old('level', $program->level) }}', academic: {{ old('weights.academic', $w['academic']) }}, matric: {{ old('weights.matric', $w['matric'] ?? 0) }} }">
+          x-data="{ level: @js((string) old('level', $program->level)), academic: @js((int) old('weights.academic', $w['academic'])), matric: @js((int) old('weights.matric', $w['matric'] ?? 0)) }">
         @csrf @if ($editing) @method('PUT') @endif
         <section class="panel">
             <div class="panel-head"><div class="panel-title">Program details</div></div>

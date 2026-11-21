@@ -185,13 +185,11 @@ class CrossDocumentVerifier
         $app->verification_score = $score;
         $app->verification_status = $status;
 
-        // Move the application along the pipeline (never touches drafts or decisions already taken).
-        if (in_array($app->status, ['submitted', 'under_review', 'verified', 'flagged'], true)) {
-            $app->status = match ($status) {
-                'clear' => 'verified',
-                'mismatch' => 'flagged',
-                default => 'under_review',
-            };
+        // Move the application along the pipeline. The AI only recommends: "clear" waits for an
+        // officer to press Verify (a forged or prompt-injected document must never reach a merit
+        // list on the model's word alone). Drafts and decisions already taken are left alone.
+        if (in_array($app->status, ['submitted', 'under_review', 'flagged'], true)) {
+            $app->status = $status === 'mismatch' ? 'flagged' : 'under_review';
         }
         $app->save();
 

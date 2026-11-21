@@ -14,7 +14,7 @@
 <body class="grid min-h-screen place-items-center bg-sunken p-6">
 <div class="flex flex-col items-center gap-6">
     <div class="no-print flex gap-2">
-        <button onclick="window.print()" class="btn btn-primary"><x-icon name="printer" :size="15" /> Print card</button>
+        <button data-print class="btn btn-primary"><x-icon name="printer" :size="15" /> Print card</button>
         <a href="{{ route('students.show', $student) }}" class="btn btn-ghost">Back to profile</a>
     </div>
     <div class="flex flex-wrap justify-center gap-6">
@@ -65,5 +65,9 @@
         </div>
     </div>
 </div>
+<script @nonce>
+        document.addEventListener('click', (e) => { if (e.target.closest('[data-print]')) window.print(); });
+        if (document.currentScript && document.body?.hasAttribute('data-print-on-load')) addEventListener('load', () => window.print());
+</script>
 </body>
 </html>

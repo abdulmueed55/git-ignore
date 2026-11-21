@@ -58,6 +58,9 @@ class StaffAccessTest extends TestCase
         $this->assertSame('clear', $app->fresh()->verification_status);
 
         $this->patch(route('admissions.status', $app), ['status' => 'rejected'])->assertSessionHasErrors('remarks');
+        // AI "clear" alone is not enough — the officer verifies, then admits.
+        $this->assertSame('under_review', $app->fresh()->status);
+        $this->patch(route('admissions.status', $app), ['status' => 'verified'])->assertSessionHas('success');
         $this->post(route('admissions.admit', $app))->assertRedirect();
         $this->assertSame('admitted', $app->fresh()->status);
         $this->assertDatabaseHas('students', ['admission_application_id' => $app->id, 'roll_no' => 'BSCS-26-001']);

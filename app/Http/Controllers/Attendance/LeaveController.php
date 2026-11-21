@@ -9,6 +9,7 @@ use App\Models\LeaveRequest;
 use App\Models\Lecture;
 use App\Models\Student;
 use App\Services\Attendance\Scope;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -42,17 +43,27 @@ class LeaveController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $leader = $request->user()->isLeadership();
+        $back = $leader ? 120 : 30;   // how far back a leave may start
+        $span = $leader ? 120 : 30;   // longest leave in days
         $data = $request->validate([
             'student_id' => ['required', 'integer', Rule::exists('students', 'id')],
-            'from_date' => ['required', 'date'],
+            'from_date' => ['required', 'date', 'after_or_equal:-'.$back.' days', 'before_or_equal:+60 days'],
             'to_date' => ['required', 'date', 'after_or_equal:from_date'],
             'reason' => ['required', 'string', 'min:5', 'max:255'],
-        ], ['to_date.after_or_equal' => 'The leave must end on or after the day it starts.']);
+        ], [
+            'to_date.after_or_equal' => 'The leave must end on or after the day it starts.',
+            'from_date.after_or_equal' => "Leave can start at most {$back} days ago — ask the principal’s office for older cases.",
+            'from_date.before_or_equal' => 'Leave can be filed at most 60 days ahead.',
+        ]);
+        if (Carbon::parse($data['from_date'])->diffInDays(Carbon::parse($data['to_date'])) + 1 > $span) {
+            return back()->withInput()->withErrors(['to_date' => "A single leave can be at most {$span} days."]);
+        }
 
         $student = Student::findOrFail($data['student_id']);
         abort_unless(Scope::canViewStudent($request->user(), $student), 403);
 
-        $leave = LeaveRequest::create($data + ['status' => 'pending']);
+        $leave = LeaveRequest::create($data + ['status' => 'pending', 'filed_by' => $request->user()->id]);
         ActivityLog::record('attendance.leave_filed', "Filed leave for {$student->name} ({$leave->days()} day(s))", $leave);
 
         return redirect()->route('attendance.leaves.index')->with('success', "Leave request filed for {$student->name}.");
@@ -87,9 +98,14 @@ class LeaveController extends Controller
         return back()->with('success', "Leave rejected for {$leave->student->name}.");
     }
 
+    /**
+     * Only the principal's office decides leave. Approval rewrites absences in every
+     * subject (including locked registers), so a teacher must not be able to file and
+     * approve leave to lift a student over the attendance threshold.
+     */
     private function authorizeLeave(Request $request, LeaveRequest $leave): void
     {
-        abort_unless(Scope::canViewStudent($request->user(), $leave->student), 403);
+        abort_unless($request->user()->isLeadership(), 403, 'Only the principal’s office can approve or reject leave.');
         abort_if($leave->status !== 'pending', 422, 'This leave request has already been decided.');
     }
 }

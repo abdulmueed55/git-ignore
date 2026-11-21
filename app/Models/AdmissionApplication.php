@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class AdmissionApplication extends Model
@@ -54,9 +55,16 @@ class AdmissionApplication extends Model
 
     protected $hidden = ['access_pin'];
 
+    /** The PIN is stored as a bcrypt hash; the applicant sees it only in their own browser session. */
+    public function pinMatches(string $pin): bool
+    {
+        return filled($this->access_pin) && Hash::check($pin, $this->access_pin);
+    }
+
     protected function casts(): array
     {
         return [
+            'access_pin' => 'hashed',
             'date_of_birth' => 'date',
             'is_hafiz' => 'boolean',
             'autofilled_fields' => 'array',

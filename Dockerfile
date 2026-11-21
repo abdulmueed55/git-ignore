@@ -25,7 +25,16 @@ COPY . .
 COPY --from=assets /app/public/build public/build
 RUN composer dump-autoload --optimize --no-interaction \
  && chmod +x docker/start.sh \
- && mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs
+ && mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs storage/app/public storage/app/private \
+ && ln -sfn /app/storage/app/public public/storage \
+ && cp -n .env.example .env \
+ && touch database/database.sqlite \
+ && chown -R www-data:www-data storage bootstrap/cache database .env \
+ && printf 'expose_php=Off\nallow_url_include=Off\ndisplay_errors=Off\nlog_errors=On\nupload_max_filesize=20M\npost_max_size=100M\nmax_file_uploads=30\n' > /usr/local/etc/php/conf.d/zz-hardening.ini
+
+# Run as an unprivileged user: the code is read-only for the app, only storage/,
+# bootstrap/cache, database/ and .env are writable.
+USER www-data
 
 ENV APP_ENV=production \
     APP_DEBUG=false \

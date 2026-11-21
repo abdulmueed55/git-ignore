@@ -75,7 +75,7 @@ class FacultyController extends Controller
         foreach ($users as $u) {
             FacultyProfile::create([
                 'user_id' => $u->id, 'department_id' => $u->department_id, 'name' => $u->name,
-                'designation' => $u->designation ?: 'Lecturer', 'email' => $u->email,
+                'designation' => $u->designation ?: 'Lecturer', 'email' => null, // never publish staff sign-in emails
                 'sort_order' => $u->role === 'principal' ? 0 : ++$order, 'is_published' => false,
             ]);
         }
@@ -94,7 +94,7 @@ class FacultyController extends Controller
             'department_id' => ['required', 'exists:departments,id'],
             'qualification' => ['required', 'string', 'max:160'],
             'specialization' => ['required', 'string', 'max:160'],
-            'email' => ['nullable', 'email', 'max:160'],
+            'email' => ['nullable', 'email:rfc,strict,filter', 'max:160'],
             'bio' => ['nullable', 'string', 'max:1200'],
             'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
             'sort_order' => ['required', 'integer', 'min:0', 'max:999'],

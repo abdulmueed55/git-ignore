@@ -268,7 +268,7 @@
     </form>
 
     @push('scripts')
-    <script>
+    <script @nonce>
         document.addEventListener('alpine:init', () => {
             Alpine.data('register', (rows, voiceUrl) => ({
                 rows, q: '', cur: 0,

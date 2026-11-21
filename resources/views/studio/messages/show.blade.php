@@ -13,7 +13,7 @@
                 <h1 class="display text-[24px] leading-tight text-ink">{{ $message->subject }}</h1>
                 <div class="mt-1 text-[13px] text-ink-2">{{ $message->name }}</div>
                 <div class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px] text-muted">
-                    @if ($message->email)<a href="mailto:{{ $message->email }}" class="inline-flex items-center gap-1 hover:text-brand"><x-icon name="mail" :size="13" />{{ $message->email }}</a>@endif
+                    @if ($message->email)<a href="mailto:{{ rawurlencode($message->email) }}" class="inline-flex items-center gap-1 hover:text-brand"><x-icon name="mail" :size="13" />{{ $message->email }}</a>@endif
                     @if ($message->phone)<a href="tel:{{ preg_replace('/[^0-9+]/', '', $message->phone) }}" class="mono inline-flex items-center gap-1 hover:text-brand"><x-icon name="phone" :size="13" />{{ $message->phone }}</a>@endif
                     <span>{{ $message->created_at->format('l j F Y, g:i A') }}</span>
                 </div>
@@ -21,10 +21,10 @@
         </header>
         <div class="prose-ledger whitespace-pre-line p-6">{{ $message->message }}</div>
         <footer class="flex flex-wrap gap-2 border-t border-line p-4">
-            @if ($message->email)<a href="mailto:{{ $message->email }}?subject={{ rawurlencode('Re: '.$message->subject) }}" class="btn btn-primary"><x-icon name="mail" :size="16" /> Reply by email</a>@endif
+            @if ($message->email)<a href="mailto:{{ rawurlencode($message->email) }}?subject={{ rawurlencode('Re: '.$message->subject) }}" class="btn btn-primary"><x-icon name="mail" :size="16" /> Reply by email</a>@endif
             @if ($message->phone)<a href="https://wa.me/92{{ ltrim(preg_replace('/\D/', '', $message->phone), '0') }}" target="_blank" class="btn btn-ghost"><x-icon name="phone" :size="16" /> WhatsApp</a>@endif
             <form method="POST" action="{{ route('studio.messages.unread', $message) }}">@csrf @method('PATCH')<button class="btn btn-ghost">Mark unread</button></form>
-            <form method="POST" action="{{ route('studio.messages.destroy', $message) }}" class="ml-auto" onsubmit="return confirm('Delete this message?')">@csrf @method('DELETE')<button class="btn btn-danger"><x-icon name="trash" :size="16" /> Delete</button></form>
+            <form method="POST" action="{{ route('studio.messages.destroy', $message) }}" class="ml-auto" data-confirm="Delete this message?">@csrf @method('DELETE')<button class="btn btn-danger"><x-icon name="trash" :size="16" /> Delete</button></form>
         </footer>
     </article>
 </x-layouts.app>
