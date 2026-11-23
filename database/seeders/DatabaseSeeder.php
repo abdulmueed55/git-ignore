@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call(ExtraClassSeeder::class);
+        $this->call(StudentPortalSeeder::class);
         $this->call(ActivitySeeder::class);
     }
 }

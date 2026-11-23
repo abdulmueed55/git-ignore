@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureRole;
 use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\StudentPasswordChanged;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias(['role' => EnsureRole::class]);
+        $middleware->alias(['role' => EnsureRole::class, 'student.ready' => StudentPasswordChanged::class]);
         $middleware->append(SecurityHeaders::class);
 
         // Behind a hosting provider's HTTPS proxy (Render, Railway, a load balancer).
@@ -27,8 +28,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 ? '*'
                 : array_map('trim', explode(',', $proxies)));
         }
-        $middleware->redirectGuestsTo(fn () => route('login'));
-        $middleware->redirectUsersTo(fn () => route('dashboard'));
+        $middleware->redirectGuestsTo(fn (Request $request) => $request->is('student', 'student/*') ? route('student.login') : route('login'));
+        $middleware->redirectUsersTo(fn (Request $request) => $request->is('student', 'student/*') ? route('student.home') : route('dashboard'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

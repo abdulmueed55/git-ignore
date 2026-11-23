@@ -21,6 +21,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/students', [StudentController::class, 'store'])->name('students.store');
             Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
             Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
+            Route::post('/students/{student}/portal-password', [StudentController::class, 'portalPassword'])->middleware('throttle:20,1')->name('students.portal-password');
         });
         Route::get('/students/{student}', [StudentController::class, 'show'])->name('students.show');
         Route::get('/students/{student}/card', [StudentController::class, 'card'])->name('students.card');

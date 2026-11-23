@@ -40,7 +40,7 @@
                                         <span class="mono text-[11px] text-muted">{{ $l->student->roll_no }}</span>
                                         <span class="text-[11.5px] text-muted">· {{ $l->student->section?->label() }}</span>
                                     </div>
-                                    <div class="mt-0.5 text-[12.5px] text-ink-2">{{ $l->reason }}</div>
+                                    <div class="mt-0.5 text-[12.5px] text-ink-2">@if ($l->source === 'student')<span class="badge badge-info !h-[18px] !text-[10px]">Asked by student</span> @endif{{ $l->reason }}</div>
                                     <div class="mt-1 text-[11.5px] text-muted">
                                         {{ $l->from_date->format('D j M') }}{{ $l->days() > 1 ? ' → '.$l->to_date->format('D j M') : '' }} · {{ $l->days() }} {{ \Illuminate\Support\Str::plural('day', $l->days()) }}
                                         @if ($l->decider) · {{ ucfirst($l->status) }} by {{ $l->decider->name }} @else · filed {{ $l->created_at->diffForHumans() }} @endif

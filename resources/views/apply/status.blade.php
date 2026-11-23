@@ -50,11 +50,26 @@
                         @endforeach
                     </ol>
 
-                    @if ($entry)
+                    @if ($app->status === 'admitted' && $app->student)
                         <div class="mt-6 rounded-xl border border-ok/30 bg-ok-soft p-5">
-                            <div class="eyebrow !text-ok">Congratulations</div>
+                            <div class="eyebrow !text-ok">Welcome to FG Liaquat Ali Degree College</div>
+                            <div class="mt-1 text-[15px] text-ink">You are admitted to <b>{{ $app->student->section?->label() ?? $app->program->name }}</b>. Your roll number is <b class="mono">{{ $app->student->roll_no }}</b>.</div>
+                            <div class="mt-3 rounded-lg bg-surface p-4 text-[13.5px]">
+                                <div class="font-semibold text-ink">Your student portal is ready</div>
+                                <p class="mt-1 text-ink-2">Attendance, timetable, extra classes, leave and this admission record — on your phone. Sign in with your <b>roll number</b> and <b>the same 6-digit PIN</b> you used here, then choose your own password.</p>
+                                <a href="{{ route('student.login') }}" class="btn btn-primary mt-3"><x-icon name="arrow-right" :size="15" /> Open student portal</a>
+                            </div>
+                        </div>
+                    @elseif ($entry)
+                        <div class="mt-6 rounded-xl border border-ok/30 bg-ok-soft p-5">
+                            <div class="eyebrow !text-ok">Congratulations — you are selected</div>
                             <div class="mt-1 text-[15px] text-ink">You are <b>#{{ $entry->position }}</b> on merit list {{ $entry->meritList->list_no }} for {{ $entry->meritList->program->name }} (merit <span class="mono">{{ number_format($entry->merit_score, 2) }}</span>).</div>
-                            <div class="mt-1 text-[13px] text-ink-2">Deposit the fee and bring original documents by <b>{{ $entry->meritList->fee_deadline?->format('l, j F Y') }}</b>.</div>
+                            <div class="mt-3 text-[13px] font-semibold text-ink">What to do next</div>
+                            <ol class="mt-1 list-decimal space-y-1 pl-5 text-[13px] text-ink-2">
+                                <li>Deposit the admission fee by <b>{{ $entry->meritList->fee_deadline?->format('l, j F Y') }}</b>.</li>
+                                <li>Bring the originals of the documents below and two photographs to the admission office.</li>
+                                <li>The office admits you and gives your roll number. Your <b>student portal</b> opens the same day — sign in with the roll number and this PIN.</li>
+                            </ol>
                         </div>
                     @elseif ($app->status === 'waitlisted')
                         <div class="mt-6 rounded-xl border border-warn/30 bg-warn-soft p-4 text-[13px] text-ink">You are on the waiting list. Watch for the next merit list{{ $app->merit_score ? ' — your merit is '.number_format($app->merit_score, 2) : '' }}.</div>
@@ -71,6 +86,20 @@
                     @else
                         <div class="mt-6 text-[13px] text-muted">{{ $app->remarks ?: ($app->status === 'under_review' ? 'Your documents are being checked by the admission office. No action needed right now.' : 'No action needed right now. Merit lists appear here when published.') }}</div>
                     @endif
+                </div>
+
+                <div class="panel mt-4 p-6">
+                    <div class="eyebrow mb-3">Your application</div>
+                    <dl class="grid grid-cols-[140px_1fr] gap-x-3 gap-y-1.5 text-[13.5px]">
+                        <dt class="text-muted">Name</dt><dd class="font-semibold text-ink">{{ $app->name }}</dd>
+                        @if ($app->father_name)<dt class="text-muted">Father</dt><dd class="text-ink">{{ $app->father_name }}</dd>@endif
+                        <dt class="text-muted">Programme</dt><dd class="text-ink">{{ $app->program?->name }} <span class="text-muted">· {{ $app->program?->admissionClass() }}</span></dd>
+                        <dt class="text-muted">Quota</dt><dd class="text-ink">{{ \App\Models\AdmissionApplication::QUOTAS[$app->quota] ?? $app->quota }}</dd>
+                        @if ($app->matric_total)<dt class="text-muted">Matric</dt><dd class="mono text-ink">{{ $app->matric_obtained }} / {{ $app->matric_total }}</dd>@endif
+                        @if ($app->inter_total)<dt class="text-muted">Intermediate</dt><dd class="mono text-ink">{{ $app->inter_obtained }} / {{ $app->inter_total }}</dd>@endif
+                        @if ($app->merit_score)<dt class="text-muted">Merit score</dt><dd class="mono font-semibold text-ink">{{ number_format($app->merit_score, 2) }}</dd>@endif
+                        <dt class="text-muted">Submitted</dt><dd class="text-ink">{{ $app->submitted_at?->format('j M Y, g:i A') ?? '—' }}</dd>
+                    </dl>
                 </div>
 
                 <div class="panel mt-4 p-6">

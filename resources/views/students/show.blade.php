@@ -114,6 +114,27 @@
 
         <aside class="space-y-6">
             <section class="panel">
+                <div class="panel-head"><div class="panel-title">Student portal</div>
+                    <x-ui.status :value="$student->hasPortal() ? ($student->must_change_password ? 'pending' : 'active') : 'missing'" :label="$student->hasPortal() ? ($student->must_change_password ? 'First sign-in pending' : 'Active') : 'No password yet'" /></div>
+                <div class="space-y-3 px-5 py-4 text-[13px]">
+                    @if (session('portal_password'))
+                        <div class="rounded-md border border-brass/40 bg-brass-soft px-3 py-2">
+                            <div class="text-[12px] text-muted">Give this to the student (shown once). They must change it at first sign-in.</div>
+                            <div class="mono mt-1 text-[15px] font-bold text-ink">{{ $student->roll_no }} · {{ session('portal_password') }}</div>
+                        </div>
+                    @endif
+                    <p class="text-muted">Sign-in: roll number + password at <span class="mono text-ink">{{ route('student.login') }}</span>.
+                        {{ $student->portal_last_login_at ? 'Last signed in '.$student->portal_last_login_at->diffForHumans().'.' : 'Not signed in yet.' }}</p>
+                    @if ($canEdit)
+                        <form method="POST" action="{{ route('students.portal-password', $student) }}" data-confirm="Give {{ $student->name }} a new temporary portal password? The old one stops working.">
+                            @csrf
+                            <button class="btn btn-ghost btn-sm w-full"><x-icon name="lock" :size="14" /> {{ $student->hasPortal() ? 'Reset portal password' : 'Create portal password' }}</button>
+                        </form>
+                    @endif
+                </div>
+            </section>
+
+            <section class="panel">
                 <div class="panel-head"><div class="panel-title">Contacts</div></div>
                 <dl class="divide-y divide-line text-[13px]">
                     @foreach ([

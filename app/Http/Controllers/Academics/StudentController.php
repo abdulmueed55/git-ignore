@@ -11,6 +11,7 @@ use App\Models\Student;
 use App\Support\Csv;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -66,6 +67,17 @@ class StudentController extends Controller
             }
             fclose($out);
         }, 'students-'.now()->format('Y-m-d').'.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    /** A temporary student-portal password (lost PIN / forgotten password). Shown once; must be changed. */
+    public function portalPassword(Request $request, Student $student): RedirectResponse
+    {
+        abort_unless($student->status === 'active', 422, 'Only active students can use the portal.');
+        $password = Str::password(10, symbols: false);
+        $student->forceFill(['password' => $password, 'must_change_password' => true, 'remember_token' => Str::random(60)])->save();
+        ActivityLog::record('students.portal_password', "Issued a new student-portal password to {$student->name} ({$student->roll_no})", $student);
+
+        return back()->with('portal_password', $password)->with('success', "New portal password for {$student->name} — give it to the student in person.");
     }
 
     public function show(Request $request, Student $student): View

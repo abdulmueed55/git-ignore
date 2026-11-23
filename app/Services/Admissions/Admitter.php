@@ -67,6 +67,13 @@ class Admitter
                 'status' => 'active',
             ]);
 
+            // Student portal account, ready at once: roll number + the PIN the applicant already has.
+            // The PIN hash is copied as-is (never seen in plain text) and must be changed on first sign-in.
+            $pinHash = $app->getRawOriginal('access_pin');
+            if ($pinHash) {
+                $student->forceFill(['password' => $pinHash, 'must_change_password' => true])->save();
+            }
+
             $app->update(['status' => 'admitted', 'reviewed_by' => auth()->id(), 'reviewed_at' => now()]);
             ActivityLog::record('admissions.admitted', "Admitted {$app->name} as {$student->roll_no}", $app);
 

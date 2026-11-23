@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Student extends Model
+/** A student; also the account of the student portal (guard "student", login = roll number). */
+class Student extends Authenticatable
 {
     protected $fillable = [
         'user_id', 'program_id', 'section_id', 'academic_session_id', 'admission_application_id',
@@ -16,9 +17,16 @@ class Student extends Model
         'photo_path', 'status',
     ];
 
+    protected $hidden = ['password', 'remember_token'];
+
     protected function casts(): array
     {
-        return ['date_of_birth' => 'date'];
+        return ['date_of_birth' => 'date', 'password' => 'hashed', 'must_change_password' => 'boolean', 'portal_last_login_at' => 'datetime'];
+    }
+
+    public function hasPortal(): bool
+    {
+        return filled($this->getRawOriginal('password') ?? $this->attributes['password'] ?? null);
     }
 
     public function program(): BelongsTo

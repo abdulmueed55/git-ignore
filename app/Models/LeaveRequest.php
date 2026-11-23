@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LeaveRequest extends Model
 {
-    protected $fillable = ['student_id', 'filed_by', 'from_date', 'to_date', 'reason', 'status', 'decided_by'];
+    protected $fillable = ['student_id', 'filed_by', 'source', 'from_date', 'to_date', 'reason', 'status', 'decided_by'];
 
     protected function fromDate(): Attribute
     {

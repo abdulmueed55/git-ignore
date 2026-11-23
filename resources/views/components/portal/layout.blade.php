@@ -33,6 +33,7 @@
                 @endforeach
             </nav>
             <div class="ml-auto flex items-center gap-2 lg:ml-2">
+                <a href="{{ route('student.login') }}" class="btn btn-ghost btn-sm hidden sm:inline-flex">Student portal</a>
                 <a href="{{ route('login') }}" class="btn btn-ghost btn-sm hidden sm:inline-flex">Staff login</a>
                 @if (Route::has('apply.start'))<a href="{{ route('apply.start') }}" class="btn btn-primary btn-sm">Apply</a>@endif
                 <button class="btn btn-ghost btn-sm btn-icon !w-8 lg:hidden" @click="menu = !menu" aria-label="Menu"><x-icon name="menu" :size="16" /></button>
@@ -40,6 +41,7 @@
         </div>
         <div x-show="menu" x-cloak x-transition class="border-t border-line bg-surface px-4 py-3 lg:hidden">
             @foreach ($menu as $m)<a href="{{ route('portal.page', $m->slug) }}" class="block rounded-md px-2 py-2 text-[14px] text-ink-2 hover:bg-sunken">{{ $m->title }}</a>@endforeach
+            <a href="{{ route('student.login') }}" class="block rounded-md px-2 py-2 text-[14px] text-ink-2 hover:bg-sunken">Student portal</a>
             <a href="{{ route('login') }}" class="block rounded-md px-2 py-2 text-[14px] text-ink-2 hover:bg-sunken">Staff login</a>
         </div>
     </header>

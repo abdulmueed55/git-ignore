@@ -17,7 +17,7 @@ class StatusController extends Controller
         $app = null;
         $tracking = $request->query('tracking_no');
         if ($tracking && in_array($tracking, $request->session()->get('apply_access', []), true)) {
-            $app = AdmissionApplication::with(['program', 'cycle', 'documents', 'checks'])->where('tracking_no', $tracking)->first();
+            $app = AdmissionApplication::with(['program', 'cycle', 'documents', 'checks', 'student.section.program'])->where('tracking_no', $tracking)->first();
         }
 
         $entry = $app ? MeritListEntry::with('meritList.program')

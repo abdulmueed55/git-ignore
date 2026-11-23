@@ -37,7 +37,7 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-foreach (['portal', 'apply', 'admissions', 'attendance', 'academics', 'studio'] as $module) {
+foreach (['portal', 'apply', 'admissions', 'attendance', 'academics', 'studio', 'student'] as $module) {
     $file = __DIR__."/modules/{$module}.php";
     if (is_file($file)) {
         require $file;

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Student;
 use App\Models\User;
 
 return [
@@ -42,6 +43,12 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // Student portal (/student): students sign in with roll number + password.
+        'student' => [
+            'driver' => 'session',
+            'provider' => 'students',
+        ],
     ],
 
     /*
@@ -65,6 +72,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', User::class),
+        ],
+
+        'students' => [
+            'driver' => 'eloquent',
+            'model' => Student::class,
         ],
 
         // 'users' => [

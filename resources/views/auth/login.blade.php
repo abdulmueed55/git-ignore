@@ -70,7 +70,7 @@
             @endif
 
             <div class="mt-8 flex justify-between text-[12.5px]">
-                <a href="{{ url('/') }}" class="text-muted hover:text-ink">← College portal</a>
+                <a href="{{ route('student.login') }}" class="text-muted hover:text-ink">Student? Student portal →</a>
                 @if (Route::has('apply.start'))<a href="{{ route('apply.start') }}" class="font-semibold text-brand hover:underline">Apply for admission</a>@endif
             </div>
         </div>
