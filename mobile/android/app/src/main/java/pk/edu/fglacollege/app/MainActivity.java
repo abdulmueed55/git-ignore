@@ -21,6 +21,8 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+import java.util.Map;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -38,6 +40,7 @@ public class MainActivity extends Activity {
 
     private static final String START_PAGE = "file:///android_asset/start.html";
     private static final String OFFLINE_PAGE = "file:///android_asset/offline.html";
+    private static final String SERVER_PAGE = "file:///android_asset/server.html";
     private static final int FILE_CHOOSER = 41;
 
     private WebView web;
@@ -174,6 +177,16 @@ public class MainActivity extends Activity {
             });
         }
 
+        /** Back to the Student / Staff choice. */
+        @JavascriptInterface
+        public void home() {
+            runOnUiThread(() -> {
+                if (web.getUrl() == null || !web.getUrl().startsWith("file:///android_asset/")) return;
+                prefs.edit().remove("start").apply();
+                web.loadUrl(START_PAGE);
+            });
+        }
+
         @JavascriptInterface
         public boolean setServer(String url) {
             Uri u = Uri.parse(url == null ? "" : url.trim());
@@ -201,6 +214,25 @@ public class MainActivity extends Activity {
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             if (request.isForMainFrame()) view.loadUrl(OFFLINE_PAGE);
+        }
+
+        /** The server address answers but no college server is there (not deployed / wrong address), or it is starting up. */
+        @Override
+        public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse response) {
+            if (!request.isForMainFrame() || !isServerUrl(request.getUrl().toString())) return;
+            String routing = null;
+            Map<String, String> headers = response.getResponseHeaders();
+            if (headers != null) {
+                for (Map.Entry<String, String> h : headers.entrySet()) {
+                    if ("x-render-routing".equalsIgnoreCase(h.getKey())) routing = h.getValue();
+                }
+            }
+            int code = response.getStatusCode();
+            if (routing != null && routing.toLowerCase().contains("no-server")) {
+                view.loadUrl(SERVER_PAGE + "#missing");
+            } else if (code == 502 || code == 503 || code == 504) {
+                view.loadUrl(SERVER_PAGE + "#waking");
+            }
         }
 
         @Override

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>College server</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #0a3d26; color: #fff; font-family: 'Roboto', Arial, sans-serif; display: flex; flex-direction: column; }
+  header { padding: 36px 24px 18px; text-align: center; }
+  header img { width: 68px; height: 68px; border-radius: 14px; }
+  h1 { font-size: 21px; margin: 14px 0 6px; }
+  header p { margin: 0; color: rgba(255,255,255,.85); line-height: 1.5; font-size: 15px; }
+  main { flex: 1; background: #f4f5f4; color: #17201b; border-radius: 18px 18px 0 0; padding: 22px 18px; display: grid; gap: 12px; align-content: start; }
+  .box { background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.08); font-size: 14.5px; line-height: 1.5; }
+  .box b { display: block; margin-bottom: 4px; }
+  .mono { font-family: monospace; font-size: 13px; color: #5b6660; word-break: break-all; }
+  input { font: inherit; padding: 12px; border: 1px solid #c4ccc7; border-radius: 6px; width: 100%; margin-top: 8px; }
+  button { width: 100%; border: 0; border-radius: 8px; padding: 14px; font: inherit; font-weight: 700; font-size: 15px; }
+  .primary { background: #0b6b3f; color: #fff; }
+  .ghost { background: #fff; color: #0b6b3f; border: 1px solid #d9dfdb; }
+  .err { color: #b42318; font-size: 13px; min-height: 18px; margin-top: 6px; }
+</style>
+</head>
+<body>
+<header>
+  <img src="crest.png" alt="">
+  <h1 id="title">College server nahi mila</h1>
+  <p id="msg">Is address par abhi college ka system online nahi hai.</p>
+</header>
+<main>
+  <div class="box">
+    <b>Abhi ka server</b>
+    <div class="mono" id="srv"></div>
+  </div>
+  <div class="box" id="fix">
+    <b>Sahi address daalein</b>
+    College ka system jis address par chal raha hai (maslan Render ka link <span class="mono">https://….onrender.com</span> ya college ka apna domain) woh yahan likhein:
+    <input id="url" type="url" inputmode="url" placeholder="https://erp.fglacollege.edu.pk">
+    <div class="err" id="err"></div>
+    <button class="primary" id="save">Save aur kholein</button>
+  </div>
+  <button class="ghost" id="retry">Dobara koshish</button>
+  <button class="ghost" id="home">Shuru ki screen</button>
+</main>
+<script>
+  var b = window.FGLA, waking = location.hash === '#waking';
+  var srv = b ? b.server() : '';
+  document.getElementById('srv').textContent = srv;
+  document.getElementById('url').value = srv;
+  if (waking) {
+    document.getElementById('title').textContent = 'Server jaag raha hai';
+    document.getElementById('msg').textContent = 'Free server kuch der istemal na ho to so jata hai. Ek minute mein khud dobara koshish hogi.';
+    document.getElementById('fix').style.display = 'none';
+    setTimeout(function () { if (b) b.retry(); }, 25000);
+  }
+  document.getElementById('retry').addEventListener('click', function () { if (b) b.retry(); });
+  document.getElementById('home').addEventListener('click', function () { if (b) b.home(); });
+  document.getElementById('save').addEventListener('click', function () {
+    var v = document.getElementById('url').value.trim();
+    if (b && b.setServer(v)) { setTimeout(function () { b.home(); }, 150); }
+    else { document.getElementById('err').textContent = 'https:// se shuru hone wala address likhein.'; }
+  });
+</script>
+</body>
+</html>
