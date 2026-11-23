@@ -13,3 +13,4 @@ storage/app/public/*
 database/*.sqlite
 .env
 docs/security/screenshots
+mobile

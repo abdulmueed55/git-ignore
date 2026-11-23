@@ -82,6 +82,17 @@ Mic ke baghair sentence type bhi kar sakte hain. Bina AI key ke bhi English/Roma
 
 SMS abhi log mein likhe jate hain; Pakistani SMS provider ka account mile to `config/attendance.php` mein jod diya jayega.
 
+## 4b. Student portal aur mobile app
+
+**Student ka account khud banta hai:** admission office jab applicant ko **Admit** karta hai, usi waqt student portal ka account ban jata hai.
+- Login: **roll number** + wahi **6-digit PIN** jo admission form ke waqt mila tha. Pehli dafa login par apna password banana zaroori hai.
+- Applicant ke "Check status" page par admit hote hi roll number aur "Open student portal" button aa jata hai.
+- PIN / password bhool jaye to: Students → student ka profile → **Reset portal password** (naya temporary password ek dafa dikhta hai).
+
+**Student portal mein:** aaj ki classes (har period ka apna P/A), attendance har subject ki aur "75% tak pahunchne ke liye kitni classes lagatar", hafte ka timetable (extra class aur test samait), college ke notices, **leave ki darkhwast** (Principal ki ghanti mein alert aata hai, faisla Attendance → Leave requests se), aur apna admission record (merit list, documents).
+
+**Mobile app:** `FGLA-College-1.0.apk` Android phone par install karein (tafseel `mobile/README.md`). Pehli screen par Student ya Teacher/Staff chunein. iPhone par Safari → Share → *Add to Home Screen*.
+
 ## 5. Website studio
 
 Website editor (ya Principal) yahan se poori website chalata hai — koi coding nahi:

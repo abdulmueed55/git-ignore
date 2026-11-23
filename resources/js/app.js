@@ -238,5 +238,10 @@ document.addEventListener('change', (e) => {
     if (e.target.matches('[data-autosubmit]')) e.target.form?.requestSubmit();
 });
 
+// Installable app (Add to Home screen) + offline page.
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
 window.Alpine = Alpine;
 Alpine.start();

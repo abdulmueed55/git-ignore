@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FG Liaquat Ali Degree College</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #0a3d26; color: #fff; font-family: 'Libre Franklin', 'Roboto', Arial, sans-serif; display: flex; flex-direction: column; }
+  header { padding: 40px 24px 18px; text-align: center; }
+  header img { width: 88px; height: 88px; border-radius: 16px; }
+  h1 { font-size: 22px; margin: 14px 0 2px; font-weight: 800; letter-spacing: -0.01em; }
+  header p { margin: 0; color: rgba(255,255,255,.78); font-size: 14px; }
+  main { flex: 1; background: #f4f5f4; color: #17201b; border-radius: 18px 18px 0 0; padding: 24px 18px 28px; display: flex; flex-direction: column; gap: 12px; }
+  .q { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #5b6660; margin: 2px 4px 2px; }
+  button.big { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; border: 0; border-radius: 10px; padding: 18px; font: inherit; color: inherit; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+  button.big:active { transform: scale(.99); }
+  button.big.primary { background: #0b6b3f; color: #fff; }
+  .av { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 17px; background: #e3efe8; color: #0b6b3f; flex: none; }
+  .primary .av { background: #fff; }
+  b { display: block; font-size: 17px; }
+  small { display: block; font-size: 13px; opacity: .8; margin-top: 2px; }
+  .links { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+  .links button { border: 1px solid #d9dfdb; background: #fff; border-radius: 8px; padding: 12px; font: inherit; font-size: 14px; font-weight: 600; color: #0b6b3f; }
+  footer { margin-top: auto; padding-top: 18px; font-size: 12.5px; color: #5b6660; text-align: center; }
+  footer a { color: #0b6b3f; font-weight: 700; }
+  form { display: none; gap: 8px; margin-top: 8px; }
+  form.open { display: grid; }
+  input { font: inherit; padding: 11px 12px; border: 1px solid #c4ccc7; border-radius: 6px; width: 100%; }
+  .err { color: #b42318; font-size: 12.5px; min-height: 16px; }
+  form button { background: #0b6b3f; color: #fff; border: 0; border-radius: 6px; padding: 11px; font: inherit; font-weight: 700; }
+</style>
+</head>
+<body>
+<header>
+  <img src="crest.png" alt="College crest">
+  <h1>FG Liaquat Ali Degree College</h1>
+  <p>Peshawar Road, Rawalpindi</p>
+</header>
+<main>
+  <div class="q">Aap kaun hain?</div>
+  <button class="big primary" data-path="/student/login"><span class="av">S</span><span><b>Student</b><small>Attendance, timetable, extra classes, leave, admission record</small></span></button>
+  <button class="big" data-path="/login"><span class="av">T</span><span><b>Teacher / Staff</b><small>Registers, class alerts, admissions, timetable</small></span></button>
+  <div class="links">
+    <button data-path="/apply">Apply for admission</button>
+    <button data-path="/apply/status">Admission status</button>
+  </div>
+  <button class="big" data-path="/" style="padding:14px"><span class="av" style="width:36px;height:36px;font-size:14px">W</span><span><b style="font-size:15px">College website</b><small>Notices, news, events, gallery</small></span></button>
+  <footer>
+    Server: <span id="srv"></span> · <a href="#" id="change">Change</a>
+    <form id="f"><input id="url" type="url" inputmode="url" placeholder="https://erp.your-college.edu.pk" required><div class="err" id="err"></div><button type="submit">Save server</button></form>
+  </footer>
+</main>
+<script>
+  var bridge = window.FGLA;
+  var srv = bridge ? bridge.server() : '';
+  document.getElementById('srv').textContent = srv.replace(/^https:\/\//, '');
+  document.querySelectorAll('[data-path]').forEach(function (b) {
+    b.addEventListener('click', function () { if (bridge) bridge.open(b.getAttribute('data-path')); });
+  });
+  document.getElementById('change').addEventListener('click', function (e) {
+    e.preventDefault(); document.getElementById('f').classList.toggle('open'); document.getElementById('url').value = srv;
+  });
+  document.getElementById('f').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = document.getElementById('url').value;
+    if (bridge && bridge.setServer(v)) { srv = v.replace(/\/+$/, ''); document.getElementById('srv').textContent = srv.replace(/^https:\/\//, ''); document.getElementById('f').classList.remove('open'); document.getElementById('err').textContent = ''; }
+    else { document.getElementById('err').textContent = 'Enter an https:// address, e.g. https://erp.fglacollege.edu.pk'; }
+  });
+</script>
+</body>
+</html>

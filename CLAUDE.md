@@ -13,6 +13,8 @@ Laravel 13 · PHP 8.3 · MySQL in production (SQLite locally/tests) · Blade + A
 | Attendance | `routes/modules/attendance.php` | `Attendance/` | `attendance/` | `AttendanceSeeder` |
 | Academics, students, staff, timetable + extra classes, activity log | `routes/modules/academics.php` | `Academics/` | `academics/`, `students/`, `staff/`, `system/` | `ExtraClassSeeder` |
 | Staff alerts (bell, class reminders) | `routes/web.php` | `NotificationController` | `components/layouts/app` (bell) | — |
+| Student portal (guard `student`, roll no + password) | `routes/modules/student.php` | `Student/` | `student/`, `components/layouts/student` | `StudentPortalSeeder` |
+| Android app (WebView shell) + PWA | — | `mobile/android` | `public/*.webmanifest`, `public/sw.js` | — |
 | Website studio (CMS) + public JSON API | `routes/modules/studio.php`, `routes/modules/api.php` | `Studio/`, `Api/` | `studio/` | `CmsSeeder` |
 
 Route names are fixed by `app/Support/Navigation.php` (sidebar + Ctrl+K palette). Keep them.

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>No connection</title>
+<style>
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0a3d26; color: #fff; font-family: 'Roboto', Arial, sans-serif; text-align: center; }
+  div { max-width: 320px; padding: 24px; }
+  img { width: 72px; height: 72px; border-radius: 14px; }
+  h1 { font-size: 21px; margin: 16px 0 6px; }
+  p { color: rgba(255,255,255,.82); line-height: 1.5; font-size: 15px; }
+  button { margin-top: 12px; background: #fff; color: #0a3d26; font: inherit; font-weight: 700; padding: 12px 26px; border: 0; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div>
+  <img src="crest.png" alt="">
+  <h1>No internet connection</h1>
+  <p>Check mobile data or Wi-Fi and try again.<br>Internet nahi hai — connection check kar ke dobara koshish karein.</p>
+  <button id="retry">Try again</button>
+</div>
+<script>document.getElementById('retry').addEventListener('click', function () { if (window.FGLA) window.FGLA.retry(); });</script>
+</body>
+</html>

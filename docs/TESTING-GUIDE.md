@@ -70,6 +70,12 @@ Har line ke saamne ✓ ya ✗ lagayein. ✗ ho to screen ka screenshot aur 1 lin
 - [ ] **Analytics**, **Defaulters** (CSV download), kisi student ka naam → attendance profile
 - [ ] Teacher kisi doosre teacher ki class nahi khol sakta (403)
 
+### B2. Student portal
+- [ ] Website par **Student portal** → demo student (login page par likha hai) + `password` → Home: aaj ki classes, attendance %, subjects, extra class, notices
+- [ ] Attendance tab → har subject ka %; Timetable tab → hafta; Leave tab → darkhwast bhejein → Principal ki ghanti mein "Leave request"
+- [ ] Admission office se kisi verified applicant ko **Admit** karein → us ke "Check status" page par roll number + "Open student portal" → roll no + PIN se login → naya password banana parta hai
+- [ ] Students → kisi student ka profile → **Reset portal password** → naya temporary password
+
 ### C. Principal — attendance control
 - [ ] **Leave requests** → aik approve karein
 - [ ] **Guardian alerts** → *Send queued* (abhi SMS log mein jate hain)
