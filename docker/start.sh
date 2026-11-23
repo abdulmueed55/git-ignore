@@ -5,7 +5,9 @@ cd /app
 
 [ -f .env ] || cp .env.example .env
 
-# Public address used for links and uploaded media (Render sets RENDER_EXTERNAL_URL).
+# Public address used for links and uploaded media.
+# Render sets RENDER_EXTERNAL_URL; Hugging Face Spaces set SPACE_HOST (e.g. name-fgla-erp.hf.space).
+if [ -z "$APP_URL" ] && [ -n "$SPACE_HOST" ]; then APP_URL="https://${SPACE_HOST}"; fi
 export APP_URL="${APP_URL:-${RENDER_EXTERNAL_URL:-http://localhost:${PORT}}}"
 
 if [ -z "$APP_KEY" ] && ! grep -q '^APP_KEY=base64:' .env; then
