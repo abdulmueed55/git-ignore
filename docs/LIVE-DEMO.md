@@ -4,7 +4,20 @@ Do tareeqe hain. Dono mein **poora system chalta hai** — login, attendance sav
 
 ---
 
-## Tareeqa 1 — Online link (Render.com, free) · ~10 minute
+## Tareeqa 0 — GitHub Codespaces (bilkul free, card nahi) · ~6 minute
+
+1. GitHub par login (abdulmueed55) → yeh link kholein:
+   **https://codespaces.new/abdulmueed55/git-ignore?ref=claude/eloquent-curie-taascf**
+2. **Create codespace** dabayein. System khud install hota hai (pehli dafa ~5 minute).
+3. Terminal mein **"College ERP live at: https://…app.github.dev"** aayega — yahi aap ka live link hai.
+4. Neeche **PORTS** tab mein port 8000 **Public** hona chahiye (warna right-click → Port Visibility → Public).
+5. Yeh link phone, browser aur Android app (*Server · Change*) — sab mein chalta hai.
+
+30 minute istemal na ho to Codespace ruk jata hai (free: 60 ghante/mahina). Dobara: github.com → Code → Codespaces → us par click; link wahi rehta hai.
+
+---
+
+## Tareeqa 1 — Online link (Render.com) · ~10 minute
 
 Is se aap ko `https://fgla-erp-demo.onrender.com` jaisa link milega jo kisi bhi phone/computer par khulta hai.
 

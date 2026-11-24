@@ -1,4 +1,6 @@
-# FG Liaquat Ali Degree College ERP — free live demo on Hugging Face Spaces (no card needed).
+# FG Liaquat Ali Degree College ERP — live demo on Hugging Face Spaces.
+# Note (Nov 2026): Hugging Face now requires a PRO subscription for Docker Spaces; for a free
+# demo use GitHub Codespaces instead (.devcontainer/, see docs/LIVE-DEMO.md).
 #
 # How to use: create a Space (SDK: Docker, hardware: CPU basic · free), then replace the
 # Space's Dockerfile with this file. The Space builds the app straight from GitHub.
