@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Runs every time the Codespace starts: serves the ERP on port 8000 and makes the link public.
 cd "$(dirname "$0")/.."
+export XDEBUG_MODE=off
 
 # The public https address GitHub gives port 8000.
 if [ -n "${CODESPACE_NAME:-}" ]; then
