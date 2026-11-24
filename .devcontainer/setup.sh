@@ -5,7 +5,9 @@ cd "$(dirname "$0")/.."
 
 echo "==> PHP extensions (gd, intl, zip)"
 if ! php -m | grep -qi '^gd$' || ! php -m | grep -qi '^intl$' || ! php -m | grep -qi '^zip$'; then
-  sudo apt-get update -qq
+  # The base image ships a Yarn apt source whose signing key has expired; we don't use Yarn.
+  sudo rm -f /etc/apt/sources.list.d/yarn.list /etc/apt/sources.list.d/yarn*.list
+  sudo apt-get update -qq || echo "(apt update reported warnings — continuing)"
   sudo apt-get install -y -qq libpng-dev libjpeg62-turbo-dev libfreetype6-dev libicu-dev libzip-dev >/dev/null
   sudo docker-php-ext-configure gd --with-freetype --with-jpeg >/dev/null
   sudo docker-php-ext-install -j"$(nproc)" gd intl zip bcmath exif >/dev/null
