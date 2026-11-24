@@ -13,7 +13,8 @@ php artisan optimize:clear >/dev/null 2>&1 || true
 
 pkill -f "artisan serve" >/dev/null 2>&1 || true
 pkill -f "schedule:work" >/dev/null 2>&1 || true
-nohup php artisan serve --host=0.0.0.0 --port=8000 > storage/logs/serve.log 2>&1 &
+# --no-reload: otherwise "artisan serve" drops these settings (APP_URL, APP_DEMO, …) for the PHP server it starts.
+nohup php artisan serve --host=0.0.0.0 --port=8000 --no-reload > storage/logs/serve.log 2>&1 &
 nohup php artisan schedule:work > storage/logs/schedule.log 2>&1 &
 
 # Make the link open for everyone (phones, the Android app) — not only for GitHub-signed-in users.
