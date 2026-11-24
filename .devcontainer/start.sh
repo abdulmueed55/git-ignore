@@ -12,6 +12,8 @@ export APP_ENV=production APP_DEBUG=false APP_DEMO=true TRUST_PROXIES=true DB_CO
 php artisan optimize:clear >/dev/null 2>&1 || true
 
 pkill -f "artisan serve" >/dev/null 2>&1 || true
+pkill -f "0.0.0.0:8000" >/dev/null 2>&1 || true   # the PHP server an earlier "artisan serve" left behind
+sleep 1
 pkill -f "schedule:work" >/dev/null 2>&1 || true
 # --no-reload: otherwise "artisan serve" drops these settings (APP_URL, APP_DEMO, …) for the PHP server it starts.
 nohup php artisan serve --host=0.0.0.0 --port=8000 --no-reload > storage/logs/serve.log 2>&1 &
