@@ -7,7 +7,7 @@ Laravel 13 · PHP 8.3 · MySQL in production (SQLite locally/tests) · Blade + A
 | Module | Routes file | Controllers | Views | Seeder |
 |---|---|---|---|---|
 | Auth + Command centre | `routes/web.php` | `Auth/LoginController`, `DashboardController` | `auth/`, `dashboard.blade.php` | `AcademicSeeder` |
-| Public landing page | `routes/modules/portal.php` | `Portal/` | `portal/` | — |
+| Public college website (approved design: Home, About, Admissions, Programmes, Faculty, Campus life, Notices, Contact) | `routes/modules/portal.php` (`portal.home`, `site.*`) | `Portal/PortalController` | `site/`, `components/site/layout`; CSS/JS `resources/css/site.css`, `resources/js/site.js`; fixed text `config/site.php`; photos `public/images/site/` | `CmsSeeder` |
 | Applicant portal | `routes/modules/apply.php` | `Apply/` | `apply/` | — |
 | Admissions desk + AI verification | `routes/modules/admissions.php` | `Admissions/` | `admissions/` | `AdmissionSeeder` |
 | Attendance | `routes/modules/attendance.php` | `Attendance/` | `attendance/` | `AttendanceSeeder` |

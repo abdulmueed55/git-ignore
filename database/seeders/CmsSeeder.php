@@ -65,9 +65,9 @@ class CmsSeeder extends Seeder
             'college_name' => 'FG Liaquat Ali Degree College',
             'college_tagline' => 'Federal Government Educational Institutions (Cantts/Garrisons) · Rawalpindi',
             'established_year' => '2007',
-            'address' => 'FG Liaquat Ali Degree College for Boys, Peshawar Road, Rawalpindi',
-            'phone' => '+92 51 5492888',
-            'phone_admissions' => '+92 51 5492888',
+            'address' => 'Peshawar Road, Rawalpindi Cantt',
+            'phone' => '051-5492888',
+            'phone_admissions' => '0336-1000830',
             'email' => 'fgladc@yahoo.com',
             'office_hours' => 'Monday – Friday, 8:00 AM – 3:00 PM',
             'map_url' => 'https://maps.google.com/?q=FG+Liaquat+Ali+Degree+College+Peshawar+Road+Rawalpindi',
@@ -247,23 +247,38 @@ class CmsSeeder extends Seeder
         }
     }
 
+    /** Copies a bundled website photo into the public disk (as if uploaded in the Studio). */
+    private function photo(string $from, string $to): string
+    {
+        Storage::disk('public')->put($to, file_get_contents(public_path($from)));
+
+        return $to;
+    }
+
     private function slides(): void
     {
+        // Real photos of the college; more slides (army visit, principal, labs, sports) can be added in the Studio.
         $slides = [
-            ['Admissions open — 1st Year & BS', 'Apply online in minutes. Your documents are read and verified automatically.', 'Apply now', '/apply'],
-            ['Commitment · Devotion · Progress — since 2007', 'Intermediate, associate degree and BS programmes taught by dedicated faculty.', 'About the college', '/pages/about'],
-            ['Science & IT exhibition 2026', 'Sixty student projects — robotics, apps and working models. Visitors welcome.', 'See the event', '/pages/about'],
+            ['FG Liaquat Ali Degree College, Peshawar Road.', 'A purpose-built public campus in Rawalpindi Cantt, under the Federal Government Educational Institutions (C/G).', 'Apply for admission', '/apply', 'images/college-building@2x.jpg'],
+            ['Disciplined, confident and ready for what comes next.', 'Intermediate and four-year BS programmes at nominal fees.', 'View programmes', '/programmes', 'images/site/students-lawn.jpg'],
+            ['Dedicated faculty, one college family.', 'Associate and assistant professors who lead eleven departments — and know their students by name.', 'Meet the faculty', '/faculty', 'images/site/faculty-students.jpg'],
+            ['Part of the Armed Forces’ education network.', 'Quality education for the children of Armed Forces personnel and civilians in cantonments and garrisons.', 'Admission policy', '/admission', 'images/site/building-front.jpg'],
         ];
-        foreach ($slides as $i => [$h, $s, $l, $u]) {
+        foreach ($slides as $i => [$h, $sub, $l, $u, $img]) {
             HeroSlide::create([
-                'heading' => $h, 'subheading' => $s, 'cta_label' => $l, 'cta_url' => $u, 'sort_order' => $i + 1, 'is_active' => true,
-                'image_path' => $this->artwork("slides/slide-{$i}.jpg", 1600, 640, '', '', $i + 2, true),
+                'heading' => $h, 'subheading' => $sub, 'cta_label' => $l, 'cta_url' => $u, 'sort_order' => $i + 1, 'is_active' => true,
+                'image_path' => $this->photo($img, 'slides/'.basename($img)),
             ]);
         }
     }
 
     private function gallery(): void
     {
+        $campus = GalleryAlbum::create(['title' => 'Our campus', 'slug' => 'our-campus', 'description' => 'The college building, our students and faculty on Peshawar Road, Rawalpindi.', 'taken_on' => now()->subDays(5), 'is_published' => true]);
+        foreach ([['images/college-building@2x.jpg', 'College main building'], ['images/site/students-lawn.jpg', 'Students on the college lawn'], ['images/site/faculty-students.jpg', 'Faculty and students'], ['images/site/faculty-students-2.jpg', 'Faculty and students outside the main block']] as $i => [$img, $cap]) {
+            $campus->images()->create(['path' => $this->photo($img, "gallery/{$campus->id}/".basename($img)), 'caption' => $cap, 'sort_order' => $i + 1]);
+        }
+
         $albums = [
             ['Annual Sports Gala 2026', 'Athletics, cricket and the closing ceremony of the three-day sports gala.', -20, ['100 m final', 'March past', 'Cricket final', 'Tug of war', 'Prize distribution', 'Jinnah House celebrates']],
             ['Iqbal Day 2026', 'Declamations, poetry recitation and the exhibition on the life of Allama Iqbal.', -11, ['Opening recitation', 'Urdu declamation', 'English declamation', 'Judges panel', 'Winners', 'Exhibition stall']],
@@ -308,33 +323,17 @@ class CmsSeeder extends Seeder
 
     private function faculty(): void
     {
-        $quals = [
-            'PHY' => ['M.Phil Physics', 'Condensed matter physics'], 'CHE' => ['Ph.D. Chemistry', 'Organic synthesis'],
-            'MTH' => ['M.Phil Mathematics', 'Numerical analysis'], 'BIO' => ['M.Phil Zoology', 'Genetics'],
-            'ENG' => ['M.Phil English Literature', 'Postcolonial fiction'], 'URD' => ['M.Phil Urdu', 'Modern Urdu poetry'],
-            'ISL' => ['M.Phil Islamic Studies', 'Seerah studies'], 'PST' => ['M.A. Pakistan Studies', 'Freedom movement'],
-            'CS' => ['MS Computer Science', 'Software engineering'], 'ECO' => ['Ph.D. Economics', 'Development economics'],
-            'COM' => ['M.Com', 'Financial accounting'], 'STA' => ['M.Phil Statistics', 'Applied statistics'], 'POL' => ['M.Phil Political Science', 'Comparative politics'],
-        ];
-        $users = User::whereIn('role', ['principal', 'teacher'])->with('department')->orderByRaw("role = 'principal' desc")->orderBy('id')->get();
-        foreach ($users as $i => $u) {
-            $code = $u->department?->code ?? 'ENG';
-            [$q, $spec] = $quals[$code] ?? ['M.A.', 'General'];
-            if (str_starts_with($u->name, 'Dr.') || str_contains($u->name, 'Dr.')) {
-                $q = str_replace(['M.Phil', 'M.A.'], 'Ph.D.', $q);
-            }
-            $missing = $i >= count($users) - 2; // a couple of incomplete profiles for the health check
+        // The college's real teaching faculty (config/site.php), with photos where published.
+        $departments = Department::pluck('id', 'code');
+        $rank = fn (string $d) => str_starts_with($d, 'Associate') ? 0 : (str_starts_with($d, 'Assistant') ? 1 : 2);
+        foreach (config('site.faculty') as $i => [$code, $name, $designation, $qualification, $photo]) {
             FacultyProfile::create([
-                'user_id' => $u->id, 'department_id' => $u->department_id, 'name' => $u->name,
-                'designation' => $u->designation ?? 'Lecturer', 'qualification' => $missing ? null : $q,
-                'specialization' => $missing ? null : $spec, 'email' => null,
-                'bio' => $missing ? null : "{$u->designation} in the Department of ".($u->department?->name ?? 'English').'. Teaches intermediate and degree classes and supervises student societies.',
-                'sort_order' => $u->role === 'principal' ? 0 : $i + 1, 'is_published' => true,
+                'department_id' => $departments[$code] ?? null, 'name' => $name, 'designation' => $designation,
+                'qualification' => $qualification, 'email' => null,
+                'photo_path' => $photo ? $this->photo("images/site/faculty/{$photo}.jpg", "faculty/{$photo}.jpg") : null,
+                'bio' => "{$designation}, {$qualification}. Teaches intermediate and degree classes.",
+                'sort_order' => $rank($designation) * 100 + $i, 'is_published' => true,
             ]);
-        }
-        // Department heads first within their department
-        foreach (Department::whereNotNull('head_id')->get() as $d) {
-            FacultyProfile::where('user_id', $d->head_id)->update(['sort_order' => 1]);
         }
     }
 
